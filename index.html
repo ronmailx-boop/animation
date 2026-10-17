@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>אולם ההקרנות</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="סרטוני אנימציה קצרים בעברית, מצוירים בקוד ומדובבים בקולות של ElevenLabs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;800&family=Secular+One&display=swap">
+<style>
+/* layout: a dark screening room; marquee header, a wall of 9:16 posters that play their own trailers, full-screen player */
+:root{
+  --bg:#140f1c; --panel:#211a2d; --fg:#f5eee6; --muted:#b3a7c2; --marquee:#ffc94a; --accent:#ff6b4a; --line:#352b45;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--font-body);
+  padding-block:20px 32px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.page{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+
+header{display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:34px;height:34px;flex:none}
+h1{margin:0;font:400 clamp(30px,8vw,44px)/1 var(--font-display);color:var(--marquee);text-wrap:balance}
+.tag{margin:0;color:var(--muted);max-width:56ch}
+.bulbs{height:6px;background:radial-gradient(circle,var(--marquee) 2px,transparent 2.6px) 0 50%/16px 6px repeat-x;opacity:.55;margin-top:6px}
+
+.shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h2{margin:0;font:400 22px/1.2 var(--font-display)}
+.count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+
+.grid{list-style:none;margin:0;padding:0;display:grid;gap:20px;grid-template-columns:1fr}
+@media (min-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.card{display:flex;flex-direction:column;gap:12px;min-width:0}
+.poster{
+  position:relative;display:block;width:100%;max-width:100%;aspect-ratio:9/16;max-height:78svh;margin:0 auto;padding:0;border:0;border-radius:14px;overflow:hidden;
+  background:var(--panel);cursor:pointer;box-shadow:0 0 0 1px var(--line);-webkit-tap-highlight-color:transparent;
+}
+.poster:focus-visible{outline:3px solid var(--marquee);outline-offset:3px}
+.poster img,.poster iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;object-fit:cover}
+.poster iframe{opacity:0;transition:opacity .4s;pointer-events:none}
+.poster iframe.on{opacity:1}
+.poster .shade{position:absolute;inset:auto 0 0 0;height:38%;background:linear-gradient(transparent,rgba(10,6,16,.85));pointer-events:none}
+.poster .play{position:absolute;inset-inline-start:14px;bottom:14px;display:flex;align-items:center;gap:8px;padding:10px 16px 10px 14px;border-radius:999px;
+  background:var(--marquee);color:#1c1408;font:800 15px var(--font-body);transition:transform .15s}
+.poster .play svg{width:16px;height:16px;fill:currentColor}
+.poster:hover .play{transform:scale(1.05)}
+.poster .dur{position:absolute;top:12px;inset-inline-end:12px;padding:3px 9px;border-radius:999px;background:rgba(10,6,16,.72);color:#fff;font:500 12px var(--font-body);font-variant-numeric:tabular-nums;direction:ltr}
+.poster .badge{position:absolute;top:12px;inset-inline-start:12px;padding:3px 9px;border-radius:999px;background:var(--accent);color:#fff;font:800 12px var(--font-body)}
+
+.meta{display:flex;flex-direction:column;gap:6px;min-width:0}
+.meta h3{margin:0;font:400 22px/1.15 var(--font-display);text-wrap:balance}
+.meta p{margin:0;color:var(--muted)}
+.cast{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.cast li{padding:2px 10px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--fg)}
+
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+
+/* player */
+dialog{padding:0;border:0;background:var(--bg);color:var(--fg);width:100vw;height:100svh;max-width:100vw;max-height:100svh;margin:0}
+dialog::backdrop{background:rgba(5,3,8,.8)}
+@media (min-width:700px){dialog{width:min(520px,94vw);height:min(940px,94svh);margin:auto;border-radius:18px;box-shadow:0 0 0 1px var(--line)}}
+.pl{display:flex;flex-direction:column;height:100%}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 10px max(16px, env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.pl-head h2{font-size:20px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.close{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.close svg{width:18px;height:18px;fill:currentColor}
+.close:focus-visible{outline:3px solid var(--marquee);outline-offset:2px}
+.pl iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
+@media (prefers-reduced-motion: reduce){.poster .play{transition:none}.poster iframe{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="6" width="28" height="22" rx="4" fill="#ffc94a"/><path d="M14 12v10l8-5z" fill="#140f1c"/><g fill="#140f1c"><rect x="6" y="8" width="3" height="3" rx="1"/><rect x="6" y="23" width="3" height="3" rx="1"/><rect x="25" y="8" width="3" height="3" rx="1"/><rect x="25" y="23" width="3" height="3" rx="1"/></g></svg>
+      <h1>אולם ההקרנות</h1>
+    </div>
+    <p class="tag">סרטוני אנימציה קצרים בעברית. כל סרט מצויר בקוד ומדובב בקולות של ElevenLabs. לחצו על סרט כדי לצפות בו עם קול.</p>
+    <div class="bulbs" aria-hidden="true"></div>
+  </header>
+
+  <main>
+    <section aria-labelledby="shelf">
+      <div class="shelf-head"><h2 id="shelf">עכשיו בהקרנה</h2><span class="count" id="count"></span></div>
+      <ul class="grid" id="grid" style="margin-top:14px"></ul>
+    </section>
+  </main>
+
+  <footer>כל הסרטים באורך 30 שניות לכל היותר. הסאונד מתחיל אחרי לחיצה על הפעלה בתוך הנגן.</footer>
+</div>
+
+<dialog id="player" aria-labelledby="plTitle">
+  <div class="pl">
+    <div class="pl-head">
+      <h2 id="plTitle"></h2>
+      <button class="close" id="close" type="button" aria-label="סגירת הנגן"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button>
+    </div>
+    <iframe id="plFrame" title="נגן הסרט" allow="autoplay"></iframe>
+  </div>
+</dialog>
+
+<script>
+(function(){
+/* the catalogue: newest first. Each film lives in films/<slug>/ with its own audio/ and poster.jpg */
+const FILMS=[
+  {slug:'hameshulash-haacharon',title:'המשולש האחרון',dur:'0:30',isNew:true,
+   logline:'ארבעה בני משפחה מנומסים מדי בשביל לקחת את משולש הפיצה האחרון. ואז האור כבה.',
+   cast:['אבא','אמא','נועה','סבא','הכלב']},
+  {slug:'bitul-minui',title:'ביטול מנוי',dur:'0:30',
+   logline:'עומר רק רוצה לבטל את המנוי לחדר הכושר. דנה, נציגת השירות, לא מוותרת עליו.',
+   cast:['דנה','עומר']}
+];
+const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const grid=document.getElementById('grid');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.getElementById('count').textContent=FILMS.length+' סרטים';
+
+const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+FILMS.forEach(f=>{
+  const li=el('li','card');
+  const btn=el('button','poster');btn.type='button';btn.setAttribute('aria-label','צפייה בסרט '+f.title);
+  const img=el('img');img.src='films/'+f.slug+'/poster.jpg';img.alt='';img.loading='lazy';img.width=360;img.height=640;
+  btn.append(img);
+  if(!reduce){const fr=el('iframe');fr.tabIndex=-1;fr.setAttribute('aria-hidden','true');fr.title='';fr.dataset.src='films/'+f.slug+'/#preview';fr.addEventListener('load',()=>{if(fr.getAttribute('src'))fr.classList.add('on');});btn.append(fr);}
+  btn.append(el('span','shade'));
+  if(f.isNew) btn.append(el('span','badge','חדש'));
+  btn.append(el('span','dur',f.dur));
+  const pl=el('span','play');pl.innerHTML=PLAY;pl.append(document.createTextNode('צפייה'));btn.append(pl);
+  btn.addEventListener('click',()=>openPlayer(f));
+  const meta=el('div','meta');meta.append(el('h3',null,f.title),el('p',null,f.logline));
+  const cast=el('ul','cast');cast.setAttribute('aria-label','דמויות');f.cast.forEach(c=>cast.append(el('li',null,c)));meta.append(cast);
+  li.append(btn,meta);grid.append(li);
+});
+
+/* trailers: a card plays its silent preview only while it is on screen */
+if(!reduce&&'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    const fr=e.target.querySelector('iframe');if(!fr) return;
+    if(e.isIntersecting){ if(!fr.getAttribute('src')) fr.src=fr.dataset.src; }
+    else { fr.classList.remove('on');fr.removeAttribute('src'); }
+  }),{threshold:.35});
+  grid.querySelectorAll('.poster').forEach(p=>io.observe(p));
+}
+
+/* player */
+const dlg=document.getElementById('player'),frame=document.getElementById('plFrame'),plTitle=document.getElementById('plTitle');
+function openPlayer(f){
+  plTitle.textContent=f.title;
+  frame.src='films/'+f.slug+'/#embed';
+  if(dlg.showModal) dlg.showModal(); else location.href='films/'+f.slug+'/';
+}
+function closePlayer(){ if(dlg.open) dlg.close(); }
+dlg.addEventListener('close',()=>{frame.removeAttribute('src');}); // stops the sound
+document.getElementById('close').addEventListener('click',closePlayer);
+dlg.addEventListener('click',e=>{if(e.target===dlg) closePlayer();});
+})();
+</script>
+</body>
+</html>
