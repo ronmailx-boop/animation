@@ -31,7 +31,8 @@
 - [x] העברת הסרטים ל-`films/<slug>/` + מצבי `#preview` (טריילר שקט בלולאה) ו-`#embed` (נגן)
 - [x] דף גלריה: פוסטר + טריילר חי לכל סרט, נגן מלא ב-dialog, Mobile-First, RTL
 - [x] פוסטרים (`poster.jpg`) מפריים מתוך כל סרט
-- [x] PR ומיזוג ל-main
+- [x] PR ומיזוג ל-main (PR #1)
+- פורסם כ-Artifact: https://claude.ai/artifact/Nsv5YM9fV3yDRzqUgQAnjn
 
 ## Current Focus
 הפלטפורמה ושני הסרטים מוזגו ל-main. הצעד הבא (לפי בקשה): אירוח ציבורי (למשל Cloudflare לפי CLAUDE.md), סרט שלישי.
