@@ -1,10 +1,24 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>המשולש האחרון</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
 <style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview .ctl,html.preview .load,html.preview #status,html.preview .title,html.preview .bigplay{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
 /* layout: phone-shaped stage (family dinner, one slice left), slim controls underneath */
 :root{
   --bg:#f4ece6; --fg:#2a1712; --muted:#7a5d52; --accent:#d9452f; --panel:#ffffff; --line:#e3cfc4;
@@ -53,6 +67,8 @@ h1{font:400 26px/1.1 var(--font-display);margin:0}
 #time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
 #status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
 </style>
+</head>
+<body>
 
 <div class="wrap" dir="rtl" lang="he">
   <div class="head">
@@ -479,6 +495,15 @@ function resumeVoices(){ // pick up any line already under way (after resume or 
   for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.v);
 }
 
+/* ---------- #preview: loop a highlight silently (no audio events fire) ---------- */
+function startPreview(a,b){
+  if(!document.documentElement.classList.contains('preview')) return;
+  E.stage.style.pointerEvents='none';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){render(lerp(a,b,.5));return;}
+  const t0=performance.now();
+  (function pv(now){T=a+((now-t0)/1000)%(b-a);render(T);requestAnimationFrame(pv);})(t0);
+}
+
 /* ---------- player ---------- */
 let T=0,playing=false,last=0,raf=0;
 const ICON={
@@ -520,5 +545,8 @@ E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=m
 E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
 E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
 ui();render(0);updateStatus();loadVoices();
+startPreview(10.6,22.6);
 })();
 </script>
+</body>
+</html>

@@ -2,8 +2,8 @@
 
 ## הפרויקט
 "ביטול מנוי" — סרטון אנימציה של 30 שניות (דף HTML יחיד, SVG + overlays, הכל נגזר מ-`render(t)`).
-- קוד: `index.html` (המקור של ה-Artifact, בלי skeleton — עוטפים אותו בפרסום).
-- קולות: `audio/01.mp3` … `audio/10.mp3` (ElevenLabs, eleven_v4, flow `QhiyuhC8R6usk7Ljt1ul`).
+- קוד: `films/bitul-minui/index.html`.
+- קולות: `films/bitul-minui/audio/01.mp3` … `10.mp3` (ElevenLabs, eleven_v4, flow `QhiyuhC8R6usk7Ljt1ul`).
 - פורסם: https://claude.ai/artifact/7ffY3Q4gkMkreNyXG9eYyx (גרסה 2).
 
 ## משימות
@@ -17,7 +17,7 @@
 
 ## סרטון 2: "המשולש האחרון" (`pizza/`)
 משפחה (אבא, אמא, נועה, סבא) מתביישת לקחת את משולש הפיצה האחרון; האור כבה והכלב אוכל אותו. בלי כתוביות, רק קול.
-- קוד: `pizza/index.html`, קולות: `pizza/audio/*.mp3` (flow `yIkiS0cqsciFdiC2KE2g`, eleven_v4).
+- קוד: `films/hameshulash-haacharon/index.html`, קולות: `films/hameshulash-haacharon/audio/*.mp3` (flow `yIkiS0cqsciFdiC2KE2g`, eleven_v4).
 - קולות: אבא Itai, אמא Tamar, נועה Shira, סבא Amit ([elderly voice]).
 - אודיו דרך Web Audio (4 קולות "אף אחד!" בבת אחת), אפקטים מסונתזים, סנכרון שפתיים לפי עוצמה.
 - פורסם: https://claude.ai/artifact/D7Tk19C5Qjh3pcBCeJRCwY
@@ -27,5 +27,11 @@
 - [x] פרסום
 - [x] בדיקה בטלפון: הקול עובד (אושר ע"י המשתמש)
 
+## פלטפורמה: "אולם ההקרנות" (`index.html` בשורש)
+- [x] העברת הסרטים ל-`films/<slug>/` + מצבי `#preview` (טריילר שקט בלולאה) ו-`#embed` (נגן)
+- [x] דף גלריה: פוסטר + טריילר חי לכל סרט, נגן מלא ב-dialog, Mobile-First, RTL
+- [x] פוסטרים (`poster.jpg`) מפריים מתוך כל סרט
+- [x] PR ומיזוג ל-main
+
 ## Current Focus
-שני הסרטונים פורסמו ונבדקו בטלפון, הקול עובד בשניהם. אין משימות פתוחות. הצעד הבא: לפי בקשה (סרטון נוסף, ליטוש, שיתוף).
+הפלטפורמה ושני הסרטים מוזגו ל-main. הצעד הבא (לפי בקשה): אירוח ציבורי (למשל Cloudflare לפי CLAUDE.md), סרט שלישי.

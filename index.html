@@ -1,574 +1,173 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
 <meta charset="utf-8">
-<title>ביטול מנוי</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>אולם ההקרנות</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="סרטוני אנימציה קצרים בעברית, מצוירים בקוד ומדובבים בקולות של ElevenLabs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;800&family=Secular+One&display=swap">
 <style>
-/* layout: phone-shaped split-screen call, rep on top, customer below, slim controls underneath */
+/* layout: a dark screening room; marquee header, a wall of 9:16 posters that play their own trailers, full-screen player */
 :root{
-  --bg:#ecebf6; --fg:#1d1540; --muted:#625c86; --accent:#7367f0; --panel:#ffffff; --line:#cfcbe6;
+  --bg:#140f1c; --panel:#211a2d; --fg:#f5eee6; --muted:#b3a7c2; --marquee:#ffc94a; --accent:#ff6b4a; --line:#352b45;
   --font-display:'Secular One','Heebo',system-ui,sans-serif;
   --font-body:'Heebo',system-ui,sans-serif;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){--bg:#121022; --fg:#ece9ff; --muted:#a29cc8; --accent:#9b91ff; --panel:#1c1936; --line:#332f58; color-scheme:dark}
-}
-:root[data-theme="dark"]{--bg:#121022; --fg:#ece9ff; --muted:#a29cc8; --accent:#9b91ff; --panel:#1c1936; --line:#332f58; color-scheme:dark}
-
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
 body{
-  background:var(--bg); color:var(--fg); font-family:var(--font-body);
-  padding-block:16px;
+  margin:0;background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--font-body);
+  padding-block:20px 32px;
   padding-left:max(16px, env(safe-area-inset-left, 0px));
   padding-right:max(16px, env(safe-area-inset-right, 0px));
 }
-.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
-.head{width:100%}
-h1{font:400 26px/1.1 var(--font-display);margin:0}
-.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+.page{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
 
-.stage{
-  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 230px) * .5625)));
-  border-radius:16px; overflow:hidden; background:#dcd7ff; container-type:inline-size;
-  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+header{display:flex;flex-direction:column;gap:6px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:34px;height:34px;flex:none}
+h1{margin:0;font:400 clamp(30px,8vw,44px)/1 var(--font-display);color:var(--marquee);text-wrap:balance}
+.tag{margin:0;color:var(--muted);max-width:56ch}
+.bulbs{height:6px;background:radial-gradient(circle,var(--marquee) 2px,transparent 2.6px) 0 50%/16px 6px repeat-x;opacity:.55;margin-top:6px}
+
+.shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h2{margin:0;font:400 22px/1.2 var(--font-display)}
+.count{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+
+.grid{list-style:none;margin:0;padding:0;display:grid;gap:20px;grid-template-columns:1fr}
+@media (min-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:900px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.card{display:flex;flex-direction:column;gap:12px;min-width:0}
+.poster{
+  position:relative;display:block;width:100%;max-width:100%;aspect-ratio:9/16;max-height:78svh;margin:0 auto;padding:0;border:0;border-radius:14px;overflow:hidden;
+  background:var(--panel);cursor:pointer;box-shadow:0 0 0 1px var(--line);-webkit-tap-highlight-color:transparent;
 }
-.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-.ov{position:absolute;pointer-events:none}
+.poster:focus-visible{outline:3px solid var(--marquee);outline-offset:3px}
+.poster img,.poster iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block;object-fit:cover}
+.poster iframe{opacity:0;transition:opacity .4s;pointer-events:none}
+.poster iframe.on{opacity:1}
+.poster .shade{position:absolute;inset:auto 0 0 0;height:38%;background:linear-gradient(transparent,rgba(10,6,16,.85));pointer-events:none}
+.poster .play{position:absolute;inset-inline-start:14px;bottom:14px;display:flex;align-items:center;gap:8px;padding:10px 16px 10px 14px;border-radius:999px;
+  background:var(--marquee);color:#1c1408;font:800 15px var(--font-body);transition:transform .15s}
+.poster .play svg{width:16px;height:16px;fill:currentColor}
+.poster:hover .play{transform:scale(1.05)}
+.poster .dur{position:absolute;top:12px;inset-inline-end:12px;padding:3px 9px;border-radius:999px;background:rgba(10,6,16,.72);color:#fff;font:500 12px var(--font-body);font-variant-numeric:tabular-nums;direction:ltr}
+.poster .badge{position:absolute;top:12px;inset-inline-start:12px;padding:3px 9px;border-radius:999px;background:var(--accent);color:#fff;font:800 12px var(--font-body)}
 
-.callbar{left:0;right:0;top:86.1cqw;height:5.6cqw;background:#1d1540;color:#fff;display:flex;align-items:center;justify-content:center;gap:2.4cqw;font:800 3.4cqw var(--font-body)}
-.callbar i{width:2.2cqw;height:2.2cqw;border-radius:50%;background:#3ddc84;display:block}
-.callbar b{font-variant-numeric:tabular-nums;font-weight:800;direction:ltr}
+.meta{display:flex;flex-direction:column;gap:6px;min-width:0}
+.meta h3{margin:0;font:400 22px/1.15 var(--font-display);text-wrap:balance}
+.meta p{margin:0;color:var(--muted)}
+.cast{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.cast li{padding:2px 10px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--fg)}
 
-.bub{max-width:none;background:#fff;color:#1b1410;border:.8cqw solid #1d1540;border-radius:4cqw;padding:2cqw 3.4cqw;
-  font:800 5.4cqw/1.25 var(--font-body);text-align:center;opacity:0;transform:scale(.9);transition:opacity .12s, transform .12s}
-.bub.on{opacity:1;transform:none}
-.bub::after{content:"";position:absolute;left:50%;bottom:-2.3cqw;width:3.6cqw;height:3.6cqw;margin-left:-1.8cqw;background:#fff;
-  border-right:.8cqw solid #1d1540;border-bottom:.8cqw solid #1d1540;transform:rotate(45deg)}
-#bubD{top:2.5cqw;left:4cqw;right:4cqw}
-#bubO{top:96cqw;left:12cqw;right:12cqw;background:#fff8e6}
-#bubO::after{background:#fff8e6}
+footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
 
-.sticker{top:40cqw;right:5cqw;background:#1d1540;color:#ffd84d;border-radius:3cqw;padding:2cqw 3.4cqw;text-align:center;opacity:0;transform:rotate(6deg)}
-.sticker b{display:block;font:400 11cqw/1 var(--font-display);direction:ltr}
-.sticker small{font:800 3.4cqw var(--font-body);color:#fff}
-
-.title{inset:0;background:#1d1540;color:#ffd84d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
-.title small{font:800 4.4cqw var(--font-body);color:#b8b1ff}
-.title h2{font:400 20cqw/1 var(--font-display);margin:0}
-.title p{margin:0;font:500 5cqw var(--font-body);color:#ece9ff}
-.end{left:10cqw;right:10cqw;top:66cqw;background:rgba(29,21,64,.96);color:#ece9ff;border-radius:4cqw;padding:4cqw;text-align:center;opacity:0}
-.end .fin{font:400 17cqw/1 var(--font-display);color:#ffd84d}
-.end small{display:block;margin-top:1.4cqw;font:500 3.8cqw/1.4 var(--font-body);color:#cfc9ff}
-.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
-  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
-.bigplay svg{position:static;width:10cqw;height:10cqw}
-
-.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
-.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
-.ctl button:focus-visible,.ctl input:focus-visible,.load:focus-within{outline:3px solid var(--accent);outline-offset:2px}
-.ctl svg{width:20px;height:20px;fill:currentColor}
-.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
-#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
-.load{width:100%;max-width:420px;display:flex;flex-direction:column;gap:6px;align-items:stretch}
-.load label{display:flex;align-items:center;justify-content:center;min-height:44px;border-radius:12px;border:1px dashed var(--accent);color:var(--accent);font-weight:800;font-size:14px;cursor:pointer;padding:6px 12px;text-align:center}
-.load input{position:absolute;opacity:0;width:1px;height:1px}
-#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+/* player */
+dialog{padding:0;border:0;background:var(--bg);color:var(--fg);width:100vw;height:100svh;max-width:100vw;max-height:100svh;margin:0}
+dialog::backdrop{background:rgba(5,3,8,.8)}
+@media (min-width:700px){dialog{width:min(520px,94vw);height:min(940px,94svh);margin:auto;border-radius:18px;box-shadow:0 0 0 1px var(--line)}}
+.pl{display:flex;flex-direction:column;height:100%}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:calc(10px + env(safe-area-inset-top,0px)) max(16px, env(safe-area-inset-right,0px)) 10px max(16px, env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.pl-head h2{font-size:20px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.close{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.close svg{width:18px;height:18px;fill:currentColor}
+.close:focus-visible{outline:3px solid var(--marquee);outline-offset:2px}
+.pl iframe{flex:1;width:100%;border:0;display:block;background:var(--bg)}
+@media (prefers-reduced-motion: reduce){.poster .play{transition:none}.poster iframe{display:none}}
 </style>
-
-<div class="wrap" dir="rtl" lang="he">
-  <div class="head">
-    <h1>ביטול מנוי</h1>
-    <p class="sub">שיחת שירות בת 30 שניות בין דנה ועומר, מצוירת בקוד.</p>
-  </div>
-
-  <div class="stage" id="stage">
-    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="שיחת טלפון מפוצלת: נציגת שירות עליזה למעלה, לקוח מותש למטה">
-      <!-- ===== top: Dana's office ===== -->
-      <rect x="0" y="0" width="360" height="310" fill="#dcd7ff"/>
-      <rect x="0" y="0" width="360" height="310" fill="#e6e2ff" opacity=".6"/>
-      <g id="poster" transform="translate(250 34)">
-        <rect id="posterBg" width="88" height="68" rx="5" fill="#ffd84d" stroke="#1d1540" stroke-width="3"/>
-        <text x="44" y="29" text-anchor="middle" direction="rtl" font-family="Secular One, sans-serif" font-size="14" fill="#1d1540">3 חודשים</text>
-        <text x="44" y="51" text-anchor="middle" direction="rtl" font-family="Secular One, sans-serif" font-size="17" fill="#e63946">בחינם!</text>
-      </g>
-      <g transform="translate(26 150)">
-        <rect x="0" y="0" width="92" height="62" rx="5" fill="#2a2450" stroke="#1d1540" stroke-width="3"/>
-        <rect x="34" y="62" width="24" height="14" fill="#1d1540"/>
-        <rect x="22" y="74" width="48" height="6" rx="3" fill="#1d1540"/>
-        <text x="46" y="28" text-anchor="middle" direction="rtl" font-family="Secular One, sans-serif" font-size="17" fill="#ff6b78">ביטול?</text>
-        <text x="46" y="48" text-anchor="middle" direction="rtl" font-family="Heebo, sans-serif" font-weight="800" font-size="10" fill="#cfc9ff">לא מכירים</text>
-      </g>
-      <g transform="translate(318 214)">
-        <rect x="-14" y="22" width="28" height="30" rx="4" fill="#c4825a"/>
-        <ellipse cx="-12" cy="10" rx="9" ry="20" fill="#3a9d6b" transform="rotate(-24 -12 10)"/>
-        <ellipse cx="12" cy="8" rx="9" ry="21" fill="#2e8a5b" transform="rotate(22 12 8)"/>
-        <ellipse cx="0" cy="2" rx="8" ry="22" fill="#47b57d"/>
-      </g>
-      <!-- Dana body + head -->
-      <ellipse cx="180" cy="284" rx="80" ry="54" fill="#7367f0"/>
-      <rect x="203" y="252" width="38" height="16" rx="3" fill="#fff"/>
-      <text x="222" y="264" text-anchor="middle" direction="rtl" font-family="Secular One, sans-serif" font-size="11" fill="#1d1540">דנה</text>
-      <rect x="170" y="184" width="20" height="30" fill="#f2b88f"/>
-      <g id="dHead" transform="translate(180 150)">
-        <ellipse cx="0" cy="3" rx="53" ry="56" fill="#3b2a3f"/>
-        <circle r="44" fill="#f2b88f"/>
-        <path d="M-45,-6 C-42,-50 42,-50 45,-6 C30,-30 -10,-34 -45,-6Z" fill="#3b2a3f"/>
-        <circle cx="-27" cy="17" r="7" fill="#f29aa0" opacity=".5"/><circle cx="27" cy="17" r="7" fill="#f29aa0" opacity=".5"/>
-        <ellipse id="dEL" cx="-15" cy="1" rx="7" ry="8.5" fill="#fff"/><ellipse id="dER" cx="15" cy="1" rx="7" ry="8.5" fill="#fff"/>
-        <circle id="dPL" cx="-15" cy="1" r="3.8" fill="#1b1410"/><circle id="dPR" cx="15" cy="1" r="3.8" fill="#1b1410"/>
-        <path id="dBL" d="" stroke="#3b2a3f" stroke-width="3.4" stroke-linecap="round" fill="none"/>
-        <path id="dBR" d="" stroke="#3b2a3f" stroke-width="3.4" stroke-linecap="round" fill="none"/>
-        <ellipse id="dMo" cx="0" cy="22" rx="8" ry="2" fill="#5a1020"/>
-        <path id="dSm" d="" stroke="#5a1020" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-        <path d="M-47,-4 C-47,-58 47,-58 47,-4" stroke="#7367f0" stroke-width="5" fill="none" stroke-linecap="round"/>
-        <circle cx="-47" cy="8" r="9" fill="#7367f0"/><circle cx="47" cy="8" r="9" fill="#7367f0"/>
-        <path d="M-47,16 C-45,36 -30,40 -14,36" stroke="#7367f0" stroke-width="3.4" fill="none" stroke-linecap="round"/>
-        <circle cx="-12" cy="36" r="4.4" fill="#1d1540"/>
-      </g>
-      <!-- towel gag (drawn before desk so it rises from behind it) -->
-      <g id="towel" transform="translate(0 120)">
-        <g transform="translate(262 222)">
-          <rect x="-34" y="-26" width="68" height="50" rx="4" fill="#ff9ccf" stroke="#1d1540" stroke-width="3"/>
-          <path d="M-34,-12H34M-34,6H34" stroke="#fff" stroke-width="4" opacity=".7"/>
-          <circle cx="-8" cy="32" r="12" fill="#f2b88f"/>
-        </g>
-      </g>
-      <rect x="0" y="262" width="360" height="48" fill="#4a3f9a"/>
-      <rect x="0" y="262" width="360" height="7" fill="#6d62c2"/>
-      <g transform="translate(82 244)">
-        <rect x="0" y="0" width="26" height="22" rx="4" fill="#fff" stroke="#1d1540" stroke-width="2.4"/>
-        <path d="M26,5 q9,2 0,12" stroke="#1d1540" stroke-width="2.4" fill="none"/>
-        <text x="13" y="15" text-anchor="middle" font-family="Secular One, sans-serif" font-size="9" fill="#7367f0">#1</text>
-      </g>
-
-      <!-- ===== bottom: Omer's couch ===== -->
-      <rect x="0" y="330" width="360" height="310" fill="#ffe3c2"/>
-      <rect x="0" y="590" width="360" height="50" fill="#d9a066"/>
-      <rect x="40" y="462" width="280" height="150" rx="26" fill="#2f6f73"/>
-      <rect x="40" y="540" width="280" height="80" rx="20" fill="#27595d"/>
-      <g id="cal" transform="translate(268 404)">
-        <rect width="78" height="86" rx="5" fill="#fff" stroke="#1d1540" stroke-width="3"/>
-        <rect width="78" height="22" rx="5" fill="#e63946" stroke="#1d1540" stroke-width="3"/>
-        <text x="39" y="16" text-anchor="middle" direction="rtl" font-family="Heebo, sans-serif" font-weight="800" font-size="11" fill="#fff">ינואר</text>
-        <text x="39" y="63" text-anchor="middle" font-family="Secular One, sans-serif" font-size="26" fill="#1d1540">2022</text>
-        <path d="M10,44L68,74M68,44L10,74" stroke="#e63946" stroke-width="3" opacity=".0"/>
-      </g>
-      <line id="spThread" x1="306" y1="492" x2="306" y2="492" stroke="#1d1540" stroke-width="1.2"/>
-      <circle id="spider" cx="306" cy="492" r="0" fill="#1d1540"/>
-      <g transform="translate(60 616)">
-        <rect x="-34" y="-5" width="68" height="10" rx="4" fill="#4a4a58"/>
-        <rect x="-40" y="-20" width="14" height="40" rx="4" fill="#33333f"/><rect x="26" y="-20" width="14" height="40" rx="4" fill="#33333f"/>
-        <path d="M-40,-20L-4,-4L-40,20M40,-20L4,-4L40,20M-40,0L-4,-4M40,0L4,-4" stroke="#fff" stroke-width="1.2" fill="none" opacity=".75"/>
-        <text y="-28" text-anchor="middle" direction="rtl" font-family="Heebo, sans-serif" font-weight="800" font-size="9" fill="#7a4b2a">מאובק</text>
-      </g>
-      <!-- Omer body -->
-      <ellipse cx="180" cy="610" rx="98" ry="60" fill="#8a93a6"/>
-      <path d="M156,556 Q160,590 154,620M204,556 Q200,590 206,620" stroke="#fff" stroke-width="2.4" fill="none" opacity=".7"/>
-      <rect x="168" y="512" width="24" height="46" fill="#e0a77a"/>
-      <path id="oArmL" d="" stroke="#8a93a6" stroke-width="26" stroke-linecap="round" fill="none"/>
-      <circle id="oHandL" cx="112" cy="600" r="12" fill="#e0a77a"/>
-      <path d="M272,620 Q272,552 246,516" stroke="#8a93a6" stroke-width="26" stroke-linecap="round" fill="none"/>
-      <g id="oHead" transform="translate(180 478)">
-        <circle cx="-46" cy="6" r="8" fill="#e0a77a"/><circle cx="46" cy="6" r="8" fill="#e0a77a"/>
-        <circle r="46" fill="#e0a77a"/>
-        <ellipse cx="0" cy="30" rx="30" ry="15" fill="#1b1410" opacity=".14"/>
-        <path d="M-46,-6 C-52,-52 52,-52 46,-6 C34,-26 -34,-26 -46,-6Z" fill="#1b1410"/>
-        <circle cx="-30" cy="-38" r="10" fill="#1b1410"/><circle cx="-8" cy="-47" r="11" fill="#1b1410"/><circle cx="16" cy="-46" r="11" fill="#1b1410"/><circle cx="35" cy="-33" r="9" fill="#1b1410"/>
-        <ellipse cx="-17" cy="14" rx="10" ry="3.4" fill="#6b4a3a" opacity=".3"/><ellipse cx="17" cy="14" rx="10" ry="3.4" fill="#6b4a3a" opacity=".3"/>
-        <ellipse id="oEL" cx="-17" cy="1" rx="8.5" ry="9" fill="#fff"/><ellipse id="oER" cx="17" cy="1" rx="8.5" ry="9" fill="#fff"/>
-        <circle id="oPL" cx="-17" cy="1" r="4" fill="#1b1410"/><circle id="oPR" cx="17" cy="1" r="4" fill="#1b1410"/>
-        <path id="oBL" d="" stroke="#1b1410" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <path id="oBR" d="" stroke="#1b1410" stroke-width="4" stroke-linecap="round" fill="none"/>
-        <ellipse id="oMo" cx="0" cy="27" rx="8" ry="2" fill="#5a1020"/>
-        <path id="oSm" d="" stroke="#5a1020" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-        <ellipse id="oSweat" cx="40" cy="-16" rx="3.6" ry="5.6" fill="#6ec6ff" opacity="0"/>
-      </g>
-      <g id="phone" transform="translate(236 478) rotate(8)">
-        <rect x="-10" y="-30" width="20" height="58" rx="5" fill="#1d1540"/>
-        <rect x="-6" y="-24" width="12" height="40" rx="2" fill="#4a3f9a"/>
-      </g>
-      <circle cx="244" cy="518" r="12" fill="#e0a77a"/>
-      <g id="puff" opacity="0">
-        <circle cx="0" cy="0" r="9" fill="#fff" opacity=".85"/><circle cx="10" cy="-6" r="7" fill="#fff" opacity=".85"/><circle cx="-8" cy="-5" r="6" fill="#fff" opacity=".85"/>
-      </g>
-    </svg>
-
-    <div class="ov callbar"><i id="dot"></i><span>שיחה פעילה</span><b id="clock">00:00</b></div>
-    <div class="ov bub" id="bubD"></div>
-    <div class="ov bub" id="bubO"></div>
-    <div class="ov sticker" id="sticker"><b>03:00</b><small>לפנות בוקר</small></div>
-    <div class="ov end" id="end"><div class="fin">הסוף</div><small>אף מנוי לא בוטל בהפקת הסרט.</small></div>
-    <div class="ov title" id="title">
-      <small>סרט קצר</small>
-      <h2>ביטול מנוי</h2>
-      <p>שיחת שירות. 30 שניות.</p>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="6" width="28" height="22" rx="4" fill="#ffc94a"/><path d="M14 12v10l8-5z" fill="#140f1c"/><g fill="#140f1c"><rect x="6" y="8" width="3" height="3" rx="1"/><rect x="6" y="23" width="3" height="3" rx="1"/><rect x="25" y="8" width="3" height="3" rx="1"/><rect x="25" y="23" width="3" height="3" rx="1"/></g></svg>
+      <h1>אולם ההקרנות</h1>
     </div>
-    <div class="ov bigplay" id="bigplay"></div>
-  </div>
+    <p class="tag">סרטוני אנימציה קצרים בעברית. כל סרט מצויר בקוד ומדובב בקולות של ElevenLabs. לחצו על סרט כדי לצפות בו עם קול.</p>
+    <div class="bulbs" aria-hidden="true"></div>
+  </header>
 
-  <div class="ctl">
-    <button id="pp" type="button" aria-label="הפעל"></button>
-    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
-    <span id="time">0:00</span>
-    <button id="mute" type="button" aria-label="השתק"></button>
-  </div>
+  <main>
+    <section aria-labelledby="shelf">
+      <div class="shelf-head"><h2 id="shelf">עכשיו בהקרנה</h2><span class="count" id="count"></span></div>
+      <ul class="grid" id="grid" style="margin-top:14px"></ul>
+    </section>
+  </main>
 
-  <div class="load">
-    <label for="files">טען קבצי MP3 אחרים (גיבוי)</label>
-    <input id="files" type="file" accept="audio/*,.mp3" multiple>
-    <p id="status" aria-live="polite">טוען את קולות ElevenLabs...</p>
-  </div>
+  <footer>כל הסרטים באורך 30 שניות לכל היותר. הסאונד מתחיל אחרי לחיצה על הפעלה בתוך הנגן.</footer>
 </div>
+
+<dialog id="player" aria-labelledby="plTitle">
+  <div class="pl">
+    <div class="pl-head">
+      <h2 id="plTitle"></h2>
+      <button class="close" id="close" type="button" aria-label="סגירת הנגן"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button>
+    </div>
+    <iframe id="plFrame" title="נגן הסרט" allow="autoplay"></iframe>
+  </div>
+</dialog>
 
 <script>
 (function(){
-const $=id=>document.getElementById(id);
-const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
-const lerp=(a,b,u)=>a+(b-a)*u;
-const eo=u=>1-Math.pow(1-u,3);
-const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
-const seg=(t,a,b)=>clamp((t-a)/(b-a));
-const A=(el,k,v)=>el.setAttribute(k,v);
-
-/* ---------- script + timing (durations are the real ElevenLabs clip lengths) ---------- */
-const DUR=30, SPEED=1.25, GAP=.08, START=.25;
-const LINES=[
- {w:'D',t:'כושר בכיף, דנה מדברת. איך אפשר לעזור?',d:3.6},
- {w:'O',t:'היי דנה. אני רוצה לבטל את המנוי.',d:2.64},
- {w:'D',t:'בשמחה! רק לפני, שלושה חודשים בחינם!',d:4.08},
- {w:'O',t:'לא. אני רוצה לבטל.',d:1.84},
- {w:'D',t:'ועוד מגבת במתנה!',d:2.0},
- {w:'O',t:'לא הייתי בחדר כושר מאז 2022.',d:3.84},
- {w:'D',t:'מאז 2022?! הלקוח שאנחנו לא יכולים לאבד!',d:5.68},
- {w:'O',t:'דנה. בבקשה. אני מתחנן.',d:3.2},
- {w:'D',t:'אני מבינה. ביטול רק בסניף, בשלוש לפנות בוקר, ביום שלישי הראשון בחודש.',d:6.4},
- {w:'O',t:'טוב. שמרי לי מגבת.',d:2.4}
+/* the catalogue: newest first. Each film lives in films/<slug>/ with its own audio/ and poster.jpg */
+const FILMS=[
+  {slug:'hameshulash-haacharon',title:'המשולש האחרון',dur:'0:30',isNew:true,
+   logline:'ארבעה בני משפחה מנומסים מדי בשביל לקחת את משולש הפיצה האחרון. ואז האור כבה.',
+   cast:['אבא','אמא','נועה','סבא','הכלב']},
+  {slug:'bitul-minui',title:'ביטול מנוי',dur:'0:30',
+   logline:'עומר רק רוצה לבטל את המנוי לחדר הכושר. דנה, נציגת השירות, לא מוותרת עליו.',
+   cast:['דנה','עומר']}
 ];
-(function(){let c=START;LINES.forEach(l=>{l.slot=l.d/SPEED;l.start=c;c+=l.slot+GAP;});})();
-const S=LINES.map(l=>l.start);
-// the ElevenLabs clips published next to this page, one per line
-const VOICE_FILES=LINES.map((l,i)=>'audio/'+String(i+1).padStart(2,'0')+'.mp3');
+const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+const grid=document.getElementById('grid');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.getElementById('count').textContent=FILMS.length+' סרטים';
 
-/* ---------- moods per line (face targets after each line starts) ---------- */
-const MD=[{bu:0,ba:0,eo:0,sm:6,tl:0,sw:0,ey:0},
- {bu:2,sm:8,tl:-2},{bu:0,sm:6,tl:0},{bu:3,eo:1,sm:9,tl:3},{bu:0,sm:7,tl:0},{bu:4,eo:2,sm:10,tl:-3},
- {bu:1,sm:5,tl:2},{bu:6,eo:4,sm:3,tl:0},{bu:0,sm:7,tl:0},{ba:2,eo:-2,sm:9,tl:3},{bu:2,ba:0,eo:0,sm:10,tl:-3}];
-const MO=[{bu:0,ba:0,eo:0,sm:-1,tl:0,sw:0,ey:0},
- {sm:-1},{sm:-1},{ba:3,sm:-3},{ba:4,sm:-4},{bu:2,ba:0,eo:1,sm:-2},
- {bu:2,ba:-2,sm:-5,ey:.3},{bu:4,ba:0,eo:3,sm:-1,ey:0},{bu:5,ba:-5,eo:2,sm:-6,sw:1},{bu:1,ba:0,eo:-1,sm:-4,sw:1},{bu:0,ba:-2,eo:0,sm:-6,ey:1,tl:8,sw:0}];
-const KEYS=['bu','ba','eo','sm','tl','sw','ey'];
-function fill(arr,base){ // make each entry complete by inheriting from previous
-  const out=[Object.assign({},base,arr[0])];
-  for(let i=1;i<arr.length;i++) out.push(Object.assign({},out[i-1],arr[i]));
-  return out;
-}
-const MDf=fill(MD,{}), MOf=fill(MO,{});
-// mood index i+1 belongs to line i (index 0 = before first line)
-function mood(arr,t){
-  let i=-1; for(let k=0;k<S.length;k++){ if(t>=S[k]) i=k; }
-  const cur=arr[i+1], prev=arr[Math.max(0,i)];
-  const u=i<0?1:eio(seg(t,S[i],S[i]+.3));
-  const r={}; KEYS.forEach(k=>r[k]=lerp(prev[k],cur[k],u)); return r;
-}
-
-/* ---------- elements ---------- */
-const E={};
-['dHead','dEL','dER','dPL','dPR','dBL','dBR','dMo','dSm','oHead','oEL','oER','oPL','oPR','oBL','oBR','oMo','oSm','oSweat',
- 'oArmL','oHandL','poster','posterBg','towel','cal','spThread','spider','puff','phone','clock','dot',
- 'bubD','bubO','sticker','end','title','bigplay','seek','time','pp','mute','stage','files','status'].forEach(k=>E[k]=$(k));
-
-const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.3)-3.2)/.07));
-function face(p,o){ // o: {L,R,PL,PR,BL,BR,Mo,Sm, cx, ex, ey0, ry, by, my, wid, flip}
-  const ry=Math.max(.8,(o.ry+p.eo)*(1-.92*o.bl)*(1-p.ey*.9));
-  A(o.L,'ry',ry);A(o.R,'ry',ry);
-  const px=o.lookx, py=o.looky;
-  A(o.PL,'cx',-o.ex+px);A(o.PR,'cx',o.ex+px);A(o.PL,'cy',o.ey0+py);A(o.PR,'cy',o.ey0+py);
-  const vis=p.ey>.7?0:1;
-  A(o.PL,'opacity',vis);A(o.PR,'opacity',vis);
-  const by=o.by-p.bu;
-  A(o.BL,'d',`M${-o.ex-10},${by} L${-o.ex+9},${by+p.ba}`);
-  A(o.BR,'d',`M${o.ex-9},${by+p.ba} L${o.ex+10},${by}`);
-  const open=o.open;
-  if(open>.12){
-    A(o.Mo,'opacity',1);A(o.Mo,'rx',o.wid*(.5+.4*open));A(o.Mo,'ry',1.5+open*8);A(o.Mo,'cy',o.my+open*2+(p.sm>0?1:0));
-    A(o.Sm,'opacity',0);
-  } else {
-    A(o.Mo,'opacity',0);
-    A(o.Sm,'opacity',1);
-    A(o.Sm,'d',`M${-o.wid},${o.my} Q0,${o.my+p.sm*1.6} ${o.wid},${o.my}`);
-  }
-}
-
-/* ---------- lip sync: loudness envelope of each clip ---------- */
-const ENV_FPS=60;
-function envOf(buf){ // RMS per 1/60 s of clip time (33 ms window), normalised so speech peaks open the mouth fully
-  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
-  let pk=1e-6;
-  for(let i=0;i<n;i++){
-    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
-    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
-    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
-  }
-  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
-  return e;
-}
-function mouthOpen(i,t){
-  const env=clips[i]&&clips[i].env;
-  if(!env) return .25+.75*Math.abs(Math.sin(t*17+i)); // no clip data: generic flapping
-  return env[Math.floor((t-S[i])*SPEED*ENV_FPS)]||0;
-}
-
-/* ---------- render ---------- */
-let curSlot=-1;
-function render(t){
-  // which line is speaking
-  let sp=-1; for(let i=0;i<LINES.length;i++){ if(t>=S[i]&&t<S[i]+LINES[i].slot){sp=i;break;} }
-  const env=sp>=0?mouthOpen(sp,t):0;
-  const dOpen=(sp>=0&&LINES[sp].w==='D')?env:0;
-  const oOpen=(sp>=0&&LINES[sp].w==='O')?env:0;
-
-  const pd=mood(MDf,t), po=mood(MOf,t);
-  // Dana
-  A(E.dHead,'transform',`translate(180 ${150+Math.sin(t*2)*1.2-dOpen*1.5}) rotate(${pd.tl+Math.sin(t*1.4)*1.2})`);
-  face(pd,{L:E.dEL,R:E.dER,PL:E.dPL,PR:E.dPR,BL:E.dBL,BR:E.dBR,Mo:E.dMo,Sm:E.dSm,ex:15,ey0:1,ry:8.5,by:-13,my:22,wid:9,
-    bl:blinkOf(t,0),lookx:1.5,looky:1.5,open:dOpen});
-  // Omer
-  const slump=8*eio(seg(t,S[9]+.2,S[9]+1));
-  A(E.oHead,'transform',`translate(180 ${478+slump+Math.sin(t*1.7)*1}) rotate(${po.tl+Math.sin(t*1.2)})`);
-  face(po,{L:E.oEL,R:E.oER,PL:E.oPL,PR:E.oPR,BL:E.oBL,BR:E.oBR,Mo:E.oMo,Sm:E.oSm,ex:17,ey0:1,ry:9,by:-15,my:27,wid:10,
-    bl:blinkOf(t,1.4),lookx:-1.5,looky:-1,open:oOpen});
-  A(E.oSweat,'opacity',po.sw>.5?1:0);
-  A(E.oSweat,'cy',-16+((t*26)%18));
-  // left arm rubbing face during line 3
-  const lh=eio(seg(t,S[3],S[3]+.3))*(1-eio(seg(t,S[3]+LINES[3].slot-.2,S[3]+LINES[3].slot+.3)));
-  const hx=lerp(112,160,lh)+Math.sin(t*14)*3*lh, hy=lerp(600,486,lh);
-  A(E.oHandL,'cx',hx);A(E.oHandL,'cy',hy);
-  A(E.oArmL,'d',`M96,620 Q${lerp(96,120,lh)},${lerp(610,560,lh)} ${hx},${hy}`);
-
-  // poster flash on line 2
-  const fl=(t>=S[2]&&t<S[2]+LINES[2].slot)?(Math.floor(t*6)%2):0;
-  A(E.posterBg,'fill',fl?'#ff9ccf':'#ffd84d');
-  A(E.poster,'transform',`translate(250 34) rotate(${fl?-2:0} 44 34)`);
-  // towel
-  const up1=eo(seg(t,S[4]+.05,S[4]+.4))*(1-eio(seg(t,S[5],S[5]+.3)));
-  const up2=eo(seg(t,S[9]+.5,S[9]+.9));
-  const up=Math.max(up1,up2);
-  const wave=up2>0?Math.sin(t*9)*5:0;
-  A(E.towel,'transform',`translate(0 ${(1-up)*120}) rotate(${wave} 262 244)`);
-  // calendar, spider, puff
-  const shake=(t>=S[5]&&t<S[5]+1.6)?Math.sin(t*50)*2.2*(1-seg(t,S[5],S[5]+1.6)):0;
-  A(E.cal,'transform',`translate(${268+shake} 404)`);
-  const drop=eo(seg(t,S[5]+.5,S[5]+1.3))*(1-eio(seg(t,S[7],S[7]+.6)));
-  A(E.spThread,'y2',492+46*drop);A(E.spider,'cy',492+46*drop);A(E.spider,'r',drop>0.01?4.2:0);
-  const pf=seg(t,S[5]+.1,S[5]+1.4);
-  A(E.puff,'opacity',pf>0&&pf<1?(1-pf)*.9:0);
-  A(E.puff,'transform',`translate(${196+pf*34} ${516-pf*26}) scale(${.6+pf*1.1})`);
-
-  // bubbles
-  let bd=-1,bo=-1;
-  for(let i=0;i<LINES.length;i++){
-    if(t>=S[i]&&t<S[i]+LINES[i].slot+.2){ if(LINES[i].w==='D') bd=i; else bo=i; }
-  }
-  setBub(E.bubD,bd);setBub(E.bubO,bo);
-  // sticker
-  const st=seg(t,S[8]+1.9,S[8]+2.2)*(1-seg(t,S[9]-.1,S[9]+.2));
-  E.sticker.style.opacity=st;
-  E.sticker.style.transform=`rotate(6deg) scale(${.7+.3*st})`;
-  // end + title
-  E.end.style.opacity=eo(seg(t,29.2,29.6));
-  const showTitle=(t<.05&&!playing);
-  E.title.style.opacity=showTitle?1:0;
-  // call bar
-  const sec=Math.floor(t);
-  E.clock.textContent='00:'+String(sec).padStart(2,'0');
-  E.dot.style.opacity=(Math.floor(t*2)%2)?.35:1;
-  E.seek.value=t;
-  E.time.textContent='0:'+String(sec).padStart(2,'0');
-}
-let bubCache=new WeakMap();
-function setBub(el,i){
-  if(bubCache.get(el)===i) return; bubCache.set(el,i);
-  if(i<0){el.classList.remove('on');return;}
-  el.textContent=LINES[i].t;el.classList.add('on');
-}
-
-/* ---------- audio: ElevenLabs clips (built in, or loaded by hand), built-in voice as fallback ---------- */
-let AC=null,muted=false,heVoices=[],voiceD=null,voiceO=null,cur=null,loading=true,playTok=0,unlocked=false;
-const clips=Array(LINES.length).fill(null);
-// one shared element: once a tap has started it, mobile browsers let it play later lines too
-const VO=new Audio();VO.preload='auto';
-function ctx(){
-  if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C){try{AC=new C();}catch(e){AC=null;}}}
-  return AC;
-}
-function ac(){
-  ctx();
-  if(AC&&AC.state==='suspended') AC.resume();
-  return AC;
-}
-function tone(f0,f1,dur,type,vol,delay){
-  if(muted||!AC) return;
-  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
-  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
-  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-  o.connect(g);g.connect(AC.destination);o.start(t0);o.stop(t0+dur+.03);
-}
-function loadVoices(){
-  if(!('speechSynthesis' in window)){heVoices=[];return updateStatus();}
-  heVoices=speechSynthesis.getVoices().filter(v=>/^(he|iw)/i.test(v.lang));
-  voiceD=heVoices[0]||null;voiceO=heVoices[1]||heVoices[0]||null;
-  updateStatus();
-}
-function updateStatus(){
-  const n=clips.filter(Boolean).length;
-  if(loading) E.status.textContent='טוען את קולות ElevenLabs...';
-  else if(n===LINES.length) E.status.textContent='קולות ElevenLabs מוכנים. לחצו על הסרטון כדי לנגן.';
-  else if(n>0) E.status.textContent='קולות ElevenLabs נטענו: '+n+' מתוך '+LINES.length+'. לשורות החסרות ישמש הקול המובנה.';
-  else if(heVoices.length) E.status.textContent='לא הצלחנו לטעון את קולות ElevenLabs, אז הסרטון מנגן בקול המובנה של המכשיר. אפשר לטעון את קבצי ה-MP3 בכפתור.';
-  else E.status.textContent='לא הצלחנו לטעון את קולות ElevenLabs ואין קול עברית במכשיר, אז הסרטון מוצג עם בועות דיבור בלבד. אפשר לטעון את קבצי ה-MP3 בכפתור.';
-}
-if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}else updateStatus();
-
-async function makeClip(blob){
-  const clip={url:URL.createObjectURL(blob),buf:null,env:null},c=ctx();
-  if(c){try{clip.buf=await c.decodeAudioData(await blob.arrayBuffer());clip.env=envOf(clip.buf);}catch(e){}}
-  return clip;
-}
-async function loadBuiltIn(){
-  await Promise.all(VOICE_FILES.map(async(src,i)=>{
-    try{
-      const r=await fetch(src);if(!r.ok) return;
-      const clip=await makeClip(await r.blob());
-      if(!clips[i]) clips[i]=clip; // a hand-loaded file wins
-    }catch(e){}
-  }));
-  loading=false;updateStatus();
-  if(playing) resumeLine();
-}
-
-function stopAudio(){
-  playTok++;
-  if(cur){try{cur.stop();}catch(e){}cur=null;}
-  if('speechSynthesis' in window){try{speechSynthesis.cancel();}catch(e){}}
-}
-function unlock(){ // called from a tap, so later play() calls on VO are allowed
-  if(unlocked) return;
-  const c=clips.find(Boolean);if(!c) return;
-  unlocked=true;VO.src=c.url;
-  const pr=VO.play();VO.pause();if(pr&&pr.catch)pr.catch(()=>{});
-}
-function playClip(i,off){
-  const c=clips[i],tok=playTok;let fell=false;
-  const viaBuffer=()=>{
-    if(fell||tok!==playTok||!AC||!c.buf) return;fell=true;
-    const s=AC.createBufferSource();s.buffer=c.buf;s.playbackRate.value=SPEED;s.connect(AC.destination);s.start(0,off);
-    cur={stop:()=>{try{s.stop();}catch(e){}}};
-  };
-  try{
-    VO.onerror=viaBuffer;VO.src=c.url;
-    VO.preservesPitch=true;VO.mozPreservesPitch=true;VO.webkitPreservesPitch=true;
-    VO.defaultPlaybackRate=SPEED;VO.playbackRate=SPEED;
-    if(off) VO.addEventListener('loadedmetadata',()=>{try{VO.currentTime=off;}catch(e){}},{once:true});
-    cur={stop:()=>{VO.pause();}};
-    const pr=VO.play();if(pr&&pr.catch)pr.catch(viaBuffer);
-  }catch(e){viaBuffer();}
-}
-function speak(i){
-  const v=LINES[i].w==='D'?voiceD:voiceO;
-  if(!v||!('speechSynthesis' in window)) return;
-  try{speechSynthesis.cancel();}catch(e){}
-  setTimeout(()=>{
-    const l=LINES[i],u=new SpeechSynthesisUtterance(l.t);
-    u.lang='he-IL';u.voice=v;u.pitch=l.w==='D'?1.3:.7;
-    const words=l.t.split(/\s+/).length;
-    u.rate=clamp(words/(l.slot*2.7),.9,1.8);
-    speechSynthesis.speak(u);
-  },30);
-}
-function playLine(i,off){
-  if(muted) return;
-  stopAudio();
-  if(clips[i]) playClip(i,off||0); else if(!off) speak(i);
-}
-function resumeLine(){ // pick up a line mid-way after resume, seek or unmute
-  const k=LINES.findIndex(l=>T>=l.start&&T<l.start+l.slot-.15);
-  if(k>=0) playLine(k,(T-LINES[k].start)*SPEED);
-}
-const trombone=()=>{tone(311,300,.28,'sawtooth',.1,0);tone(262,200,.6,'sawtooth',.1,.3);};
-const EV=[
-  [.08,()=>{tone(1200,900,.06,'square',.05);tone(900,1200,.06,'square',.05,.08);}],
-  [S[4]+.25,()=>tone(2300,2300,.3,'sine',.07)],
-  [S[9]+.6,()=>tone(2300,2300,.3,'sine',.07)],
-  [29.5,trombone]
-].concat(LINES.map((l,i)=>[l.start,()=>playLine(i)]));
-
-/* ---------- load ElevenLabs MP3s by hand (backup): match to lines by duration ---------- */
-E.files.addEventListener('change',async()=>{
-  const files=[...E.files.files];if(!files.length) return;
-  E.status.textContent='טוען '+files.length+' קבצים...';
-  const ctx=ac();
-  if(!ctx){E.status.textContent='המכשיר לא תומך בפענוח אודיו בדף הזה.';return;}
-  const items=[];
-  for(const f of files){
-    try{const buf=await ctx.decodeAudioData(await f.arrayBuffer());items.push({f,buf,dur:buf.duration});}catch(e){}
-  }
-  const pairs=[];
-  items.forEach((it,a)=>LINES.forEach((l,b)=>pairs.push([Math.abs(it.dur-l.d),a,b])));
-  pairs.sort((x,y)=>x[0]-y[0]);
-  const ua=new Set(),ub=new Set();
-  for(const [d,a,b] of pairs){
-    if(d>.12) break;
-    if(ua.has(a)||ub.has(b)) continue;
-    ua.add(a);ub.add(b);
-    clips[b]={url:URL.createObjectURL(items[a].f),buf:items[a].buf,env:envOf(items[a].buf)};
-  }
-  loading=false;updateStatus();
+const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+FILMS.forEach(f=>{
+  const li=el('li','card');
+  const btn=el('button','poster');btn.type='button';btn.setAttribute('aria-label','צפייה בסרט '+f.title);
+  const img=el('img');img.src='films/'+f.slug+'/poster.jpg';img.alt='';img.loading='lazy';img.width=360;img.height=640;
+  btn.append(img);
+  if(!reduce){const fr=el('iframe');fr.tabIndex=-1;fr.setAttribute('aria-hidden','true');fr.title='';fr.dataset.src='films/'+f.slug+'/#preview';fr.addEventListener('load',()=>{if(fr.getAttribute('src'))fr.classList.add('on');});btn.append(fr);}
+  btn.append(el('span','shade'));
+  if(f.isNew) btn.append(el('span','badge','חדש'));
+  btn.append(el('span','dur',f.dur));
+  const pl=el('span','play');pl.innerHTML=PLAY;pl.append(document.createTextNode('צפייה'));btn.append(pl);
+  btn.addEventListener('click',()=>openPlayer(f));
+  const meta=el('div','meta');meta.append(el('h3',null,f.title),el('p',null,f.logline));
+  const cast=el('ul','cast');cast.setAttribute('aria-label','דמויות');f.cast.forEach(c=>cast.append(el('li',null,c)));meta.append(cast);
+  li.append(btn,meta);grid.append(li);
 });
 
-/* ---------- player ---------- */
-let T=0,playing=false,last=0,raf=0;
-const ICON={
-  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
-  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
-  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
-  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
-  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
-};
-function ui(){
-  const ended=T>=DUR;
-  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
-  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
-  E.bigplay.style.opacity=playing?0:1;
-  E.bigplay.innerHTML=ended?ICON.replay.replace('<svg','<svg style="fill:#1d1540"'):'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#1d1540"/></svg>';
-  E.mute.innerHTML=muted?ICON.off:ICON.on;
-  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+/* trailers: a card plays its silent preview only while it is on screen */
+if(!reduce&&'IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    const fr=e.target.querySelector('iframe');if(!fr) return;
+    if(e.isIntersecting){ if(!fr.getAttribute('src')) fr.src=fr.dataset.src; }
+    else { fr.classList.remove('on');fr.removeAttribute('src'); }
+  }),{threshold:.35});
+  grid.querySelectorAll('.poster').forEach(p=>io.observe(p));
 }
-function frame(now){
-  if(!playing) return;
-  const dt=Math.min(.1,(now-last)/1000);last=now;
-  const prev=T;T=Math.min(DUR,T+dt);
-  for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
-  render(T);
-  if(T>=DUR){playing=false;ui();return;}
-  raf=requestAnimationFrame(frame);
+
+/* player */
+const dlg=document.getElementById('player'),frame=document.getElementById('plFrame'),plTitle=document.getElementById('plTitle');
+function openPlayer(f){
+  plTitle.textContent=f.title;
+  frame.src='films/'+f.slug+'/#embed';
+  if(dlg.showModal) dlg.showModal(); else location.href='films/'+f.slug+'/';
 }
-function play(){
-  if(T>=DUR){T=0;bubCache=new WeakMap();}
-  ac();unlock();playing=true;last=performance.now();ui();
-  resumeLine();
-  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
-}
-function pause(){playing=false;cancelAnimationFrame(raf);stopAudio();ui();}
-function toggle(){playing?pause():play();}
-E.stage.addEventListener('click',toggle);
-E.pp.addEventListener('click',toggle);
-E.mute.addEventListener('click',()=>{muted=!muted;if(muted)stopAudio();else if(playing)resumeLine();ui();});
-E.seek.addEventListener('input',()=>{
-  T=parseFloat(E.seek.value);stopAudio();
-  render(T);ui();
-});
-E.seek.addEventListener('change',()=>{if(playing)resumeLine();});
-ui();render(0);
-loadBuiltIn();
+function closePlayer(){ if(dlg.open) dlg.close(); }
+dlg.addEventListener('close',()=>{frame.removeAttribute('src');}); // stops the sound
+document.getElementById('close').addEventListener('click',closePlayer);
+dlg.addEventListener('click',e=>{if(e.target===dlg) closePlayer();});
 })();
 </script>
+</body>
+</html>
