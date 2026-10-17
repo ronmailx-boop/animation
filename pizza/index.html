@@ -1,0 +1,524 @@
+<meta charset="utf-8">
+<title>המשולש האחרון</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<style>
+/* layout: phone-shaped stage (family dinner, one slice left), slim controls underneath */
+:root{
+  --bg:#f4ece6; --fg:#2a1712; --muted:#7a5d52; --accent:#d9452f; --panel:#ffffff; --line:#e3cfc4;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#17100e; --fg:#f6e9e2; --muted:#b99c90; --accent:#ff7a5c; --panel:#241917; --line:#3d2b26; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#17100e; --fg:#f6e9e2; --muted:#b99c90; --accent:#ff7a5c; --panel:#241917; --line:#3d2b26; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 210px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#ffd6a5; container-type:inline-size;
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.title{inset:0;background:#2a1712;color:#ffcc4d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
+.title small{font:800 4.4cqw var(--font-body);color:#ffb39f}
+.title h2{font:400 17cqw/1 var(--font-display);margin:0}
+.title p{margin:0;font:500 5cqw var(--font-body);color:#f6e9e2}
+.end{left:10cqw;right:10cqw;top:8cqw;background:rgba(42,23,18,.95);color:#f6e9e2;border-radius:4cqw;padding:4cqw;text-align:center;opacity:0}
+.end .fin{font:400 17cqw/1 var(--font-display);color:#ffcc4d}
+.end small{display:block;margin-top:1.4cqw;font:500 3.8cqw/1.4 var(--font-body);color:#ffd9cc}
+.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
+.bigplay svg{position:static;width:10cqw;height:10cqw}
+
+.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
+.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ctl svg{width:20px;height:20px;fill:currentColor}
+.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
+#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+</style>
+
+<div class="wrap" dir="rtl" lang="he">
+  <div class="head">
+    <h1>המשולש האחרון</h1>
+    <p class="sub">ארוחה משפחתית, משולש פיצה אחד, ואף אחד לא רוצה אותו. 30 שניות עם קול.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="משפחה של ארבעה סביב שולחן עם משולש פיצה אחרון, וכלב שמחכה מתחת לשולחן">
+      <defs>
+        <pattern id="chk" width="24" height="24" patternUnits="userSpaceOnUse">
+          <rect width="24" height="24" fill="#fff"/><rect width="12" height="12" fill="#e5484d"/><rect x="12" y="12" width="12" height="12" fill="#e5484d"/>
+        </pattern>
+        <pattern id="wp" width="28" height="28" patternUnits="userSpaceOnUse">
+          <rect width="28" height="28" fill="#ffd6a5"/><rect x="0" width="10" height="28" fill="#ffcb94"/>
+        </pattern>
+      </defs>
+      <g id="cam">
+        <!-- room -->
+        <rect width="360" height="640" fill="url(#wp)"/>
+        <rect y="522" width="360" height="118" fill="#8a5a3b"/>
+        <rect y="516" width="360" height="8" fill="#6b4329"/>
+        <g transform="translate(36 104)">
+          <rect width="62" height="48" rx="3" fill="#fff8ec" stroke="#8a5a3b" stroke-width="4"/>
+          <path d="M14,14 Q31,8 48,14 L31,40Z" fill="#ffcc4d" stroke="#d98c2b" stroke-width="2"/>
+          <circle cx="28" cy="20" r="2.6" fill="#d6322a"/><circle cx="35" cy="25" r="2.2" fill="#d6322a"/>
+          <path d="M42,8 l3,-4 M47,12 l5,-2" stroke="#d9452f" stroke-width="2" stroke-linecap="round"/>
+        </g>
+        <g transform="translate(298 126)">
+          <circle r="22" fill="#fff" stroke="#3a2a20" stroke-width="3"/>
+          <line x1="0" y1="0" x2="9" y2="-5" stroke="#3a2a20" stroke-width="3" stroke-linecap="round"/>
+          <line id="clk" x1="0" y1="3" x2="0" y2="-16" stroke="#e5484d" stroke-width="2" stroke-linecap="round"/>
+          <circle r="2.2" fill="#3a2a20"/>
+        </g>
+        <g id="lamp">
+          <path id="cone" d="M150,88 L210,88 L340,420 L20,420Z" fill="#fff6c9" opacity=".2"/>
+          <line x1="180" y1="0" x2="180" y2="62" stroke="#3a2a20" stroke-width="2"/>
+          <path d="M150,88 L162,62 L198,62 L210,88Z" fill="#2f7a6d"/>
+          <ellipse id="bulb" cx="180" cy="90" rx="10" ry="5" fill="#fff6c9"/>
+        </g>
+        <g id="chars"></g>
+        <!-- table -->
+        <path d="M8,352 L352,352 L360,402 L0,402Z" fill="#fbf2e8"/>
+        <path d="M8,352 L352,352" stroke="#e8d6c6" stroke-width="2"/>
+        <ellipse id="glow" cx="180" cy="371" rx="44" ry="16" fill="#fff3a6" opacity="0"/>
+        <ellipse cx="180" cy="372" rx="32" ry="9" fill="#c8ccd4" stroke="#9aa0ab" stroke-width="2"/>
+        <g id="slice">
+          <path d="M163,369 Q181,362 199,369 L181,386Z" fill="#ffcc4d" stroke="#d98c2b" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M163,369 Q181,362 199,369" stroke="#c46a2a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          <circle cx="176" cy="372" r="2.6" fill="#d6322a"/><circle cx="187" cy="373" r="2.3" fill="#d6322a"/><circle cx="181" cy="379" r="1.9" fill="#d6322a"/>
+        </g>
+        <g id="crumbs" opacity="0" fill="#d98c2b"><circle cx="172" cy="372" r="1.4"/><circle cx="186" cy="370" r="1.2"/><circle cx="180" cy="375" r="1.5"/></g>
+        <path id="spark" d="M216,350 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3z" fill="#fff" opacity="0"/>
+        <g id="plates"></g>
+        <rect y="400" width="360" height="118" fill="url(#chk)"/>
+        <path d="M0,400 H360" stroke="#c23b3f" stroke-width="3"/>
+        <path d="M0,516 Q15,524 30,516 T60,516 T90,516 T120,516 T150,516 T180,516 T210,516 T240,516 T270,516 T300,516 T330,516 T360,516 V506 H0Z" fill="#fff"/>
+        <g id="arms"></g>
+        <!-- the dog -->
+        <g id="dog" transform="translate(-90 590)">
+          <path id="tail" d="M-26,16 q-16,-10 -14,-28" stroke="#b97a45" stroke-width="7" fill="none" stroke-linecap="round"/>
+          <ellipse cx="-6" cy="20" rx="28" ry="17" fill="#c98a52"/>
+          <ellipse cx="-24" cy="32" rx="6" ry="4" fill="#b97a45"/><ellipse cx="10" cy="34" rx="6" ry="4" fill="#b97a45"/>
+          <g id="dogHead">
+            <ellipse cx="-18" cy="-6" rx="7" ry="14" fill="#7a4a26" transform="rotate(18 -18 -6)"/>
+            <ellipse cx="18" cy="-6" rx="7" ry="14" fill="#7a4a26" transform="rotate(-18 18 -6)"/>
+            <ellipse cx="0" cy="-8" rx="20" ry="18" fill="#d79a60"/>
+            <circle id="dEyeL" cx="-8" cy="-12" r="3" fill="#1b1410"/><circle id="dEyeR" cx="8" cy="-12" r="3" fill="#1b1410"/>
+            <g id="dogCheeks" opacity="0" fill="#e8b07a"><circle cx="-11" cy="3" r="7"/><circle cx="11" cy="3" r="7"/></g>
+            <ellipse cx="0" cy="2" rx="11" ry="8" fill="#f1d2ae"/>
+            <ellipse cx="0" cy="-2" rx="4.2" ry="3.2" fill="#1b1410"/>
+            <ellipse id="tongue" cx="3" cy="12" rx="4" ry="5" fill="#ff7a8a" opacity="0"/>
+            <path id="cheese" d="M4,8 q5,12 -2,24" stroke="#ffcc4d" stroke-width="3" fill="none" stroke-linecap="round" opacity="0"/>
+          </g>
+        </g>
+      </g>
+      <rect id="dark" width="360" height="640" fill="#07060c" opacity="0"/>
+      <g id="darkEyes" opacity="0"></g>
+    </svg>
+
+    <div class="ov end" id="end"><div class="fin">הסוף</div><small>אף פיצה לא נפגעה בהפקת הסרט. חוץ מאחת.</small></div>
+    <div class="ov title" id="title">
+      <small>סרט קצר</small>
+      <h2>המשולש האחרון</h2>
+      <p>ארבעה אנשים. משולש אחד. 30 שניות.</p>
+    </div>
+    <div class="ov bigplay" id="bigplay"></div>
+  </div>
+
+  <div class="ctl">
+    <button id="pp" type="button" aria-label="הפעל"></button>
+    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
+    <span id="time">0:00</span>
+    <button id="mute" type="button" aria-label="השתק"></button>
+  </div>
+  <p id="status" aria-live="polite">טוען את הקולות...</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const eo=u=>1-Math.pow(1-u,3);
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const A=(el,k,v)=>el.setAttribute(k,v);
+const NS='http://www.w3.org/2000/svg';
+const DUR=30, HY=262, SL=[180,371];
+
+/* ---------- cast (0 dad, 1 mom, 2 Noa, 3 grandpa) ---------- */
+const CH=[
+ {x:58,skin:'#e9b08a',shirt:'#3f7fd9',brow:'#3b2a20',bw:3.2,my:20,
+  front:'<path d="M-31,2 q-3,-16 7,-24 M31,2 q3,-16 -7,-24" stroke="#3b2a20" stroke-width="8" fill="none" stroke-linecap="round"/><ellipse cx="-8" cy="-22" rx="8" ry="3" fill="#fff" opacity=".35"/>',
+  over:'<path d="M-13,11 q6.5,-6 13,-1 q6.5,-5 13,1 q-6,6 -13,2 q-7,4 -13,-2z" fill="#3b2a20"/><g id="gl0"><circle cx="-11" cy="-1" r="10" fill="none" stroke="#222" stroke-width="2.4"/><circle cx="11" cy="-1" r="10" fill="none" stroke="#222" stroke-width="2.4"/><path d="M-1,-1h2" stroke="#222" stroke-width="2.4"/></g>'},
+ {x:140,skin:'#f2c29c',shirt:'#e2485e',brow:'#4a2214',bw:2.6,my:17,
+  back:'<g fill="#6b2f1a"><circle cx="-30" cy="-8" r="13"/><circle cx="30" cy="-8" r="13"/><circle cx="-24" cy="-26" r="14"/><circle cx="24" cy="-26" r="14"/><circle cx="0" cy="-34" r="16"/><circle cx="-34" cy="10" r="11"/><circle cx="34" cy="10" r="11"/></g>',
+  front:'<path d="M-28,-10 q12,-18 28,-10 q16,-8 28,10 q-4,-24 -28,-24 q-24,0 -28,24z" fill="#6b2f1a"/><circle cx="-31" cy="12" r="3" fill="#ffd34d"/><circle cx="31" cy="12" r="3" fill="#ffd34d"/>',
+  over:'<circle id="sauce" cx="16" cy="10" r="3.6" fill="#d6322a" opacity="0"/>'},
+ {x:222,skin:'#f6caa4',shirt:'#f2b33a',brow:'#3a2416',bw:2.4,my:17,
+  back:'<g id="pony"><ellipse cx="0" cy="-46" rx="11" ry="15" fill="#3a2416"/><rect x="-8" y="-36" width="16" height="6" rx="3" fill="#7367f0"/></g>',
+  front:'<path d="M-31,-2 C-33,-40 33,-40 31,-2 C24,-22 -10,-26 -31,-2Z" fill="#3a2416"/><g fill="#c97b5a" opacity=".6"><circle cx="-17" cy="9" r="1.3"/><circle cx="-13" cy="11" r="1.3"/><circle cx="17" cy="9" r="1.3"/><circle cx="13" cy="11" r="1.3"/></g>'},
+ {x:304,skin:'#dca37e',shirt:'#7d8b5c',brow:'#f4f1ea',bw:4.6,my:19,
+  front:'<g fill="#f4f1ea"><circle cx="-30" cy="-4" r="8"/><circle cx="-27" cy="-15" r="7"/><circle cx="30" cy="-4" r="8"/><circle cx="27" cy="-15" r="7"/></g><ellipse cx="0" cy="8" rx="6.5" ry="5.5" fill="#c98a66"/>',
+  over:'<g id="napkin" opacity="0"><path d="M-24,-22 L24,-22 L2,-60Z" fill="#fff" stroke="#e5484d" stroke-width="2" stroke-linejoin="round"/><path d="M-12,-30 H14" stroke="#e5484d" stroke-width="2"/></g>'}
+];
+CH.forEach((c,i)=>{c.side=c.x<180?1:-1;});
+(function build(){
+  let ch='',pl='',ar='',de='';
+  CH.forEach((c,i)=>{
+    ch+=`<rect x="${c.x-36}" y="292" width="72" height="92" rx="26" fill="${c.shirt}"/><rect x="${c.x-8}" y="284" width="16" height="14" fill="${c.skin}"/>
+    <g id="h${i}" transform="translate(${c.x} ${HY})">${c.back||''}<circle r="31" fill="${c.skin}"/>${c.front||''}
+      <ellipse id="eL${i}" cx="-11" cy="-1" rx="6.5" ry="7.5" fill="#fff"/><ellipse id="eR${i}" cx="11" cy="-1" rx="6.5" ry="7.5" fill="#fff"/>
+      <circle id="pL${i}" cx="-11" cy="-1" r="3.3" fill="#1b1410"/><circle id="pR${i}" cx="11" cy="-1" r="3.3" fill="#1b1410"/>
+      <path id="bL${i}" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/>
+      <path id="bR${i}" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/>
+      <ellipse id="mo${i}" cx="0" cy="${c.my}" rx="7" ry="2" fill="#5a1020"/>
+      <path id="sm${i}" stroke="#5a1020" stroke-width="2.4" stroke-linecap="round" fill="none"/>${c.over||''}</g>`;
+    pl+=`<ellipse cx="${c.x+c.side*6}" cy="392" rx="19" ry="5.5" fill="#fff" stroke="#d9cfc6" stroke-width="1.5"/><path d="M${c.x+c.side*6-8},391 q8,-4 14,0" stroke="#c46a2a" stroke-width="3.5" fill="none" stroke-linecap="round"/>`;
+    ar+=`<path id="arm${i}" stroke="${c.shirt}" stroke-width="12" stroke-linecap="round" fill="none"/><circle id="hand${i}" r="7.5" fill="${c.skin}"/>`;
+    de+=`<g id="de${i}"><ellipse cx="-9" rx="5" ry="6" fill="#fff"/><ellipse cx="9" rx="5" ry="6" fill="#fff"/><circle cx="-9" r="2.2" fill="#07060c"/><circle cx="9" r="2.2" fill="#07060c"/></g>`;
+  });
+  de+='<g id="dde"><ellipse cx="-7" rx="4" ry="3" fill="#ffd34d"/><ellipse cx="7" rx="4" ry="3" fill="#ffd34d"/></g>';
+  $('chars').innerHTML=ch;$('plates').innerHTML=pl;$('arms').innerHTML=ar;$('darkEyes').innerHTML=de;
+})();
+
+/* ---------- script: who says what, when (s = start, d = clip length) ---------- */
+const LINES=[
+ {c:0,f:'01',s:.4,  d:3.24}, // dad: anyone want the last slice?
+ {c:1,f:'02',s:3.4, d:2.77}, // mom: no no, you take it, honey
+ {c:2,f:'03',s:5.7, d:3.24}, // Noa: me? I'm stuffed
+ {c:3,f:'04',s:8.4, d:2.69}, // grandpa: I'm on a diet
+ {c:0,f:'05',s:13.3,d:2.19}, // dad: so... nobody?
+ {c:0,f:'06a',s:15.2,d:1.23,v:.75}, // all: nobody!
+ {c:1,f:'06b',s:15.22,d:1.31,v:.75},
+ {c:2,f:'06c',s:15.2,d:1.15,v:.75},
+ {c:3,f:'06d',s:15.55,d:2.19,v:.85}, // grandpa, a beat late
+ {c:2,f:'07',s:22.0,d:3.0},  // Noa: wait... where's the slice?!
+ {c:3,f:'08',s:24.6,d:4.68}  // grandpa: so... who's ordering another pizza?
+];
+const ENV_FPS=60;
+function envOf(buf){ // loudness per 1/60 s (33 ms window), scaled so speech peaks open the mouth fully
+  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
+  let pk=1e-6;
+  for(let i=0;i<n;i++){
+    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
+    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
+    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
+  }
+  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
+  return e;
+}
+function mouthOf(i,t){
+  let m=0;
+  for(const l of LINES){
+    if(l.c!==i||!l.env||t<l.s||t>=l.s+l.d) continue;
+    m=Math.max(m,l.env[Math.floor((t-l.s)*ENV_FPS)]||0);
+  }
+  return m;
+}
+function speakerAt(t){ for(const l of LINES){ if(t>=l.s&&t<l.s+l.d-.3) return l; } return null; }
+
+/* ---------- faces: shared mood track + per-person overrides ---------- */
+const MOOD=[
+ [0,   {es:1,  bu:0, ba:0, sm:5, o:0}],    // polite
+ [10.6,{es:.55,bu:-1,ba:3, sm:0, o:0}],    // standoff squint
+ [17.3,{es:.6, bu:-1,ba:3, sm:3, o:0}],    // sneaky
+ [21.8,{es:1.35,bu:5,ba:-1,sm:0, o:.45}],  // lights on: shock
+ [22.5,{es:1.3, bu:4,ba:-1,sm:-1,o:0}],    // ...and Noa finds her voice
+ [24.4,{es:1.1,bu:3, ba:-3,sm:-4,o:0}],    // it was the dog
+ [27.2,{es:1,  bu:1, ba:0, sm:4, o:0}]     // oh well
+];
+const OVR=[ // [who, from, to, mood]
+ [3,8.4,10.7,{sm:2,bu:3,ba:-1}],
+ [0,13.3,15.2,{es:.4,ba:4,bu:-2}],
+ [3,15.5,17.4,{es:1.2,bu:3}],
+ [3,26.9,30,{sm:9,es:.6,bu:2,ba:0}]
+];
+const MK=['es','bu','ba','sm','o'];
+function moodOf(i,t){
+  let k=0; for(let j=0;j<MOOD.length;j++) if(t>=MOOD[j][0]) k=j;
+  const cur=MOOD[k][1],prev=MOOD[Math.max(0,k-1)][1],u=eio(seg(t,MOOD[k][0],MOOD[k][0]+.3));
+  const r={}; MK.forEach(q=>r[q]=lerp(prev[q],cur[q],u));
+  for(const [w,a,b,m] of OVR){
+    if(w!==i||t<a||t>b) continue;
+    const v=eio(seg(t,a,a+.25))*(1-eio(seg(t,b-.25,b)));
+    for(const q in m) r[q]=lerp(r[q],m[q],v);
+  }
+  return r;
+}
+const head=j=>[CH[j].x,HY];
+const nb=(i,k)=>i===0?1:i===3?2:(k?i-1:i+1);
+function dogX(t){
+  if(t<17.6) return -90;
+  if(t<18.9) return lerp(-90,112,seg(t,17.6,18.9));
+  if(t<21.8) return 112;
+  return 180;
+}
+function target(i,t){ // where person i is looking (null = straight ahead)
+  if(t<10.6){
+    const l=speakerAt(t);
+    if(!l) return SL;
+    if(l.c===i){ const u=(t-l.s)/l.d; return (u>.4&&u<.75)?SL:null; } // says no, eyes say yes
+    return head(l.c);
+  }
+  if(t<11.3) return SL;
+  if(t<12.9) return head(nb(i,Math.floor((t-11.3)/.4)%2));
+  if(t<13.3) return SL;
+  if(t<15.2) return i===0?head(1+Math.floor((t-13.3)*2.2)%3):head(0);
+  if(t<17.3) return (t>15.6&&t<16.5&&i!==3)?head(3):null;
+  if(t<21.8) return SL;
+  if(t<23.0) return SL;
+  if(t<24.3) return head(nb(i,Math.floor(t*2.5)%2));
+  if(t<27.2) return [dogX(t),585];
+  return i===3?null:head(3);
+}
+function look(i,t){ // smoothed pupil offset
+  let x=0,y=0;
+  for(const dt of [0,.06,.12,.18]){
+    const p=target(i,Math.max(0,t-dt));
+    if(!p) continue;
+    const dx=p[0]-CH[i].x,dy=p[1]-HY,d=Math.hypot(dx,dy);
+    if(d>1){x+=dx/d;y+=dy/d;}
+  }
+  return [x/4,y/4];
+}
+const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.7)-3.6)/.07));
+function reach(i,t){ // 0 = hand on own plate, 1 = on the slice
+  if(t>=19.8) return 1-.85*eio(seg(t,23.6,24.6));
+  const st=[17.4,17.8,18.1,18.4][i];
+  let r=.6*eio(seg(t,st,st+1.2));
+  if(r>0) r+=Math.sin(t*9+i*2)*.03;
+  return Math.max(r,eo(seg(t,19.55,19.8)));
+}
+
+/* ---------- elements ---------- */
+const E={};
+['cam','lamp','cone','bulb','clk','glow','slice','crumbs','spark','dog','dogHead','tail','dEyeL','dEyeR','dogCheeks','tongue','cheese',
+ 'dark','darkEyes','dde','gl0','sauce','pony','napkin','end','title','bigplay','seek','time','pp','mute','stage','status'].forEach(k=>E[k]=$(k));
+const P=CH.map((c,i)=>{const o={};['h','eL','eR','pL','pR','bL','bR','mo','sm','arm','hand','de'].forEach(k=>o[k]=$(k+i));return o;});
+
+/* ---------- render: everything is a pure function of t ---------- */
+function render(t){
+  // camera: slow push-in on the standoff and the sneak, jolts on the shout and the lights
+  const z=1+.14*eio(seg(t,10.6,13.0))*(1-eio(seg(t,13.3,13.8)))+.08*eio(seg(t,17.3,19.6))*(t<19.8?1:0);
+  const sh=(t>=15.2&&t<15.8?3*(1-seg(t,15.2,15.8)):0)+(t>=21.8&&t<22.3?2*(1-seg(t,21.8,22.3)):0);
+  A(E.cam,'transform',`translate(${180+Math.sin(t*61)*sh} ${380+Math.cos(t*53)*sh}) scale(${z}) translate(-180 -380)`);
+  // lamp sways, swings hard after the scuffle
+  const sw=Math.sin(t*1.3)*2+(t>=21.8?14*Math.exp(-(t-21.8)*.8)*Math.sin((t-21.8)*5):0);
+  A(E.lamp,'transform',`rotate(${sw} 180 0)`);
+  // wall clock: ticks every second, every half second in the standoff
+  const tick=t<10.6?Math.floor(t):10.6+Math.floor((t-10.6)*2)/2+(t>13.4?Math.floor(t-13.4):0);
+  A(E.clk,'transform',`rotate(${tick*30})`);
+  // the slice: glows in the standoff, gone after the dark
+  const g=seg(t,10.7,11.2)*(1-seg(t,13.3,13.7))+.6*seg(t,17.3,17.8)*(t<19.8?1:0);
+  A(E.glow,'opacity',g*(.55+.35*Math.sin(t*8)));
+  A(E.spark,'opacity',g>.5?Math.max(0,Math.sin(t*6)):0);
+  A(E.spark,'transform',`rotate(${t*90} 216 362)`);
+  const gone=t>=19.8;
+  A(E.slice,'opacity',gone?0:1);A(E.crumbs,'opacity',gone?1:0);
+
+  const sp=speakerAt(t);
+  CH.forEach((c,i)=>{
+    const p=P[i],m=moodOf(i,t),L=look(i,t),r=reach(i,t);
+    const creep=t<19.8?clamp(r,0,.7):0;
+    const talk=mouthOf(i,t);
+    const tilt=Math.sin(t*1.3+i)*2+(sp&&sp.c===i?Math.sin(t*5)*1.5:0)+(i===3&&t>26.9?Math.sin(t*9)*3:0);
+    A(p.h,'transform',`translate(${c.x+c.side*8*creep} ${HY+Math.sin(t*1.7+i*1.3)*1-talk*1.2}) rotate(${tilt})`);
+    const ry=Math.max(.7,7.5*m.es*(1-.92*blinkOf(t,i*.9)));
+    A(p.eL,'ry',ry);A(p.eR,'ry',ry);
+    A(p.pL,'cx',-11+L[0]*2.6);A(p.pR,'cx',11+L[0]*2.6);
+    A(p.pL,'cy',-1+L[1]*2.4);A(p.pR,'cy',-1+L[1]*2.4);
+    const pr=m.es>1.2?2.5:3.3;A(p.pL,'r',pr);A(p.pR,'r',pr);
+    const by=-12-m.bu;
+    A(p.bL,'d',`M-18,${by} L-5,${by+m.ba}`);A(p.bR,'d',`M5,${by+m.ba} L18,${by}`);
+    const o=Math.max(talk,m.o);
+    if(o>.12){
+      A(p.mo,'opacity',1);A(p.mo,'rx',5+3.5*o);A(p.mo,'ry',1.5+7*o);A(p.sm,'opacity',0);
+    } else {
+      A(p.mo,'opacity',0);A(p.sm,'opacity',1);
+      A(p.sm,'d',`M-8,${c.my} Q0,${c.my+m.sm*1.4} 8,${c.my}`);
+    }
+    // arm from shoulder to hand
+    const sx=c.x+c.side*24,sy=316,rx=c.x+c.side*10,ry0=388;
+    const tx=180+[-11,-4,4,11][i],ty=372+[-2,2,-2,2][i];
+    const hx=lerp(rx,tx,r)+(t>=21.8&&t<23.6?Math.sin(t*30+i)*1.5:0),hy=lerp(ry0,ty,r);
+    A(p.hand,'cx',hx);A(p.hand,'cy',hy);
+    A(p.arm,'d',`M${sx},${sy} Q${lerp(sx,hx,.5)},${Math.min(sy,hy)-6-20*r} ${hx},${hy}`);
+    // eyes in the dark
+    A(p.de,'transform',`translate(${c.x+Math.sin(t*7+i*1.7)*7} ${HY-1+Math.cos(t*5+i*2)*5}) scale(1 ${t%1.1<.06?.1:1})`);
+  });
+  // the aftermath
+  const mess=t>=21.8;
+  A(E.gl0,'transform',mess?'rotate(14) translate(2 3)':'');
+  A(E.sauce,'opacity',mess?1:0);
+  A(E.pony,'transform',mess?'rotate(38 0 -34)':'');
+  A(E.napkin,'opacity',mess?1:0);
+
+  // dog: sneaks in, waits, eats, burps
+  let dx=dogX(t),dy=590;
+  if(t>=17.6&&t<18.9) dy-=Math.abs(Math.sin(t*12))*3;
+  A(E.dog,'transform',`translate(${dx} ${dy})`);
+  const chew=t>=21.8&&t<24.3?Math.sin(t*16)*1.3:0;
+  const puff=seg(t,29,29.12)*(1-seg(t,29.4,29.6));
+  A(E.dogHead,'transform',`translate(0 ${chew}) rotate(${t>=18.9&&t<19.8?-12:0}) scale(${1+puff*.08})`);
+  A(E.dogCheeks,'opacity',puff);
+  A(E.tail,'transform',`rotate(${Math.sin(t*(t>=21.8?20:6))*(t>=21.8?24:10)} -26 16)`);
+  const up=t>=18.9&&t<19.8?-2:0;
+  A(E.dEyeL,'cy',-12+up);A(E.dEyeR,'cy',-12+up);
+  A(E.cheese,'opacity',t>=21.8&&t<25.6?1:0);
+  A(E.tongue,'opacity',t>=25.6&&t<28.4&&Math.sin(t*7)>0?1:0);
+
+  // lights out
+  let dk=t>=19.8&&t<21.8?1:0;
+  if(t>=21.86&&t<21.94) dk=1;
+  A(E.dark,'opacity',dk);A(E.darkEyes,'opacity',dk);
+  A(E.cone,'opacity',dk?0:.2);A(E.bulb,'fill',dk?'#5a5040':'#fff6c9');
+  const de=seg(t,20.3,20.8)*(1-seg(t,21.2,21.7));
+  A(E.dde,'transform',`translate(${lerp(112,180,de)} ${lerp(585,370,de)})`);
+
+  E.end.style.opacity=eo(seg(t,29.2,29.6));
+  E.title.style.opacity=(t<.05&&!playing)?1:0;
+  E.seek.value=t;
+  E.time.textContent='0:'+String(Math.floor(t)).padStart(2,'0');
+}
+
+/* ---------- audio: Web Audio, so the four "nobody!" takes can overlap ---------- */
+let AC=null,master=null,noiseBuf=null,muted=false,loaded=0,failed=0;
+const live=new Set();
+function ctx(){
+  if(AC) return AC;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
+  try{AC=new C();}catch(e){return null;}
+  master=AC.createGain();master.connect(AC.destination);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  return AC;
+}
+function ac(){ // from a tap: wake the context, and on iPhone play even with the silent switch on
+  try{if(navigator.audioSession) navigator.audioSession.type='playback';}catch(e){}
+  if(!ctx()) return null;
+  if(AC.state==='suspended') AC.resume();
+  const s=AC.createBufferSource();s.buffer=AC.createBuffer(1,1,22050);s.connect(AC.destination);s.start(0);
+  return AC;
+}
+function track(s){live.add(s);s.onended=()=>live.delete(s);return s;}
+function stopAll(){live.forEach(s=>{try{s.stop();}catch(e){}});live.clear();}
+function playBuf(buf,off,vol){
+  const s=AC.createBufferSource(),g=AC.createGain();
+  s.buffer=buf;g.gain.value=vol||1;s.connect(g);g.connect(master);s.start(0,off||0);track(s);
+}
+function tone(f0,f1,dur,type,vol,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function noise(dur,vol,freq,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
+  s.buffer=noiseBuf;f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random()*.5);s.stop(t0+dur+.02);track(s);
+}
+const click=()=>{tone(2400,1800,.03,'square',.06);noise(.03,.15,3000);};
+const SFX=[
+  [10.62,()=>{tone(220,218,.22,'sawtooth',.08);tone(208,206,.22,'sawtooth',.08,.26);tone(156,150,.9,'sawtooth',.09,.52);}],
+  ...[11.0,11.5,12.0,12.5,12.9,13.15].map((x,k)=>[x,()=>tone(k%2?1500:1900,k%2?1500:1900,.04,'square',.05)]),
+  [15.18,()=>{tone(392,380,.5,'sawtooth',.05);tone(494,480,.5,'sawtooth',.05);tone(587,570,.5,'sawtooth',.05);}],
+  [17.3,()=>tone(170,720,2.45,'triangle',.06)],
+  ...[17.7,18.0,18.3,18.6].map(x=>[x,()=>tone(900,600,.05,'sine',.07)]),
+  [19.8,click],
+  [20.0,()=>noise(.16,.35,700)],[20.22,()=>noise(.1,.3,3200)],[20.32,()=>tone(300,900,.25,'square',.05)],
+  [20.6,()=>noise(.2,.4,500)],[20.88,()=>noise(.09,.3,5200)],[21.0,()=>noise(.09,.25,4800)],
+  [21.3,()=>noise(.06,.4,400)],[21.42,()=>noise(.06,.4,450)],[21.56,()=>tone(520,140,.24,'sine',.2)],
+  [21.8,click],[21.94,click],
+  [29.05,()=>{tone(120,70,.55,'sawtooth',.16);tone(60,45,.55,'sine',.2);}]
+];
+const EV=SFX.concat(LINES.map(l=>[l.s,()=>{if(l.buf) playBuf(l.buf,0,l.v);}]));
+
+async function loadVoices(){
+  const c=ctx();
+  if(!c){failed=LINES.length;return updateStatus();}
+  await Promise.all(LINES.map(async l=>{
+    try{
+      const r=await fetch('audio/'+l.f+'.mp3');if(!r.ok) throw new Error(r.status);
+      const ab=await r.arrayBuffer();
+      l.buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      l.env=envOf(l.buf);loaded++;
+    }catch(e){failed++;}
+    updateStatus();
+  }));
+  if(playing) resumeVoices();
+}
+function updateStatus(){
+  const n=LINES.length;
+  if(loaded+failed<n) E.status.textContent='טוען את הקולות... '+loaded+' מתוך '+n;
+  else if(!failed) E.status.textContent='הקולות מוכנים. הפעילו סאונד ולחצו על הסרטון.';
+  else E.status.textContent='לא הצלחנו לטעון '+failed+' מתוך '+n+' קולות. בדקו את החיבור לאינטרנט ורעננו את הדף.';
+}
+function resumeVoices(){ // pick up any line already under way (after resume or seek)
+  if(!AC) return;
+  for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.v);
+}
+
+/* ---------- player ---------- */
+let T=0,playing=false,last=0,raf=0;
+const ICON={
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
+  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
+  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
+};
+function ui(){
+  const ended=T>=DUR;
+  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
+  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
+  E.bigplay.style.opacity=playing?0:1;
+  E.bigplay.innerHTML=(ended?ICON.replay:ICON.play).replace('<svg','<svg style="fill:#2a1712"');
+  E.mute.innerHTML=muted?ICON.off:ICON.on;
+  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+}
+function frame(now){
+  if(!playing) return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const prev=T;T=Math.min(DUR,T+dt);
+  if(AC) for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
+  render(T);
+  if(T>=DUR){playing=false;ui();return;}
+  raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(T>=DUR) T=0;
+  ac();playing=true;last=performance.now();ui();
+  resumeVoices();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
+}
+function pause(){playing=false;cancelAnimationFrame(raf);stopAll();ui();}
+function toggle(){playing?pause():play();}
+E.stage.addEventListener('click',toggle);
+E.pp.addEventListener('click',toggle);
+E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=muted?0:1;ui();});
+E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
+E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
+ui();render(0);updateStatus();loadVoices();
+})();
+</script>
