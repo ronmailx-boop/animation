@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>שיעור נהיגה</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview .ctl,html.preview #status,html.preview .title,html.preview .bigplay{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
+/* layout: phone-shaped stage (a learner car head-on, the road rushing past), slim controls underneath */
+:root{
+  --bg:#f3f1ea; --fg:#1f1a14; --muted:#6c6355; --accent:#e2483d; --panel:#ffffff; --line:#ddd6c8;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#15130f; --fg:#f3eee4; --muted:#b0a693; --accent:#ff6f5e; --panel:#221f19; --line:#38322a; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#15130f; --fg:#f3eee4; --muted:#b0a693; --accent:#ff6f5e; --panel:#221f19; --line:#38322a; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 210px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#8fd3f5; container-type:inline-size;
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.title{inset:0;background:#1f1a14;color:#ffd23f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
+.title small{font:800 4.4cqw var(--font-body);color:#ffb0a6}
+.title h2{font:400 18cqw/1 var(--font-display);margin:0}
+.title p{margin:0;font:500 5cqw var(--font-body);color:#f3eee4}
+.end{left:10cqw;right:10cqw;bottom:8cqw;background:rgba(31,26,20,.95);color:#f3eee4;border-radius:4cqw;padding:3.4cqw;text-align:center;opacity:0}
+.end .fin{font:400 14cqw/1 var(--font-display);color:#ffd23f}
+.end small{display:block;margin-top:1.2cqw;font:500 3.6cqw/1.4 var(--font-body);color:#ffe2d6}
+.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
+.bigplay svg{position:static;width:10cqw;height:10cqw}
+
+.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
+.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ctl svg{width:20px;height:20px;fill:currentColor}
+.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
+#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="he">
+  <div class="head">
+    <h1>שיעור נהיגה</h1>
+    <p class="sub">שיעור ראשון של סבתא רחל. היא נוהגת מאז 62. 30 שניות עם קול.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="מכונית לימוד נהיגה מקדימה: סבתא מאחורי ההגה, מורה נהיגה מבוהל לידה, ושוטר בחלון">
+      <g id="cam">
+        <!-- sky, hills, road -->
+        <rect width="360" height="640" fill="#8fd3f5"/>
+        <circle cx="300" cy="70" r="30" fill="#ffe27a"/>
+        <g fill="#fff" opacity=".9"><ellipse cx="70" cy="80" rx="34" ry="12"/><ellipse cx="96" cy="72" rx="22" ry="12"/><ellipse cx="200" cy="120" rx="28" ry="9"/></g>
+        <path d="M0,250 Q60,214 130,240 Q200,206 270,236 Q320,218 360,236 V260 H0Z" fill="#7cc46a"/>
+        <rect y="250" width="360" height="390" fill="#8ed27a"/>
+        <path d="M168,250 L192,250 L410,640 L-50,640Z" fill="#5d6470"/>
+        <path d="M168,250 L160,250 L-60,640 L-50,640Z M192,250 L200,250 L420,640 L410,640Z" fill="#f2f2f2"/>
+        <g id="dashes" fill="#fff4b0"></g>
+        <g id="trees"></g>
+        <g id="speedLines" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity="0"><path d="M18,300V360M30,420V500M8,520V600M342,300V360M330,420V500M352,520V600"/></g>
+        <!-- police car behind us -->
+        <g id="police" opacity="0">
+          <rect x="-46" y="-26" width="92" height="42" rx="14" fill="#f4f6fb"/>
+          <rect x="-34" y="-46" width="68" height="26" rx="10" fill="#f4f6fb"/>
+          <rect x="-28" y="-42" width="56" height="18" rx="4" fill="#2b3a55"/>
+          <rect x="-46" y="-4" width="92" height="9" fill="#2556c4"/>
+          <rect id="lbR" x="-22" y="-56" width="20" height="10" rx="3" fill="#ff3b4e"/><rect id="lbB" x="2" y="-56" width="20" height="10" rx="3" fill="#3b7bff"/>
+          <circle cx="-30" cy="6" r="6" fill="#fff6c2"/><circle cx="30" cy="6" r="6" fill="#fff6c2"/>
+          <rect x="-40" y="16" width="16" height="10" rx="3" fill="#222"/><rect x="24" y="16" width="16" height="10" rx="3" fill="#222"/>
+        </g>
+        <!-- our car -->
+        <g id="car">
+          <ellipse cx="180" cy="566" rx="140" ry="14" fill="#2c3038" opacity=".35"/>
+          <rect x="60" y="538" width="42" height="30" rx="8" fill="#22252b"/><rect x="258" y="538" width="42" height="30" rx="8" fill="#22252b"/>
+          <rect x="148" y="280" width="64" height="26" rx="5" fill="#ffd23f" stroke="#1f1a14" stroke-width="2"/>
+          <text x="180" y="300" text-anchor="middle" font-family="Secular One, sans-serif" font-size="22" fill="#e2483d">ל</text>
+          <ellipse cx="40" cy="420" rx="16" ry="11" fill="#c63a30"/><ellipse cx="320" cy="420" rx="16" ry="11" fill="#c63a30"/>
+          <rect x="50" y="304" width="260" height="244" rx="44" fill="#e2483d"/>
+          <path d="M100,330 L260,330 L284,438 L76,438Z" fill="#2f3542"/>
+          <!-- inside the car -->
+          <g id="inside">
+            <rect x="104" y="340" width="56" height="40" rx="12" fill="#4b5263"/><rect x="200" y="340" width="56" height="40" rx="12" fill="#4b5263"/>
+            <g id="iBody"><path d="M104,440 Q104,400 132,398 Q160,400 160,440Z" fill="#f2f2f2"/><path d="M132,400 L127,416 L132,438 L137,416Z" fill="#2556c4"/></g>
+            <path d="M198,440 Q198,400 228,398 Q258,400 258,440Z" fill="#8e5aa8"/>
+            <g id="clip"><rect x="-14" y="-12" width="28" height="24" rx="2" fill="#b07a46"/><rect x="-10" y="-8" width="20" height="18" fill="#fff"/><path d="M-7,-3h14M-7,2h14M-7,6h9" stroke="#999" stroke-width="1.4"/></g>
+            <g id="heads"></g>
+            <ellipse cx="228" cy="426" rx="26" ry="9" fill="none" stroke="#1f1a14" stroke-width="5"/>
+            <circle id="gHL" cx="204" cy="424" r="6" fill="#f1c3a0"/><circle id="gHR" cx="252" cy="424" r="6" fill="#f1c3a0"/>
+          </g>
+          <path d="M100,330 L260,330 L284,438 L76,438Z" fill="#cdeaff" opacity=".14"/>
+          <path d="M120,336 L150,336 L106,436 L84,436Z" fill="#fff" opacity=".12"/>
+          <path d="M100,330 L260,330 L284,438 L76,438Z" fill="none" stroke="#b8352c" stroke-width="5" stroke-linejoin="round"/>
+          <path d="M70,440 H290 Q300,470 300,480 H60 Q60,470 70,440Z" fill="#ef5a4e"/>
+          <circle cx="94" cy="494" r="19" fill="#fff8d6" stroke="#b8352c" stroke-width="4"/><circle cx="266" cy="494" r="19" fill="#fff8d6" stroke="#b8352c" stroke-width="4"/>
+          <rect x="130" y="480" width="100" height="32" rx="8" fill="#2b2f36"/><path d="M140,488H220M140,496H220M140,504H220" stroke="#4a505b" stroke-width="3"/>
+          <rect x="56" y="518" width="248" height="26" rx="10" fill="#c9ccd2"/>
+          <rect x="146" y="522" width="68" height="18" rx="3" fill="#ffd23f" stroke="#1f1a14" stroke-width="1.5"/>
+          <text x="180" y="536" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="11" fill="#1f1a14" direction="ltr">62-062-62</text>
+        </g>
+        <g id="dust" opacity="0" fill="#e9dcc4"><circle cx="120" cy="590" r="26"/><circle cx="170" cy="604" r="32"/><circle cx="230" cy="592" r="28"/><circle cx="270" cy="606" r="20"/></g>
+        <!-- the officer -->
+        <g id="cop">
+          <rect x="296" y="424" width="80" height="230" rx="30" fill="#2f4f8f"/>
+          <circle cx="318" cy="452" r="7" fill="#ffd23f"/>
+          <path d="M300,470 Q290,500 280,520" stroke="#2f4f8f" stroke-width="16" stroke-linecap="round"/>
+          <g transform="translate(278 524)"><rect x="-10" y="-14" width="22" height="28" rx="2" fill="#fff"/><path d="M-6,-6h14M-6,0h14M-6,6h10" stroke="#999" stroke-width="1.4"/></g>
+          <circle cx="280" cy="524" r="7" fill="#e7b08a"/>
+        </g>
+      </g>
+      <rect id="flash" width="360" height="640" fill="#fff" opacity="0"/>
+    </svg>
+
+    <div class="ov end" id="end"><div class="fin">הסוף</div><small>סבתא רחל עברה טסט. המורה עדיין בטיפול.</small></div>
+    <div class="ov title" id="title">
+      <small>סרט קצר</small>
+      <h2>שיעור נהיגה</h2>
+      <p>שיעור ראשון. מהיר מאוד. 30 שניות.</p>
+    </div>
+    <div class="ov bigplay" id="bigplay"></div>
+  </div>
+
+  <div class="ctl">
+    <button id="pp" type="button" aria-label="הפעל"></button>
+    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
+    <span id="time">0:00</span>
+    <button id="mute" type="button" aria-label="השתק"></button>
+  </div>
+  <p id="status" aria-live="polite">טוען את הקולות...</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const eo=u=>1-Math.pow(1-u,3);
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const win=(t,a,b,f)=>seg(t,a,a+(f||.25))*(1-seg(t,b-(f||.25),b)); // 0→1→0 over [a,b]
+const A=(el,k,v)=>el.setAttribute(k,v);
+const NS='http://www.w3.org/2000/svg';
+const DUR=30, INS=0, GMA=1, COP=2;
+
+/* ---------- cast: heads are built from one template ---------- */
+const CH=[
+ {id:'i',x:132,y:370,r:25,skin:'#f3c6a2',brow:'#4a3020',bw:2.8,my:14,
+  back:'',
+  front:'<path id="iHair" d="M-25,-4 C-27,-30 27,-32 25,-4 C18,-18 -12,-20 -25,-4Z" fill="#6a4328"/><g fill="none" stroke="#1f1a14" stroke-width="2"><circle cx="-9" cy="-1" r="8"/><circle cx="9" cy="-1" r="8"/><path d="M-1,-1h2"/></g>',
+  over:'<ellipse id="iSweat" cx="22" cy="-12" rx="3" ry="5" fill="#7fd0ff" opacity="0"/><g id="iX" opacity="0" stroke="#1f1a14" stroke-width="2.4" stroke-linecap="round"><path d="M-13,-5l8,8M-5,-5l-8,8M5,-5l8,8M13,-5l-8,8"/></g>'},
+ {id:'g',x:228,y:370,r:25,skin:'#f1c3a0',brow:'#d9d4cc',bw:3,my:14,
+  back:'<circle cx="0" cy="-30" r="13" fill="#eeeae4"/>',
+  front:'<path d="M-25,-2 C-27,-30 27,-32 25,-2 C20,-20 -20,-20 -25,-2Z" fill="#eeeae4"/><circle cx="-25" cy="8" r="3" fill="#fff"/><circle cx="25" cy="8" r="3" fill="#fff"/><g fill="#ff9aa2" opacity=".55"><circle cx="-15" cy="8" r="5"/><circle cx="15" cy="8" r="5"/></g><g fill="none" stroke="#b5833a" stroke-width="2"><circle cx="-9" cy="-1" r="8"/><circle cx="9" cy="-1" r="8"/><path d="M-1,-1h2"/></g>',
+  over:''},
+ {id:'c',x:330,y:382,r:30,skin:'#e7b08a',brow:'#3a2618',bw:3.2,my:17,
+  back:'',
+  front:'<path d="M-30,-6 C-30,-30 30,-30 30,-6Z" fill="#3a2618"/>',
+  over:'<g id="cBlush" opacity="0" fill="#ff8a8a"><circle cx="-17" cy="9" r="6"/><circle cx="17" cy="9" r="6"/></g><g id="shades"><rect x="-22" y="-9" width="19" height="13" rx="5" fill="#111"/><rect x="3" y="-9" width="19" height="13" rx="5" fill="#111"/><path d="M-3,-4h6" stroke="#111" stroke-width="2.4"/></g><g><path d="M-34,-14 Q0,-34 34,-14 L30,-8 H-30Z" fill="#20345e"/><rect x="-36" y="-12" width="72" height="8" rx="4" fill="#142445"/><circle cx="0" cy="-22" r="5" fill="#ffd23f"/></g>'}
+];
+(function build(){
+  const svg=(c)=>`<g id="${c.id}H" transform="translate(${c.x} ${c.y})">${c.back}<circle r="${c.r}" fill="${c.skin}"/>${c.front}
+    <ellipse id="${c.id}eL" cx="-9" cy="-1" rx="5.5" ry="6.5" fill="#fff"/><ellipse id="${c.id}eR" cx="9" cy="-1" rx="5.5" ry="6.5" fill="#fff"/>
+    <circle id="${c.id}pL" cx="-9" cy="-1" r="2.8" fill="#1b1410"/><circle id="${c.id}pR" cx="9" cy="-1" r="2.8" fill="#1b1410"/>
+    <path id="${c.id}bL" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/><path id="${c.id}bR" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/>
+    <ellipse id="${c.id}mo" cx="0" cy="${c.my}" rx="6" ry="2" fill="#5a1020"/><path id="${c.id}sm" stroke="#5a1020" stroke-width="2.2" stroke-linecap="round" fill="none"/>${c.over}</g>`;
+  $('heads').innerHTML=svg(CH[0])+svg(CH[1]);
+  const g=document.createElementNS(NS,'g');g.innerHTML=svg(CH[2]);$('cop').append(g);
+  let d='';for(let k=0;k<9;k++) d+='<path/>';$('dashes').innerHTML=d;
+  let tr='';for(let k=0;k<6;k++) tr+='<g><rect x="-4" y="-10" width="8" height="34" fill="#8a5a36"/><circle cy="-22" r="22" fill="#4fa54a"/><circle cx="-10" cy="-12" r="14" fill="#5cb956"/></g>';$('trees').innerHTML=tr;
+})();
+
+/* ---------- script: who says what, when (s = start, d = clip length) ---------- */
+const LINES=[
+ {c:INS,f:'01',s:.4,  d:5.41}, // okay, Mrs. Rachel. We'll start slowly. Mirrors... seatbelt...
+ {c:GMA,f:'02',s:5.6, d:3.63}, // sweetie, I've been driving since sixty-two
+ {c:INS,f:'03',s:9.3, d:1.49}, // MRS. RACHEL!!!
+ {c:COP,f:'04',s:14.6,d:2.69}, // license and registration, please
+ {c:GMA,f:'05',s:16.6,d:3.16}, // Shmulik? I changed your diapers!
+ {c:COP,f:'06',s:19.4,d:1.49}, // ...grandma?
+ {c:COP,f:'07',s:20.7,d:3.47}, // okay... go. just slow down by the kindergarten
+ {c:GMA,f:'08',s:24.3,d:2.85}, // so, honey? did I pass?
+ {c:INS,f:'09',s:27.0,d:2.04}  // ...I want to get out
+];
+const ENV_FPS=60;
+function envOf(buf){ // loudness per 1/60 s (33 ms window), scaled so speech peaks open the mouth fully
+  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
+  let pk=1e-6;
+  for(let i=0;i<n;i++){
+    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
+    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
+    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
+  }
+  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
+  return e;
+}
+function mouthOf(c,t){
+  let m=0;
+  for(const l of LINES){
+    if(l.c!==c||!l.env||t<l.s||t>=l.s+l.d) continue;
+    m=Math.max(m,l.env[Math.floor((t-l.s)*ENV_FPS)]||0);
+  }
+  return m;
+}
+
+/* ---------- faces over time ---------- */
+const MOODS=[
+ [ // instructor
+  [0,{es:1,bu:1,ba:-1,sm:2,o:0}],[9.0,{es:1.6,bu:7,ba:-2,sm:0,o:.6}],[13.9,{es:1.3,bu:4,ba:-3,sm:-3,o:0}],
+  [16.8,{es:1.25,bu:3,ba:0,sm:-1,o:0}],[24.3,{es:1.2,bu:5,ba:-3,sm:-5,o:0}],[27.0,{es:1.1,bu:4,ba:-4,sm:-4,o:0}]],
+ [ // grandma
+  [0,{es:.9,bu:1,ba:0,sm:5,o:0}],[5.6,{es:.65,bu:-1,ba:3,sm:8,o:0}],[9.0,{es:.55,bu:-2,ba:4,sm:10,o:0}],
+  [13.9,{es:1,bu:2,ba:-1,sm:4,o:0}],[16.6,{es:1.15,bu:4,ba:-1,sm:9,o:0}],[24.3,{es:1,bu:3,ba:-1,sm:9,o:0}]],
+ [ // officer
+  [0,{es:1,bu:-1,ba:3,sm:-2,o:0}],[19.4,{es:1.35,bu:5,ba:-1,sm:0,o:0}],[20.7,{es:1.05,bu:2,ba:-3,sm:4,o:0}]]
+];
+const MK=['es','bu','ba','sm','o'];
+function moodOf(i,t){
+  const M=MOODS[i];let k=0;for(let j=0;j<M.length;j++) if(t>=M[j][0]) k=j;
+  const cur=M[k][1],prev=M[Math.max(0,k-1)][1],u=eio(seg(t,M[k][0],M[k][0]+.3));
+  const r={};MK.forEach(q=>r[q]=lerp(prev[q],cur[q],u));return r;
+}
+function lookAt(i,t){ // a point to look at, or null for straight ahead
+  const I=[132,370],G=[228,370],C=[330,382];
+  if(i===INS){
+    if(t>=5.6&&t<9.0) return G;
+    if(t>=14.6&&t<16.6) return C;
+    if(t>=16.6&&t<20.0) return G;
+    if(t>=20.0&&t<24.3) return C;
+    if(t>=24.3&&t<27.0) return G;
+    return null;
+  }
+  if(i===GMA){
+    if(t>=1.2&&t<5.6) return I;
+    if(t>=14.6&&t<24.2) return C;
+    if(t>=24.3&&t<27.4) return I;
+    return null;
+  }
+  return G;
+}
+const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.5)-3.4)/.07));
+
+/* ---------- motion ---------- */
+function speed(t){ // road speed, 0..1.4
+  if(t<9.0) return 0;
+  if(t<13.3) return 1.2*eo(seg(t,9.0,9.6));
+  if(t<13.9) return 1.2*(1-seg(t,13.3,13.9));
+  if(t<29.0) return 0;
+  return 1.4*eo(seg(t,29.0,29.3));
+}
+function dist(t){ let d=0;for(let x=9;x<Math.min(t,30);x+=.02) d+=speed(x)*.02;return d; }
+function copIn(t){ return eo(seg(t,13.9,14.6))*(1-eio(seg(t,24.0,24.6))); }
+
+/* ---------- elements ---------- */
+const E={};
+['cam','dashes','trees','speedLines','police','lbR','lbB','car','inside','iBody','clip','gHL','gHR','dust','cop','flash','iSweat','iX','iHair','cBlush','shades',
+ 'end','title','bigplay','seek','time','pp','mute','stage','status'].forEach(k=>E[k]=$(k));
+const P=CH.map(c=>{const o={};['H','eL','eR','pL','pR','bL','bR','mo','sm'].forEach(k=>o[k]=$(c.id+k));return o;});
+const DASH=[...E.dashes.children],TREE=[...E.trees.children];
+
+/* ---------- render: everything is a pure function of t ---------- */
+function render(t){
+  const v=speed(t),D=dist(t);
+  A(E.cam,'transform','translate(180 452) scale(1.14) translate(-180 -452)'); // frame the car, not the sky
+  // road dashes and roadside trees rush toward us
+  DASH.forEach((el,k)=>{
+    const p=((k/DASH.length)+D*.9)%1,y0=250+p*p*390,y1=250+Math.min(1,p+.05)*Math.min(1,p+.05)*390,w=1+p*7;
+    A(el,'d',`M${180-w},${y0}L${180+w},${y0}L${180+w*1.15},${y1}L${180-w*1.15},${y1}Z`);
+  });
+  TREE.forEach((el,k)=>{
+    const side=k%2?1:-1,p=((Math.floor(k/2)/3)+D*.6)%1,sc=.25+p*p*1.8,x=180+side*(30+p*p*230),y=250+p*p*360;
+    A(el,'transform',`translate(${x} ${y}) scale(${sc})`);
+  });
+  A(E.speedLines,'opacity',clamp((v-.4)*1.5));
+  A(E.speedLines,'transform',`translate(0 ${(t*900)%80})`);
+
+  // police: catches up from the horizon, parks behind us
+  const pc=seg(t,12.2,13.9),ps=lerp(.15,.62,eo(pc));
+  A(E.police,'opacity',t>=12.2?1:0);
+  A(E.police,'transform',`translate(${lerp(186,262,eo(pc))} ${lerp(256,312,eo(pc))}) scale(${ps})`);
+  const fl=Math.floor(t*6)%2;A(E.lbR,'opacity',fl?1:.25);A(E.lbB,'opacity',fl?.25:1);
+
+  // our car: idles, rockets, swerves, brakes; at the very end it takes off again
+  const fast=v>.2;
+  const bob=Math.sin(t*(fast?40:9))*(fast?2.2:.8);
+  const swerve=t>=10&&t<13.2?Math.sin((t-10)*2.6)*5:0;
+  const brake=t>=13.3&&t<14.2?6*Math.sin(seg(t,13.3,14.2)*Math.PI):0;
+  const away=eio(seg(t,29.0,29.6)),sc=1-.86*away;
+  A(E.car,'transform',`translate(180 ${450+bob+brake-190*away}) scale(${sc}) rotate(${swerve}) translate(-180 -450)`);
+  A(E.dust,'opacity',win(t,9.0,10.2,.3)*.9+win(t,29.0,29.9,.2));
+  A(E.dust,'transform',`translate(0 ${-((t*30)%10)})`);
+  A(E.flash,'opacity',t>=11.6&&t<11.72?.85:0);
+  // the clipboard flies off when she floors it
+  const cf=seg(t,9.4,10.6);
+  A(E.clip,'transform',`translate(${lerp(122,-60,eo(cf))} ${lerp(420,250,eo(cf))}) rotate(${cf*540})`);
+  A(E.clip,'opacity',t<10.6?1:0);
+  // grandma's hands on the wheel: steady at speed, waving when she asks
+  const wave=t>=24.3&&t<26.0?Math.sin(t*14)*3:0;
+  A(E.gHL,'cy',424+(t>=10&&t<13.2?Math.sin(t*2.6)*3:0));A(E.gHR,'cy',424-(t>=10&&t<13.2?Math.sin(t*2.6)*3:0)+wave);
+
+  // officer walks up, leans in, then leaves
+  const ci=copIn(t);
+  A(E.cop,'transform',`translate(${(1-ci)*120-16} 0) rotate(${ci*(t>=14.6&&t<24?-4:0)} 330 640)`);
+  const shadesUp=eo(seg(t,19.5,19.8));
+  A(E.shades,'transform',`translate(0 ${-24*shadesUp})`);
+  A(E.cBlush,'opacity',win(t,19.6,24.3,.3)*.6);
+
+  // faces
+  const fainted=t>=28.7;
+  CH.forEach((c,i)=>{
+    const p=P[i],m=moodOf(i,t),talk=mouthOf(i,t);
+    let x=c.x,y=c.y,rot=Math.sin(t*1.5+i)*2;
+    if(fast&&i<2) y+=bob*.6;
+    if(i===INS&&t>=9.0&&t<13.9) {x-=3;rot-=6;}       // pinned to the seat
+    if(i===INS&&fainted) {rot=lerp(rot,-34,eo(seg(t,28.7,28.95)));y+=10*eo(seg(t,28.7,28.95));}
+    if(i===GMA&&t>=24.3&&t<26.0) rot+=Math.sin(t*6)*3;
+    A(p.H,'transform',`translate(${x} ${y-talk}) rotate(${rot})`);
+    const look=lookAt(i,t);let lx=0,ly=0;
+    if(look){const dx=look[0]-x,dy=look[1]-y,d=Math.hypot(dx,dy)||1;lx=dx/d;ly=dy/d;}
+    const ery=Math.max(.6,6.5*m.es*(1-.92*blinkOf(t,i*1.3)));
+    A(p.eL,'ry',ery);A(p.eR,'ry',ery);
+    const pr=m.es>1.35?2.1:2.8;
+    [[p.pL,-9],[p.pR,9]].forEach(([e,cx])=>{A(e,'cx',cx+lx*2.3);A(e,'cy',-1+ly*2);A(e,'r',pr);});
+    const by=-11-m.bu;
+    A(p.bL,'d',`M-15,${by} L-4,${by+m.ba}`);A(p.bR,'d',`M4,${by+m.ba} L15,${by}`);
+    let o=Math.max(talk,m.o);
+    if(i===INS&&fainted) o=.25;
+    if(o>.12){A(p.mo,'opacity',1);A(p.mo,'rx',4.5+3*o);A(p.mo,'ry',1.4+6*o);A(p.sm,'opacity',0);}
+    else{A(p.mo,'opacity',0);A(p.sm,'opacity',1);A(p.sm,'d',`M-7,${c.my} Q0,${c.my+m.sm*1.2} 7,${c.my}`);}
+    if(i===INS){
+      [p.eL,p.eR,p.pL,p.pR].forEach(e=>A(e,'opacity',fainted?0:1));
+    }
+  });
+  A(E.iX,'opacity',fainted?1:0);
+  A(E.iSweat,'opacity',(t>=9&&t<14)||(t>=24.3&&t<29)?1:0);
+  A(E.iSweat,'cy',-12+((t*30)%14));
+  A(E.iHair,'transform',fast?`skewX(${-14+Math.sin(t*30)*4})`:'');
+
+  E.end.style.opacity=eo(seg(t,29.4,29.8));
+  E.title.style.opacity=(t<.05&&!playing)?1:0;
+  E.seek.value=t;
+  E.time.textContent='0:'+String(Math.floor(t)).padStart(2,'0');
+}
+
+/* ---------- audio: Web Audio for voices and the synthesized effects ---------- */
+let AC=null,master=null,noiseBuf=null,muted=false,loaded=0,failed=0;
+const live=new Set();
+function ctx(){
+  if(AC) return AC;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
+  try{AC=new C();}catch(e){return null;}
+  master=AC.createGain();master.connect(AC.destination);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  return AC;
+}
+function ac(){ // from a tap: wake the context, and on iPhone play even with the silent switch on
+  try{if(navigator.audioSession) navigator.audioSession.type='playback';}catch(e){}
+  if(!ctx()) return null;
+  if(AC.state==='suspended') AC.resume();
+  const s=AC.createBufferSource();s.buffer=AC.createBuffer(1,1,22050);s.connect(AC.destination);s.start(0);
+  return AC;
+}
+function track(s){live.add(s);s.onended=()=>live.delete(s);return s;}
+function stopAll(){live.forEach(s=>{try{s.stop();}catch(e){}});live.clear();}
+function playBuf(buf,off,vol){
+  const s=AC.createBufferSource(),g=AC.createGain();
+  s.buffer=buf;g.gain.value=vol||1;s.connect(g);g.connect(master);s.start(0,off||0);track(s);
+}
+function tone(f0,f1,dur,type,vol,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function swell(f,dur,vol,delay){ // soft attack, for the choir
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type='sine';o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.35);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function noise(dur,vol,freq,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
+  s.buffer=noiseBuf;f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random()*.5);s.stop(t0+dur+.02);track(s);
+}
+const SFX=[
+  [.1,()=>{tone(55,50,1.2,'sawtooth',.05);}],                                       // engine idles
+  [9.0,()=>{tone(70,420,1.1,'sawtooth',.12);noise(.9,.25,300);}],                   // VROOM
+  [10.0,()=>tone(380,520,2.8,'sawtooth',.04)],                                     // engine screaming
+  [11.6,()=>{noise(.05,.3,4000);tone(2600,2600,.05,'square',.05);}],                // speed camera
+  ...[0,1,2,3,4,5].map(k=>[12.2+k*.33,()=>tone(k%2?650:950,k%2?950:650,.32,'sine',.06)]), // siren
+  [13.3,()=>{noise(.6,.3,2600);tone(1800,1300,.55,'square',.025);}],                // brakes
+  [13.95,()=>tone(500,500,.05,'sine',.06)],[14.25,()=>tone(480,480,.05,'sine',.06)], // footsteps
+  [19.5,()=>tone(900,1300,.18,'sine',.06)],                                        // shades up
+  [24.05,()=>tone(500,500,.05,'sine',.06)],[24.3,()=>tone(480,480,.05,'sine',.06)],
+  [28.72,()=>{tone(140,60,.25,'sine',.25);noise(.12,.25,300);}],                   // thud
+  [29.0,()=>{tone(70,480,.8,'sawtooth',.12);noise(.6,.25,300);}],                   // and she's off
+  [29.25,()=>{tone(440,440,.1,'square',.05);tone(440,440,.14,'square',.05,.16);}]   // beep beep
+];
+const EV=SFX.concat(LINES.map(l=>[l.s,()=>{if(l.buf) playBuf(l.buf,0,l.v);}]));
+
+async function loadVoices(){
+  const c=ctx();
+  if(!c){failed=LINES.length;return updateStatus();}
+  await Promise.all(LINES.map(async l=>{
+    try{
+      const r=await fetch('audio/'+l.f+'.mp3');if(!r.ok) throw new Error(r.status);
+      const ab=await r.arrayBuffer();
+      l.buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      l.env=envOf(l.buf);loaded++;
+    }catch(e){failed++;}
+    updateStatus();
+  }));
+  if(playing) resumeVoices();
+}
+function updateStatus(){
+  const n=LINES.length;
+  if(loaded+failed<n) E.status.textContent='טוען את הקולות... '+loaded+' מתוך '+n;
+  else if(!failed) E.status.textContent='הקולות מוכנים. הפעילו סאונד ולחצו על הסרטון.';
+  else E.status.textContent='לא הצלחנו לטעון '+failed+' מתוך '+n+' קולות. בדקו את החיבור לאינטרנט ורעננו את הדף.';
+}
+function resumeVoices(){ // pick up any line already under way (after resume or seek)
+  if(!AC) return;
+  for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.v);
+}
+
+/* ---------- #preview: loop a highlight silently (no audio events fire) ---------- */
+function startPreview(a,b){
+  if(!document.documentElement.classList.contains('preview')) return;
+  E.stage.style.pointerEvents='none';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){render(lerp(a,b,.5));return;}
+  const t0=performance.now();
+  (function pv(now){T=a+((now-t0)/1000)%(b-a);render(T);requestAnimationFrame(pv);})(t0);
+}
+
+/* ---------- player ---------- */
+let T=0,playing=false,last=0,raf=0;
+const ICON={
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
+  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
+  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
+};
+function ui(){
+  const ended=T>=DUR;
+  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
+  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
+  E.bigplay.style.opacity=playing?0:1;
+  E.bigplay.innerHTML=(ended?ICON.replay:ICON.play).replace('<svg','<svg style="fill:#1f1a14"');
+  E.mute.innerHTML=muted?ICON.off:ICON.on;
+  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+}
+function frame(now){
+  if(!playing) return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const prev=T;T=Math.min(DUR,T+dt);
+  if(AC) for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
+  render(T);
+  if(T>=DUR){playing=false;ui();return;}
+  raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(T>=DUR) T=0;
+  ac();playing=true;last=performance.now();ui();
+  resumeVoices();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
+}
+function pause(){playing=false;cancelAnimationFrame(raf);stopAll();ui();}
+function toggle(){playing?pause():play();}
+E.stage.addEventListener('click',toggle);
+E.pp.addEventListener('click',toggle);
+E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=muted?0:1;ui();});
+E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
+E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
+
+ui();render(0);updateStatus();loadVoices();
+startPreview(8.8,22.4);
+})();
+</script>
+
+</body>
+</html>
