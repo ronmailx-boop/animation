@@ -106,9 +106,17 @@
 - [x] נבדק ב-Playwright (Pixel 7): התחלה, גלילה קדימה ואחורה, הסרט הקודם נעצר
 - [ ] בדיקה בטלפון (במיוחד אייפון: קול אחרי גלילה)
 
+## פריסה ל-Cloudflare — מותג "נו, באמת"
+- שם המותג (טיקטוק / פייסבוק / יוטיוב בהמשך): "נו, באמת", `@nu.beemet`.
+- כתובת: https://nu.beemet.vplusstudio.app (תת-דומיין דו-שלבי; לפי תיעוד Cloudflare, Custom Domain של Worker מנפיק לו תעודה בחינם). גיבוי: https://nu-beemet.ronmailx.workers.dev. שם ה-Worker: `nu-beemet` (נבדק שאין Worker כזה בחשבון).
+- [x] `wrangler.jsonc`, `.assetsignore` (כולל `remotion`, `.claude`, `skills-lock.json`), `.github/workflows/deploy-cloudflare.yml`
+- [ ] המשתמש: ליצור API Token (תבנית Edit Cloudflare Workers, zone `vplusstudio.app`, שם `nu-beemet-deploy`) ולשמור כ-Secret `CLOUDFLARE_API_TOKEN` בריפו
+- [ ] אחרי ה-Secret: להריץ את ה-workflow ולאמת בלוג את שורת ה-custom domain; לבדוק בטלפון שהאתר עולה ושהקבצים הפנימיים (למשל `/CLAUDE.md`) מחזירים 404
+- [ ] לשקול: להחליף את שם האתר "אולם ההקרנות" במותג "נו, באמת"
+
 ## כלים
 - [x] סקיל `find-skills` (vercel-labs/skills) הועתק ל-`.claude/skills/find-skills/` — נטען אוטומטית בכל סשן.
 - [x] סקילים של Remotion (`remotion-dev/skills`, 12 סקילים, `remotion-*`) הותקנו ב-`.claude/skills/`; מקור וגרסאות ב-`skills-lock.json`. Remotion = React → MP4, שיטה שונה מהסרטונים הקיימים (HTML + CSS/SVG).
 
 ## Current Focus
-שמונה סרטונים ב-main; דף הבית הוא עכשיו פיד בסגנון טיקטוק. סרטון 8 ("יום פיג'מות") הוא הראשון שנבנה ב-Remotion ומוגש כ-MP4. ממתינים לבדיקה בטלפון: "רק שאלה", "שומרת חנייה", "אכלת?", "יום פיג'מות". הצעד הבא (לפי בקשה): אירוח ציבורי (Cloudflare לפי CLAUDE.md — להוסיף `remotion` ל-`.assetsignore`), מסמכים משפטיים, סרט נוסף.
+שמונה סרטונים ב-main; דף הבית הוא עכשיו פיד בסגנון טיקטוק. סרטון 8 ("יום פיג'מות") הוא הראשון שנבנה ב-Remotion ומוגש כ-MP4. ממתינים לבדיקה בטלפון: "רק שאלה", "שומרת חנייה", "אכלת?", "יום פיג'מות". הצעד הבא: המשתמש מוסיף את ה-Secret `CLOUDFLARE_API_TOKEN`, ואז פריסה ואימות של https://nu.beemet.vplusstudio.app. אחר כך: מסמכים משפטיים, סרט נוסף.
