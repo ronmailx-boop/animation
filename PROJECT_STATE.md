@@ -113,6 +113,8 @@
 - [x] המשתמש: ליצור API Token (תבנית Edit Cloudflare Workers, zone `vplusstudio.app`, שם `nu-beemet-deploy`) ולשמור כ-Secret `CLOUDFLARE_API_TOKEN` בריפו
 - [x] פריסה ראשונה (18.10.2026): הלוג מראה את `https://nu-beemet.ronmailx.workers.dev` ואת `nu.beemet.vplusstudio.app (custom domain)`. עלו 90 קבצים — בדיוק החלק הציבורי, כלומר `.assetsignore` עובד
 - [x] בדיקה בטלפון: האתר נפתח (התעודה ל-`nu.beemet` הונפקה תוך כמה דקות), שיתוף בוואטסאפ עובד עם תצוגה מקדימה
+- [x] אייקון אפליקציה: `icons/icon-512.png`, `icons/icon-192.png` (פרצוף מגלגל עיניים על צהוב), `apple-touch-icon` ו-`og:image` לתצוגה מקדימה בוואטסאפ
+- [x] אריח ב-apps.vplusstudio.app (ריפו my-site): שם "נו, באמת", אייקון מ-`icons/icon-512.png`, קישור ל-https://nu.beemet.vplusstudio.app/
 - [x] שורת הכתובת נשארת נקייה (בלי `#<slug>` בזמן גלילה); קישור שיתוף נוחת על הסרט ואז מתנקה
 - [x] מיתוג האתר ל"נו, באמת": כותרת, לוגו (פרצוף מגלגל עיניים, גם favicon), @nu.beemet בכיתוב, טקסט השיתוף
 
