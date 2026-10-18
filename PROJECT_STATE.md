@@ -84,6 +84,7 @@
 
 ## כלים
 - [x] סקיל `find-skills` (vercel-labs/skills) הועתק ל-`.claude/skills/find-skills/` — נטען אוטומטית בכל סשן.
+- [x] סקילים של Remotion (`remotion-dev/skills`, 12 סקילים, `remotion-*`) הותקנו ב-`.claude/skills/`; מקור וגרסאות ב-`skills-lock.json`. Remotion = React → MP4, שיטה שונה מהסרטונים הקיימים (HTML + CSS/SVG).
 
 ## Current Focus
 שבעה סרטונים והגלריה ב-main. "רק שאלה", "שומרת חנייה" ו"אכלת?" ממתינים לבדיקה בטלפון. הצעד הבא (לפי בקשה): אירוח ציבורי (Cloudflare לפי CLAUDE.md), מסמכים משפטיים, סרט נוסף.
