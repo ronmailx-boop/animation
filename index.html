@@ -230,7 +230,6 @@ function activate(i){
   slides.forEach((s,j)=>{if(Math.abs(j-i)<=1) load(s); else if(Math.abs(j-i)>2) unload(s);});
   if(started) withFilm(slides[i],fl=>fl.restart());
   if(i>0) hint.classList.remove('on');
-  history.replaceState(null,'','#'+slides[i].f.slug);
 }
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting) activate(+e.target.dataset.i);}),{root:feed,threshold:.6});
 slides.forEach(s=>io.observe(s.sec));
@@ -266,6 +265,8 @@ document.addEventListener('keydown',e=>{
 /* a shared link (#<slug>) lands on that film */
 const linked=FILMS.findIndex(f=>f.slug===decodeURIComponent(location.hash.slice(1)));
 if(linked>0) slides[linked].sec.scrollIntoView({block:'start'});
+/* the address bar stays the plain site address; only shared links carry a film */
+if(location.hash) history.replaceState(null,'',location.pathname+location.search);
 
 /* share: a link to this page that opens on the film (#<slug>).
    On phones the system share menu lists every installed app (WhatsApp etc.); elsewhere, our own sheet. */
