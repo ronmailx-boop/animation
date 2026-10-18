@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>שומרת חנייה</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview .ctl,html.preview #status,html.preview .title,html.preview .bigplay{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
+/* layout: phone-shaped stage (a Tel Aviv street from the side, flat cartoon with thick outlines), slim controls underneath */
+:root{
+  --bg:#f4f0e8; --fg:#1d1a16; --muted:#6b6458; --accent:#e2483d; --panel:#ffffff; --line:#ddd6c8;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#15130f; --fg:#f3eee4; --muted:#b0a693; --accent:#ff6f5e; --panel:#221f19; --line:#38322a; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#15130f; --fg:#f3eee4; --muted:#b0a693; --accent:#ff6f5e; --panel:#221f19; --line:#38322a; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 210px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#8fd3f5; container-type:inline-size;
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.title{inset:0;background:#1d1a16;color:#ffd23f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
+.title small{font:800 4.4cqw var(--font-body);color:#ffb0a6}
+.title h2{font:400 18cqw/1 var(--font-display);margin:0}
+.title p{margin:0;font:500 5cqw var(--font-body);color:#f3eee4}
+.cap{left:0;right:0;top:30%;text-align:center;font:400 9cqw/1.1 var(--font-display);color:#fff;text-shadow:0 .8cqw 0 #1d1a16,0 0 3cqw rgba(0,0,0,.6);opacity:0}
+.end{left:10cqw;right:10cqw;top:8cqw;background:rgba(29,26,22,.95);color:#f3eee4;border-radius:4cqw;padding:3.4cqw;text-align:center;opacity:0}
+.end .fin{font:400 14cqw/1 var(--font-display);color:#ffd23f}
+.end small{display:block;margin-top:1.2cqw;font:500 3.6cqw/1.4 var(--font-body);color:#ffe2d6}
+.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
+.bigplay svg{position:static;width:10cqw;height:10cqw}
+
+.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
+.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ctl svg{width:20px;height:20px;fill:currentColor}
+.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
+#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="he">
+  <div class="head">
+    <h1>שומרת חנייה</h1>
+    <p class="sub">יוסי מסתובב עשרים דקות ומוצא חנייה. רינה כבר עומדת בה, ושומרת אותה לבעלה. 30 שניות עם קול.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="רחוב בתל אביב: אישה עומדת בתוך מקום חנייה פנוי, ונהג במכונית מתווכח איתה">
+      <g id="cam" stroke-linejoin="round">
+        <!-- sky and buildings -->
+        <rect id="sky" width="360" height="400" fill="#8fd3f5"/>
+        <circle id="sun" cx="300" cy="60" r="26" fill="#ffe27a"/>
+        <g stroke="#1d1a16" stroke-width="3">
+          <rect x="-10" y="120" width="140" height="280" fill="#f4efe4"/>
+          <rect x="130" y="70" width="120" height="330" fill="#efe2c8"/>
+          <rect x="250" y="140" width="120" height="260" fill="#f7f1e6"/>
+        </g>
+        <g id="wins" stroke="#1d1a16" stroke-width="2.5"></g>
+        <g stroke="#1d1a16" stroke-width="2.5" fill="#ffffff">
+          <rect x="4" y="214" width="112" height="10"/><rect x="4" y="300" width="112" height="10"/>
+          <rect x="140" y="170" width="100" height="10"/><rect x="140" y="260" width="100" height="10"/>
+          <rect x="262" y="236" width="96" height="10"/><rect x="262" y="320" width="96" height="10"/>
+        </g>
+        <g fill="#d8dde2" stroke="#1d1a16" stroke-width="2"><rect x="92" y="186" width="22" height="16" rx="2"/><rect x="216" y="226" width="22" height="16" rx="2"/><rect x="330" y="290" width="22" height="16" rx="2"/></g>
+        <path d="M30,214 Q36,196 50,204 Q58,188 70,204 Q84,196 88,214Z" fill="#5cb956" stroke="#1d1a16" stroke-width="2.5"/>
+        <rect id="night" width="360" height="400" fill="#16204a" opacity="0"/>
+        <!-- sidewalk, curb (blue and white: parking allowed), street -->
+        <rect y="398" width="360" height="40" fill="#cfc8bb"/>
+        <path d="M0,398H360" stroke="#1d1a16" stroke-width="3"/>
+        <g stroke="#b9b2a4" stroke-width="2"><path d="M40,398V438M110,398V438M180,398V438M250,398V438M320,398V438"/></g>
+        <rect y="436" width="360" height="10" fill="#fff" stroke="#1d1a16" stroke-width="2.5"/>
+        <g fill="#2f6fd6"><rect x="0" y="437" width="24" height="8"/><rect x="48" y="437" width="24" height="8"/><rect x="96" y="437" width="24" height="8"/><rect x="144" y="437" width="24" height="8"/><rect x="192" y="437" width="24" height="8"/><rect x="240" y="437" width="24" height="8"/><rect x="288" y="437" width="24" height="8"/><rect x="336" y="437" width="24" height="8"/></g>
+        <rect y="446" width="360" height="194" fill="#5d6470"/>
+        <g fill="#f2f2f2"><rect x="10" y="626" width="40" height="5"/><rect x="90" y="626" width="40" height="5"/><rect x="170" y="626" width="40" height="5"/><rect x="250" y="626" width="40" height="5"/><rect x="330" y="626" width="40" height="5"/></g>
+        <!-- parking sign -->
+        <g stroke="#1d1a16" stroke-width="2.5"><path d="M330,420V330" stroke-width="4"/><rect x="306" y="300" width="48" height="40" rx="5" fill="#2f6fd6"/></g>
+        <text x="330" y="330" text-anchor="middle" font-family="Secular One, sans-serif" font-size="26" fill="#fff">P</text>
+        <!-- parked cars, the gap between them is the spot -->
+        <g id="parked"></g>
+        <g id="people"></g>
+        <!-- Yossi's car -->
+        <g id="ycar">
+          <path d="M-92,600 L-92,574 Q-90,556 -68,552 L-44,548 L-28,514 Q-24,506 -12,506 L52,506 Q62,506 68,516 L84,548 Q96,552 96,574 L96,600 Z M-22,546 L-10,518 L18,518 L18,546 Z M26,546 L26,518 L56,518 L68,546 Z" fill="#e2483d" fill-rule="evenodd" stroke="#1d1a16" stroke-width="3"/>
+          <g fill="#cdeaff" opacity=".28"><path d="M-22,546 L-10,518 L18,518 L18,546 Z"/><path d="M26,546 L26,518 L56,518 L68,546 Z"/></g>
+          <path d="M-60,566H84" stroke="#b8352c" stroke-width="3"/>
+          <rect x="-90" y="560" width="10" height="8" rx="2" fill="#fff6c2" stroke="#1d1a16" stroke-width="2"/>
+          <rect id="blink" x="-92" y="572" width="8" height="7" rx="2" fill="#ffa21f" stroke="#1d1a16" stroke-width="2" opacity="0"/>
+          <rect x="88" y="560" width="8" height="10" rx="2" fill="#ff5a4e" stroke="#1d1a16" stroke-width="2"/>
+          <g id="wheels"><g transform="translate(-56 600)"><circle r="17" fill="#22252b" stroke="#1d1a16" stroke-width="3"/><circle r="7" fill="#c9ccd2"/><path d="M-7,0H7" stroke="#22252b" stroke-width="3"/></g>
+          <g transform="translate(62 600)"><circle r="17" fill="#22252b" stroke="#1d1a16" stroke-width="3"/><circle r="7" fill="#c9ccd2"/><path d="M-7,0H7" stroke="#22252b" stroke-width="3"/></g></g>
+        </g>
+        <g id="honker"></g>
+        <g id="honks" font-family="Secular One, sans-serif" font-size="22" fill="#ffd23f" stroke="#1d1a16" stroke-width="5" paint-order="stroke" text-anchor="middle"><text>טוּט!</text><text>טוּוּוּט!</text></g>
+        <!-- the phone call bubble -->
+        <g id="call" opacity="0" transform="translate(120 40)">
+          <path d="M36,118 h150 a14,14 0 0 1 14,14 v40 a14,14 0 0 1 -14,14 h-108 l-26,22 l6,-22 h-22 a14,14 0 0 1 -14,-14 v-40 a14,14 0 0 1 14,-14Z" fill="#fff" stroke="#1d1a16" stroke-width="3"/>
+          <text x="111" y="150" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="15" fill="#1d1a16">שמוליק</text>
+          <text x="111" y="172" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="500" font-size="12" fill="#6b6458">אילת → תל אביב: 4:12 שע׳</text>
+        </g>
+      </g>
+    </svg>
+
+    <div class="ov cap" id="cap">ארבע שעות אחר כך...</div>
+    <div class="ov end" id="end"><div class="fin">הסוף</div><small>שמוליק עוד בדרך. החנייה עדיין שמורה. פעמיים.</small></div>
+    <div class="ov title" id="title">
+      <small>סרט קצר</small>
+      <h2>שומרת חנייה</h2>
+      <p>עשרים דקות של סיבובים. חנייה אחת. בעל אחד באילת.</p>
+    </div>
+    <div class="ov bigplay" id="bigplay"></div>
+  </div>
+
+  <div class="ctl">
+    <button id="pp" type="button" aria-label="הפעל"></button>
+    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
+    <span id="time">0:00</span>
+    <button id="mute" type="button" aria-label="השתק"></button>
+  </div>
+  <p id="status" aria-live="polite">טוען את הקולות...</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const eo=u=>1-Math.pow(1-u,3);
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const win=(t,a,b,f)=>seg(t,a,a+(f||.25))*(1-seg(t,b-(f||.25),b)); // 0→1→0 over [a,b]
+const A=(el,k,v)=>el.setAttribute(k,v);
+const DUR=30, YOS=0, RIN=1, SHM=2;
+// people are drawn in their own coordinates (feet on y=568) and scaled into the street
+const PS=.7, PY=114, SX=x=>x/PS;
+
+/* ---------- cast: every person is one template (legs, torso, arms, head) ---------- */
+const CH=[
+ {id:'y',r:25,skin:'#f0c09a',brow:'#3a2618',bw:3.2,my:15,shirt:'#2e9e8f',pants:'#c9b48a',shoe:'#3a2a1e',
+  back:'',
+  front:'<path d="M-25,2 C-27,-14 -22,-18 -18,-14 L-18,0Z M25,2 C27,-14 22,-18 18,-14 L18,0Z" fill="#3a2618"/><path d="M-12,9 Q0,4 12,9 Q6,13 0,11 Q-6,13 -12,9Z" fill="#3a2618"/>',over:''},
+ {id:'r',r:24,skin:'#e8b48f',brow:'#141414',bw:3,my:14,shirt:'#e94f6f',pants:'#e8b48f',shoe:'#1d1a16',skirt:1,
+  back:'<g fill="#141414" stroke="#1d1a16" stroke-width="2.5"><circle cx="-24" cy="-10" r="14"/><circle cx="24" cy="-10" r="14"/><circle cx="-12" cy="-28" r="14"/><circle cx="12" cy="-28" r="14"/><circle cx="-28" cy="10" r="11"/><circle cx="28" cy="10" r="11"/></g>',
+  front:'<path d="M-24,-4 C-22,-28 22,-28 24,-4 C12,-18 -12,-18 -24,-4Z" fill="#141414"/><g fill="#ff9aa2" opacity=".5"><circle cx="-14" cy="8" r="5"/><circle cx="14" cy="8" r="5"/></g>',
+  over:'<g fill="none" stroke="#ffd23f" stroke-width="2.5"><circle cx="-25" cy="12" r="5"/><circle cx="25" cy="12" r="5"/></g><g><rect x="-21" y="-25" width="18" height="9" rx="4" fill="#ff6fa0" stroke="#1d1a16" stroke-width="2"/><rect x="3" y="-25" width="18" height="9" rx="4" fill="#ff6fa0" stroke="#1d1a16" stroke-width="2"/></g>'},
+ null // Shmulik is only a voice on the phone
+];
+const OL='stroke="#1d1a16" stroke-width="3"';
+(function build(){
+  let h='';
+  [YOS,RIN].forEach(i=>{const c=CH[i];
+    h+=`<g id="${c.id}P">
+      <path id="${c.id}lg" fill="${c.pants}" ${OL}/><path id="${c.id}sh" fill="${c.shoe}" ${OL}/>
+      <path id="${c.id}ts" fill="${c.shirt}" ${OL}/>
+      <g id="${c.id}pr"></g>
+      <path id="${c.id}ar" fill="none" stroke="#1d1a16" stroke-width="15" stroke-linecap="round"/><path id="${c.id}ai" fill="none" stroke="${c.skirt?c.skin:c.shirt}" stroke-width="9" stroke-linecap="round"/>
+      <circle id="${c.id}hL" r="7" fill="${c.skin}" ${OL}/><circle id="${c.id}hR" r="7" fill="${c.skin}" ${OL}/>
+      <g id="${c.id}H">${c.back}<circle r="${c.r}" fill="${c.skin}" ${OL}/>${c.front}
+        <ellipse id="${c.id}eL" cx="-9" cy="-1" rx="5.5" ry="6.5" fill="#fff" stroke="#1d1a16" stroke-width="1.6"/><ellipse id="${c.id}eR" cx="9" cy="-1" rx="5.5" ry="6.5" fill="#fff" stroke="#1d1a16" stroke-width="1.6"/>
+        <circle id="${c.id}pL" cx="-9" cy="-1" r="2.8" fill="#1b1410"/><circle id="${c.id}pR" cx="9" cy="-1" r="2.8" fill="#1b1410"/>
+        <path id="${c.id}bL" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/><path id="${c.id}bR" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/>
+        <ellipse id="${c.id}mo" cx="0" cy="${c.my}" rx="6" ry="2" fill="#5a1020"/><path id="${c.id}sm" stroke="#5a1020" stroke-width="2.4" stroke-linecap="round" fill="none"/>${c.over}</g>
+    </g>`;});
+  $('people').innerHTML=h;
+  A($('people'),'transform',`translate(0 ${PY}) scale(${PS})`);
+  $('rpr').innerHTML='<rect x="-7" y="-12" width="14" height="24" rx="3" fill="#222" stroke="#1d1a16" stroke-width="2"/>';
+  // windows on the buildings
+  let w='';
+  [[14,140],[62,140],[14,234],[62,234],[14,320],[62,320],[146,96],[196,96],[146,190],[196,190],[146,280],[196,280],[266,166],[314,166],[266,256],[314,256]].forEach(([x,y])=>w+=`<rect x="${x}" y="${y}" width="34" height="56" fill="#9fd3ec"/>`);
+  $('wins').innerHTML=w;
+  // parked cars on both sides of the spot, and the car that honks at the end
+  const car=(fill)=>`<path d="M-80,52 L-80,28 Q-78,12 -58,8 L-38,4 L-24,-26 Q-20,-34 -10,-34 L44,-34 Q54,-34 60,-24 L72,4 Q84,8 84,28 L84,52Z" fill="${fill}" stroke="#1d1a16" stroke-width="3"/>
+    <path d="M-18,2 L-8,-24 L18,-24 L18,2Z M24,2 L24,-24 L50,-24 L60,2Z" fill="#9fd3ec" stroke="#1d1a16" stroke-width="2.5"/>
+    <circle cx="-48" cy="52" r="15" fill="#22252b" stroke="#1d1a16" stroke-width="3"/><circle cx="54" cy="52" r="15" fill="#22252b" stroke="#1d1a16" stroke-width="3"/>`;
+  $('parked').innerHTML=`<g transform="translate(14 456)">${car('#3d7be0')}</g><g transform="translate(332 456)">${car('#ffc93c')}</g>`;
+  $('honker').innerHTML=`<g transform="translate(0 548) scale(-1 1)">${car('#7d5ad6')}</g>`;
+})();
+
+/* ---------- script: who says what, when (s = start, d = speech length) ---------- */
+const LINES=[
+ {c:YOS,f:'01',s:.4,   d:3.56}, // twenty minutes I'm driving around... yes! a spot!
+ {c:RIN,f:'02',s:4.1,  d:2.09}, // taken! I'm saving it for my husband!
+ {c:YOS,f:'03',s:6.5,  d:2.70}, // lady, you can't save a spot with your body!
+ {c:RIN,f:'04',s:9.5,  d:2.28}, // of course you can. he's on his way.
+ {c:RIN,f:'05',s:12.1, d:1.73}, // Shmulik, where are you?
+ {c:SHM,f:'06',s:14.0, d:1.35,radio:1}, // I just left Eilat!
+ {c:YOS,f:'07',s:15.5, d:1.03}, // from Eilat?!
+ {c:RIN,f:'08',s:16.8, d:1.11}, // he drives fast.
+ {c:YOS,f:'09',s:19.9, d:3.19}, // no problem. I'm saving too. for my wife.
+ {c:RIN,f:'10',s:23.3, d:1.15}, // and where is she?
+ {c:YOS,f:'11',s:24.8, d:1.28}  // haven't met her yet.
+];
+const ENV_FPS=60;
+function envOf(buf){ // loudness per 1/60 s (33 ms window), scaled so speech peaks open the mouth fully
+  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
+  let pk=1e-6;
+  for(let i=0;i<n;i++){
+    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
+    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
+    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
+  }
+  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
+  return e;
+}
+function mouthOf(c,t){
+  let m=0;
+  for(const l of LINES){
+    if(l.c!==c||t<l.s||t>=l.s+l.d) continue;
+    m=Math.max(m,l.env?(l.env[Math.floor((t-l.s)*ENV_FPS)]||0):.5+.5*Math.sin(t*28)); // without audio, flap
+  }
+  return m;
+}
+
+/* ---------- faces over time ---------- */
+const MOODS={
+ [YOS]:[[0,{es:.7,bu:-1,ba:2,sm:-3,o:0}],[2.8,{es:1.35,bu:6,ba:-2,sm:8,o:0}],[4.1,{es:1.4,bu:6,ba:-3,sm:-2,o:.3}],
+        [6.5,{es:1.05,bu:-2,ba:5,sm:-5,o:0}],[15.5,{es:1.55,bu:8,ba:-2,sm:0,o:.5}],[16.8,{es:1,bu:2,ba:3,sm:-4,o:0}],
+        [18.2,{es:.75,bu:3,ba:1,sm:6,o:0}],[23.3,{es:.8,bu:2,ba:0,sm:8,o:0}],[26.2,{es:.7,bu:1,ba:1,sm:5,o:0}]],
+ [RIN]:[[0,{es:1,bu:1,ba:0,sm:3,o:0}],[4.1,{es:1.1,bu:-1,ba:4,sm:2,o:0}],[9.5,{es:.75,bu:3,ba:-1,sm:6,o:0}],
+        [12.1,{es:.9,bu:3,ba:-1,sm:9,o:0}],[16.8,{es:.7,bu:4,ba:-2,sm:5,o:0}],[19.9,{es:1.2,bu:5,ba:-1,sm:0,o:0}],
+        [23.3,{es:.75,bu:-1,ba:4,sm:-3,o:0}],[25.2,{es:1.45,bu:8,ba:-2,sm:0,o:.4}],[26.2,{es:.8,bu:0,ba:3,sm:-4,o:0}]]
+};
+const MK=['es','bu','ba','sm','o'];
+function moodOf(i,t){
+  const M=MOODS[i];let k=0;for(let j=0;j<M.length;j++) if(t>=M[j][0]) k=j;
+  const cur=M[k][1],prev=M[Math.max(0,k-1)][1],u=eio(seg(t,M[k][0],M[k][0]+.3));
+  const r={};MK.forEach(q=>r[q]=lerp(prev[q],cur[q],u));return r;
+}
+const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.5)-3.4)/.07));
+
+/* ---------- blocking ---------- */
+function keys(t,pts){ // [[t,v],...] eased between keys
+  if(t<=pts[0][0]) return pts[0][1];
+  for(let k=1;k<pts.length;k++) if(t<pts[k][0]) return lerp(pts[k-1][1],pts[k][1],eio(seg(t,pts[k-1][0],pts[k][0])));
+  return pts[pts.length-1][1];
+}
+// Yossi's car drives in from the right, brakes at the spot, and stays there
+const carX=t=>t<2.9?lerp(470,250,eo(seg(t,0,2.9))):keys(t,[[2.9,250],[3.7,146]]);
+const SEATED_HY=353, CAR_HY=(534-PY)/PS; // head height when seated vs. at the driver's window
+function stateOf(i,t){
+  if(i===YOS){
+    const out=seg(t,18.4,19.4);
+    const x=lerp(SX(carX(t)-2),SX(118),eio(out));
+    const stand=eo(out);
+    const dy=lerp(CAR_HY-SEATED_HY,0,eio(out))-Math.sin(out*Math.PI)*40;
+    let pose='wheel';
+    if(t>=6.5&&t<9.3) pose='point'; else if(t>=18.4&&t<19.7) pose='side'; else if(t>=19.7) pose=t>=24.8&&t<26.2?'shrug':'cross';
+    return {x,stand,dy,pose,inCar:out<1};
+  }
+  // Rina hops off the sidewalk into the spot
+  const hop=seg(t,3.75,4.15);
+  const x=lerp(SX(240),SX(178),eio(hop));
+  const dy=lerp((432-512)/PS,0,eio(hop))-Math.sin(hop*Math.PI)*50;
+  let pose='side';
+  if(t>=3.75&&t<12.0) pose='spread'; else if(t>=12.0&&t<16.7) pose='phone'; else if(t>=16.7&&t<18.1) pose='shrug'; else if(t>=18.1) pose='cross';
+  return {x,stand:1,dy,pose};
+}
+function lookAt(i,t){
+  const yh=()=>{const s=stateOf(YOS,t);return [s.x,SEATED_HY+lerp(0,-36,s.stand)+s.dy];};
+  const rh=()=>{const s=stateOf(RIN,t);return [s.x,310+s.dy];};
+  if(i===YOS){
+    if(t<2.8) return [SX(-40),300];
+    if(t<3.7) return [SX(170),380];
+    if(t>=12.1&&t<16.7) return [rh()[0],250];
+    return rh();
+  }
+  if(t<3.6) return [SX(360),560];
+  if(t>=12.1&&t<15.4) return [SX(110),SX(150)];
+  if(t>=18.1&&t<19.9) return null;
+  return yh();
+}
+
+/* ---------- elements ---------- */
+const E={};
+['cam','sky','sun','night','ycar','blink','wheels','honker','honks','call','cap','end','title','bigplay','seek','time','pp','mute','stage','status'].forEach(k=>E[k]=$(k));
+const P={};
+[YOS,RIN].forEach(i=>{const c=CH[i],o={};
+  ['P','lg','sh','ts','pr','ar','ai','hL','hR','H','eL','eR','pL','pR','bL','bR','mo','sm'].forEach(k=>o[k]=$(c.id+k));P[i]=o;});
+const HONK=[...E.honks.children];
+
+function drawPerson(i,t){
+  const c=CH[i],p=P[i],s=stateOf(i,t);
+  A(p.P,'transform',`translate(0 ${s.dy||0})`);
+  // behind the wheel only the head shows; the legs appear once the feet clear the car
+  A(p.ts,'opacity',s.inCar&&s.stand<.01?0:1);
+  [p.lg,p.sh].forEach(e=>A(e,'opacity',(s.dy||0)>140?0:1));
+  const x=s.x, hip=lerp(472,452,s.stand), sh=hip-88;
+  const hy=sh-c.r-6;
+  const lt=lerp(486,hip,s.stand), fy=568;
+  const L=dx=>`M${x+dx-9},${lt}H${x+dx+9}V${fy}H${x+dx-9}Z`;
+  A(p.lg,'d',L(-12)+L(12));
+  const F=dx=>`M${x+dx-12},${fy+6}Q${x+dx-12},${fy-6} ${x+dx+2},${fy-6}Q${x+dx+14},${fy-6} ${x+dx+14},${fy+6}Z`;
+  A(p.sh,'d',F(-14)+F(12));
+  const w=c.skirt?30:28, wb=c.skirt?44:28;
+  A(p.ts,'d',`M${x-w},${sh+10}Q${x-w},${sh} ${x-w+12},${sh}H${x+w-12}Q${x+w},${sh} ${x+w},${sh+10}L${x+wb},${hip+(c.skirt?30:8)}H${x-wb}Z`);
+  const sL=[x-w+6,sh+10],sR=[x+w-6,sh+10];
+  let hL=[x-24,hip-4],hR=[x+24,hip-4],eL=null,eR=null,prop=null;
+  const wob=Math.sin(t*12);
+  switch(s.pose){
+    case 'wheel': hL=[x-30,sh+16];hR=[x+30,sh+16];break;
+    case 'point': hL=[x-30,sh+16];hR=[x+64,sh-30+wob*4];eR=[x+44,sh+4];break;
+    case 'spread': hL=[x-74,sh-18+wob*6];hR=[x+74,sh-18-wob*6];eL=[x-48,sh];eR=[x+48,sh];break;
+    case 'phone': hR=[x+22,hy+6];eR=[x+42,sh+10];prop=[hR[0]+2,hR[1]-4];hL=[x-24,hip-6];break;
+    case 'shrug': hL=[x-46,sh-12];hR=[x+46,sh-12];eL=[x-42,sh+20];eR=[x+42,sh+20];break;
+    case 'cross': hL=[x+14,sh+34];hR=[x-14,sh+30];eL=[x-38,sh+38];eR=[x+38,sh+38];break;
+  }
+  const arm=(s0,e,h)=>e?`M${s0[0]},${s0[1]}L${e[0]},${e[1]}L${h[0]},${h[1]}`:`M${s0[0]},${s0[1]}Q${(s0[0]+h[0])/2+(h[0]<x?-10:10)},${(s0[1]+h[1])/2} ${h[0]},${h[1]}`;
+  const d=arm(sL,eL,hL)+arm(sR,eR,hR);
+  A(p.ar,'d',d);A(p.ai,'d',d);
+  A(p.hL,'cx',hL[0]);A(p.hL,'cy',hL[1]);A(p.hR,'cx',hR[0]);A(p.hR,'cy',hR[1]);
+  if(prop){A(p.pr,'transform',`translate(${prop[0]} ${prop[1]})`);A(p.pr,'opacity',1);} else A(p.pr,'opacity',0);
+  const m=moodOf(i,t),talk=mouthOf(i,t);
+  let rot=Math.sin(t*1.5+i)*2;
+  if(s.pose==='shrug') rot+=i===RIN?-8:8;
+  if(talk>.2) rot+=Math.sin(t*9)*2.5;
+  if(i===YOS&&t>=6.5&&t<9.3) rot-=6;                           // leaning out of the window
+  A(p.H,'transform',`translate(${x} ${hy-talk*2}) rotate(${rot})`);
+  const look=lookAt(i,t);let lx=0,ly=0;
+  if(look){const dx=look[0]-x,dy=look[1]-(hy+(s.dy||0)),dd=Math.hypot(dx,dy)||1;lx=dx/dd;ly=dy/dd;}
+  const ery=Math.max(.6,6.5*m.es*(1-.92*blinkOf(t,i*1.3)));
+  A(p.eL,'ry',ery);A(p.eR,'ry',ery);
+  const pr=m.es>1.35?2.1:2.8;
+  [[p.pL,-9],[p.pR,9]].forEach(([e,cx])=>{A(e,'cx',cx+lx*2.3);A(e,'cy',-1+ly*2);A(e,'r',pr);});
+  const by=-11-m.bu;
+  A(p.bL,'d',`M-15,${by} L-4,${by+m.ba}`);A(p.bR,'d',`M4,${by+m.ba} L15,${by}`);
+  const o=Math.max(talk,m.o);
+  if(o>.12){A(p.mo,'opacity',1);A(p.mo,'rx',4.5+3*o);A(p.mo,'ry',1.4+6*o);A(p.sm,'opacity',0);}
+  else{A(p.mo,'opacity',0);A(p.sm,'opacity',1);A(p.sm,'d',`M-7,${c.my} Q0,${c.my+m.sm*1.2} 7,${c.my}`);}
+}
+
+/* ---------- render: everything is a pure function of t ---------- */
+const TL0=26.3, TL1=28.3; // the time skip at the end
+function render(t){
+  // our car: rolls in, brakes hard when he spots it, indicator on
+  const cx=carX(t);
+  const braking=t>=2.85&&t<3.25?Math.sin(seg(t,2.85,3.25)*Math.PI)*4:0;
+  A(E.ycar,'transform',`translate(${cx} 0) rotate(${braking} 0 600)`);
+  [...E.wheels.children].forEach(w=>{const b=w.getAttribute('transform').split(')')[0]+')';A(w,'transform',b+` rotate(${-(470-cx)*2.2})`);});
+  A(E.blink,'opacity',t>=3.0&&t<18.4&&Math.floor(t*2.5)%2?1:0);
+  // the car behind loses patience
+  const hx=keys(t,[[17.0,460],[17.6,334]]);
+  A(E.honker,'transform',`translate(${hx} 0)`);
+  const HT=[[17.7,18.5,0],[18.9,19.7,1],[22.9,23.3,0],[26.3,26.9,1],[27.3,27.9,0]];
+  HONK.forEach((h,k)=>{let o=0;HT.forEach(([a,b,j])=>{if(j===k) o=Math.max(o,win(t,a,b,.08));});
+    A(h,'opacity',o);A(h,'x',k?286:316);A(h,'y',(k?470:494)-o*6);});
+  // the phone call
+  A(E.call,'opacity',win(t,13.9,15.5,.15));
+  // sky: day, then the sun goes down during the time skip
+  const tl=seg(t,TL0,TL1);
+  A(E.sun,'cy',60+tl*240);A(E.sun,'fill',tl>.4?'#ff9a3c':'#ffe27a');
+  A(E.sky,'fill',tl<.35?'#8fd3f5':tl<.7?'#f2a05e':'#2a2f63');
+  A(E.night,'opacity',tl*.45);
+
+  drawPerson(RIN,t);drawPerson(YOS,t);
+
+  E.cap.style.opacity=win(t,TL0+.1,TL1+.1,.25);
+  E.end.style.opacity=eo(seg(t,28.6,29.0));
+  E.title.style.opacity=(t<.05&&!playing)?1:0;
+  E.seek.value=t;
+  E.time.textContent='0:'+String(Math.floor(t)).padStart(2,'0');
+}
+
+/* ---------- audio: Web Audio for voices and the synthesized effects ---------- */
+let AC=null,master=null,noiseBuf=null,muted=false,loaded=0,failed=0;
+const live=new Set();
+function ctx(){
+  if(AC) return AC;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
+  try{AC=new C();}catch(e){return null;}
+  master=AC.createGain();master.connect(AC.destination);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  return AC;
+}
+function ac(){ // from a tap: wake the context, and on iPhone play even with the silent switch on
+  try{if(navigator.audioSession) navigator.audioSession.type='playback';}catch(e){}
+  if(!ctx()) return null;
+  if(AC.state==='suspended') AC.resume();
+  const s=AC.createBufferSource();s.buffer=AC.createBuffer(1,1,22050);s.connect(AC.destination);s.start(0);
+  return AC;
+}
+function track(s){live.add(s);s.onended=()=>live.delete(s);return s;}
+function stopAll(){live.forEach(s=>{try{s.stop();}catch(e){}});live.clear();}
+function playBuf(buf,off,radio){
+  const s=AC.createBufferSource();s.buffer=buf;
+  let out=s;
+  if(radio){ // Shmulik comes through a phone speaker
+    const hp=AC.createBiquadFilter(),lp=AC.createBiquadFilter();
+    hp.type='highpass';hp.frequency.value=500;lp.type='lowpass';lp.frequency.value=3000;
+    s.connect(hp);hp.connect(lp);out=lp;
+  }
+  out.connect(master);s.start(0,off||0);track(s);
+}
+function tone(f0,f1,dur,type,vol,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function noise(dur,vol,freq,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
+  s.buffer=noiseBuf;f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random()*.5);s.stop(t0+dur+.02);track(s);
+}
+const honk=(len,d)=>{tone(392,392,len,'square',.05,d);tone(466,466,len,'square',.04,d);};
+const SFX=[
+  [.05,()=>tone(70,60,2.8,'sawtooth',.05)],                                      // engine
+  [2.85,()=>{noise(.5,.3,2600);tone(1800,1300,.45,'square',.02);}],              // brakes
+  ...Array.from({length:14},(_,k)=>[3.0+k*.8,()=>tone(1500,1500,.03,'square',.03)]), // indicator ticks
+  [3.75,()=>tone(300,700,.25,'triangle',.1)],                                     // boing: she jumps in
+  [12.0,()=>{tone(1320,1320,.08,'sine',.05);tone(1320,1320,.08,'sine',.05,.12);}], // dialing
+  [17.7,()=>honk(.7)],[18.9,()=>honk(.25)],[19.25,()=>honk(.45)],
+  [18.4,()=>{noise(.15,.15,700);}],                                                // car door
+  [19.4,()=>{tone(140,70,.15,'sine',.2);noise(.08,.2,300);}],                      // door slams
+  [22.9,()=>honk(.35)],
+  [TL0,()=>{noise(.6,.12,1600);tone(300,1100,.6,'sine',.04);}],                    // whoosh into the time skip
+  [26.3,()=>honk(.5)],[27.3,()=>honk(.6)],
+  [28.6,()=>{tone(523,523,.12,'square',.05);tone(659,659,.12,'square',.05,.12);tone(784,784,.3,'square',.05,.24);}] // sting
+];
+const EV=SFX.concat(LINES.map(l=>[l.s,()=>{if(l.buf) playBuf(l.buf,0,l.radio);}]));
+
+async function loadVoices(){
+  const c=ctx();
+  if(!c){failed=LINES.length;return updateStatus();}
+  await Promise.all(LINES.map(async l=>{
+    try{
+      const r=await fetch('audio/'+l.f+'.mp3');if(!r.ok) throw new Error(r.status);
+      const ab=await r.arrayBuffer();
+      l.buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      l.env=envOf(l.buf);loaded++;
+    }catch(e){failed++;}
+    updateStatus();
+  }));
+  if(playing) resumeVoices();
+}
+function updateStatus(){
+  const n=LINES.length;
+  if(loaded+failed<n) E.status.textContent='טוען את הקולות... '+loaded+' מתוך '+n;
+  else if(!failed) E.status.textContent='הקולות מוכנים. הפעילו סאונד ולחצו על הסרטון.';
+  else E.status.textContent='לא הצלחנו לטעון '+failed+' מתוך '+n+' קולות. בדקו את החיבור לאינטרנט ורעננו את הדף.';
+}
+function resumeVoices(){ // pick up any line already under way (after resume or seek)
+  if(!AC) return;
+  for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.radio);
+}
+
+/* ---------- #preview: loop a highlight silently (no audio events fire) ---------- */
+function startPreview(a,b){
+  if(!document.documentElement.classList.contains('preview')) return;
+  E.stage.style.pointerEvents='none';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){render(lerp(a,b,.5));return;}
+  const t0=performance.now();
+  (function pv(now){T=a+((now-t0)/1000)%(b-a);render(T);requestAnimationFrame(pv);})(t0);
+}
+
+/* ---------- player ---------- */
+let T=0,playing=false,last=0,raf=0;
+const ICON={
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
+  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
+  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
+};
+function ui(){
+  const ended=T>=DUR;
+  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
+  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
+  E.bigplay.style.opacity=playing?0:1;
+  E.bigplay.innerHTML=(ended?ICON.replay:ICON.play).replace('<svg','<svg style="fill:#1d1a16"');
+  E.mute.innerHTML=muted?ICON.off:ICON.on;
+  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+}
+function frame(now){
+  if(!playing) return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const prev=T;T=Math.min(DUR,T+dt);
+  if(AC) for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
+  render(T);
+  if(T>=DUR){playing=false;ui();return;}
+  raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(T>=DUR) T=0;
+  ac();playing=true;last=performance.now();ui();
+  resumeVoices();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
+}
+function pause(){playing=false;cancelAnimationFrame(raf);stopAll();ui();}
+function toggle(){playing?pause():play();}
+E.stage.addEventListener('click',toggle);
+E.pp.addEventListener('click',toggle);
+E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=muted?0:1;ui();});
+E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
+E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
+
+ui();render(0);updateStatus();loadVoices();
+startPreview(3.4,18.0);
+})();
+</script>
+
+</body>
+</html>
