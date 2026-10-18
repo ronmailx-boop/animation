@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>רק שאלה</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview .ctl,html.preview #status,html.preview .title,html.preview .bigplay{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
+/* layout: phone-shaped stage (a clinic waiting room, flat cartoon with thick outlines), slim controls underneath */
+:root{
+  --bg:#eef3f1; --fg:#17201d; --muted:#5d6b66; --accent:#e2483d; --panel:#ffffff; --line:#d3ddd9;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#111614; --fg:#e9f0ed; --muted:#9fb0a9; --accent:#ff6f5e; --panel:#1c2421; --line:#2f3a36; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#111614; --fg:#e9f0ed; --muted:#9fb0a9; --accent:#ff6f5e; --panel:#1c2421; --line:#2f3a36; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 210px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#cfe8de; container-type:inline-size;
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.title{inset:0;background:#17201d;color:#7fe0b4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
+.title small{font:800 4.4cqw var(--font-body);color:#ffb0a6}
+.title h2{font:400 20cqw/1 var(--font-display);margin:0}
+.title p{margin:0;font:500 5cqw var(--font-body);color:#e9f0ed}
+.cap{left:0;right:0;top:40%;text-align:center;font:400 9cqw/1.1 var(--font-display);color:#fff;text-shadow:0 .8cqw 0 #17201d,0 0 3cqw rgba(0,0,0,.6);opacity:0}
+.end{left:10cqw;right:10cqw;bottom:8cqw;background:rgba(23,32,29,.95);color:#e9f0ed;border-radius:4cqw;padding:3.4cqw;text-align:center;opacity:0}
+.end .fin{font:400 14cqw/1 var(--font-display);color:#7fe0b4}
+.end small{display:block;margin-top:1.2cqw;font:500 3.6cqw/1.4 var(--font-body);color:#d8efe5}
+.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
+.bigplay svg{position:static;width:10cqw;height:10cqw}
+
+.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
+.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ctl svg{width:20px;height:20px;fill:currentColor}
+.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
+#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="he">
+  <div class="head">
+    <h1>רק שאלה</h1>
+    <p class="sub">חדר המתנה בקופת חולים. מוטי הבא בתור, אבל לכולם יש רק שאלה. 30 שניות עם קול.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="חדר המתנה בקופת חולים: מוטי יושב עם מספר ביד, ואנשים נכנסים לפניו לרופא">
+      <g id="cam" stroke-linejoin="round">
+        <!-- wall, floor, ceiling light -->
+        <rect width="360" height="530" fill="#cfe8de"/>
+        <rect y="300" width="360" height="230" fill="#b9dccd"/>
+        <path d="M0,300H360" stroke="#8fbfab" stroke-width="4"/>
+        <rect y="526" width="360" height="114" fill="#e6e1d6"/>
+        <g stroke="#cfc8b8" stroke-width="2"><path d="M0,560H360M0,600H360M60,526V640M140,526V640M220,526V640M300,526V640"/></g>
+        <path d="M0,526H360" stroke="#17201d" stroke-width="3"/>
+        <rect x="120" y="0" width="120" height="16" rx="3" fill="#fffbe6" stroke="#17201d" stroke-width="3"/>
+        <!-- window: the sky runs day-night-day during the time skip -->
+        <rect x="16" y="168" width="92" height="104" rx="6" fill="#ffffff" stroke="#17201d" stroke-width="3"/>
+        <rect id="sky" x="22" y="174" width="80" height="92" fill="#8fd3f5"/>
+        <circle id="sun" cx="62" cy="200" r="11" fill="#ffe27a"/>
+        <path d="M62,174V266M22,220H102" stroke="#ffffff" stroke-width="5"/>
+        <rect x="16" y="168" width="92" height="104" rx="6" fill="none" stroke="#17201d" stroke-width="3"/>
+        <!-- clock -->
+        <circle cx="62" cy="104" r="28" fill="#fff" stroke="#17201d" stroke-width="3.5"/>
+        <g stroke="#17201d" stroke-width="2.4" stroke-linecap="round"><path d="M62,80V84M62,124V128M38,104H42M82,104H86"/></g>
+        <path id="hrH" d="M62,104V90" stroke="#17201d" stroke-width="4" stroke-linecap="round"/>
+        <path id="mnH" d="M62,104V82" stroke="#e2483d" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="62" cy="104" r="3" fill="#17201d"/>
+        <!-- now-serving display + intercom -->
+        <rect x="122" y="54" width="116" height="78" rx="10" fill="#17201d" stroke="#0b0f0e" stroke-width="3"/>
+        <text x="180" y="74" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="12" fill="#7fe0b4">התור הנוכחי</text>
+        <text id="num" x="180" y="122" text-anchor="middle" font-family="Secular One, sans-serif" font-size="46" fill="#ff4b3e" direction="ltr">45</text>
+        <circle cx="300" cy="96" r="20" fill="#e9ece9" stroke="#17201d" stroke-width="3"/>
+        <g fill="#17201d"><circle cx="294" cy="90" r="2"/><circle cx="306" cy="90" r="2"/><circle cx="300" cy="96" r="2"/><circle cx="294" cy="102" r="2"/><circle cx="306" cy="102" r="2"/></g>
+        <g id="waves" fill="none" stroke="#ff4b3e" stroke-width="3" stroke-linecap="round" opacity="0"><path d="M326,84 Q334,96 326,108"/><path d="M334,76 Q346,96 334,116"/></g>
+        <!-- poster: the joke is the waiting time -->
+        <rect x="132" y="168" width="96" height="104" rx="4" fill="#fff8e1" stroke="#17201d" stroke-width="3"/>
+        <text x="180" y="196" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="12" fill="#17201d">זמן המתנה</text>
+        <text x="180" y="212" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="12" fill="#17201d">ממוצע:</text>
+        <text x="180" y="244" text-anchor="middle" font-family="Secular One, sans-serif" font-size="24" fill="#2b8a64">5 דק׳</text>
+        <text x="180" y="262" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="500" font-size="9" fill="#5d6b66">*לא כולל שאלות</text>
+        <!-- the doctor's door -->
+        <rect x="256" y="238" width="98" height="22" rx="4" fill="#fff" stroke="#17201d" stroke-width="3"/>
+        <text x="305" y="254" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="12" fill="#17201d">ד״ר כהן</text>
+        <rect x="262" y="266" width="86" height="262" fill="#fff6d6" stroke="#17201d" stroke-width="3"/>
+        <g id="door">
+          <rect x="262" y="266" width="86" height="262" fill="#9b6a43" stroke="#17201d" stroke-width="3"/>
+          <rect x="274" y="282" width="62" height="96" rx="4" fill="#8a5b37"/>
+          <rect x="274" y="394" width="62" height="118" rx="4" fill="#8a5b37"/>
+          <rect x="278" y="304" width="54" height="40" rx="3" fill="#fff" stroke="#17201d" stroke-width="2"/>
+          <text x="305" y="320" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="9" fill="#e2483d">כניסה לפי</text>
+          <text x="305" y="336" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="9" fill="#e2483d">תור בלבד!</text>
+          <circle cx="272" cy="404" r="5" fill="#ffd23f" stroke="#17201d" stroke-width="2"/>
+        </g>
+        <!-- chairs -->
+        <g id="chairs" stroke="#17201d" stroke-width="3">
+          <g><rect x="22" y="404" width="66" height="70" rx="12" fill="#2f7fd1"/><rect x="18" y="466" width="74" height="16" rx="6" fill="#2a6fb6"/><path d="M28,482V550M82,482V550" stroke-width="5"/></g>
+          <g><rect x="102" y="404" width="66" height="70" rx="12" fill="#2f7fd1"/><rect x="98" y="466" width="74" height="16" rx="6" fill="#2a6fb6"/><path d="M108,482V550M162,482V550" stroke-width="5"/></g>
+          <g><rect x="182" y="404" width="66" height="70" rx="12" fill="#2f7fd1"/><rect x="178" y="466" width="74" height="16" rx="6" fill="#2a6fb6"/><path d="M188,482V550M242,482V550" stroke-width="5"/></g>
+        </g>
+        <g id="web" opacity="0" fill="none" stroke="#ffffff" stroke-width="1.4"><path d="M102,404 L140,404 M102,404 L102,442 M102,404 L132,434 M114,404 Q110,412 102,416 M126,404 Q122,422 102,428 M138,404 Q132,430 102,440"/></g>
+        <g id="people"></g>
+        <g id="zzz" font-family="Secular One, sans-serif" fill="#17201d" opacity="0"><text font-size="20">Z</text><text font-size="15">z</text><text font-size="11">z</text></g>
+      </g>
+      <rect id="tint" width="360" height="640" fill="#1b2a4a" opacity="0"/>
+    </svg>
+
+    <div class="ov cap" id="cap">שלוש שעות אחר כך...</div>
+    <div class="ov end" id="end"><div class="fin">הסוף</div><small>מבוסס על אינספור סיפורים אמיתיים. בכל קופת חולים.</small></div>
+    <div class="ov title" id="title">
+      <small>סרט קצר</small>
+      <h2>רק שאלה</h2>
+      <p>חדר המתנה. תור. ומישהו שרק שואל.</p>
+    </div>
+    <div class="ov bigplay" id="bigplay"></div>
+  </div>
+
+  <div class="ctl">
+    <button id="pp" type="button" aria-label="הפעל"></button>
+    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
+    <span id="time">0:00</span>
+    <button id="mute" type="button" aria-label="השתק"></button>
+  </div>
+  <p id="status" aria-live="polite">טוען את הקולות...</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const eo=u=>1-Math.pow(1-u,3);
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const win=(t,a,b,f)=>seg(t,a,a+(f||.25))*(1-seg(t,b-(f||.25),b)); // 0→1→0 over [a,b]
+const A=(el,k,v)=>el.setAttribute(k,v);
+const DUR=30, SEC=0, MOT=1, ZVI=2, SAV=3, DEL=4, NEW=5;
+const DOOR_X=306, OUT=-60;
+
+/* ---------- cast: every person is one template (legs, torso, arms, head) ---------- */
+const CH=[
+ null, // the secretary is only a voice on the intercom
+ {id:'m',r:25,skin:'#f2c29b',brow:'#4a3020',bw:2.8,my:14,shirt:'#3d7be0',pants:'#2f4a7a',shoe:'#3a2a1e',
+  back:'<path id="mBeard" fill="#5b3a22" stroke="#17201d" stroke-width="2.5"/>',
+  front:'<path d="M-25,-4 C-26,-30 26,-32 25,-4 C16,-16 -14,-18 -25,-4Z" fill="#5b3a22"/>',over:''},
+ {id:'z',r:25,skin:'#d6a07a',brow:'#141414',bw:3.2,my:14,shirt:'#ff6fa0',pants:'#f4f1ea',shoe:'#c9a227',chain:1,
+  back:'',
+  front:'<path d="M-25,-6 C-24,-33 24,-33 25,-6 C20,-26 -14,-22 -25,-6Z" fill="#141414"/><path d="M-17,12 Q0,30 17,12" stroke="#7a5a42" stroke-width="5" fill="none" opacity=".3"/>',
+  over:'<g><rect x="-21" y="-25" width="18" height="9" rx="4" fill="#222"/><rect x="3" y="-25" width="18" height="9" rx="4" fill="#222"/><path d="M-3,-21h6" stroke="#222" stroke-width="2"/></g>'},
+ {id:'s',r:24,skin:'#f1c3a0',brow:'#d9d4cc',bw:3,my:13,shirt:'#8e5aa8',pants:'#6b4180',shoe:'#3a2a1e',skirt:1,
+  back:'<circle cx="0" cy="-29" r="12" fill="#eeeae4" stroke="#17201d" stroke-width="2.5"/>',
+  front:'<path d="M-24,-2 C-26,-30 26,-30 24,-2 C20,-20 -20,-20 -24,-2Z" fill="#eeeae4"/><g fill="#ff9aa2" opacity=".55"><circle cx="-14" cy="8" r="5"/><circle cx="14" cy="8" r="5"/></g>',
+  over:'<g fill="none" stroke="#b5833a" stroke-width="2"><circle cx="-9" cy="-1" r="8"/><circle cx="9" cy="-1" r="8"/><path d="M-1,-1h2"/></g>'},
+ {id:'d',r:25,skin:'#e0a882',brow:'#3a2618',bw:3,my:14,shirt:'#ffc93c',pants:'#4a4f5c',shoe:'#222',
+  back:'',
+  front:'<path d="M-26,-6 C-26,-31 26,-31 26,-6Z" fill="#d93a2f" stroke="#17201d" stroke-width="2.5"/><path d="M-8,-8 H34 Q37,-2 30,-2 H-8Z" fill="#b52a21" stroke="#17201d" stroke-width="2.5"/>',over:''},
+ {id:'n',r:25,skin:'#efc19c',brow:'#c4561e',bw:2.8,my:14,shirt:'#3aa76d',pants:'#2b3340',shoe:'#f4f1ea',
+  back:'<g fill="#e0702c" stroke="#17201d" stroke-width="2.5"><circle cx="-20" cy="-16" r="11"/><circle cx="0" cy="-26" r="12"/><circle cx="20" cy="-16" r="11"/></g>',
+  front:'<path d="M-24,-6 C-22,-28 22,-28 24,-6 C14,-18 -14,-18 -24,-6Z" fill="#e0702c"/>',
+  over:'<path d="M-28,2 Q-30,-40 0,-40 Q30,-40 28,2" stroke="#2f2f2f" stroke-width="5" fill="none"/><rect x="-34" y="-6" width="11" height="18" rx="5" fill="#2f9e5c" stroke="#17201d" stroke-width="2"/><rect x="23" y="-6" width="11" height="18" rx="5" fill="#2f9e5c" stroke="#17201d" stroke-width="2"/>'}
+];
+const OL='stroke="#17201d" stroke-width="3"';
+(function build(){
+  let h='';
+  [NEW,MOT,ZVI,SAV,DEL].forEach(i=>{const c=CH[i];
+    h+=`<g id="${c.id}P">
+      <path id="${c.id}lg" fill="${c.pants}" ${OL}/><path id="${c.id}sh" fill="${c.shoe}" ${OL}/>
+      <path id="${c.id}ts" fill="${c.shirt}" ${OL}/>
+      ${c.chain?`<path id="${c.id}ch" fill="none" stroke="#ffd23f" stroke-width="3"/>`:''}
+      <g id="${c.id}pr"></g>
+      <path id="${c.id}ar" fill="none" stroke="#17201d" stroke-width="15" stroke-linecap="round"/><path id="${c.id}ai" fill="none" stroke="${c.shirt}" stroke-width="9" stroke-linecap="round"/>
+      <circle id="${c.id}hL" r="7" fill="${c.skin}" ${OL}/><circle id="${c.id}hR" r="7" fill="${c.skin}" ${OL}/>
+      <g id="${c.id}H">${c.back}<circle r="${c.r}" fill="${c.skin}" ${OL}/>${c.front}
+        <ellipse id="${c.id}eL" cx="-9" cy="-1" rx="5.5" ry="6.5" fill="#fff" stroke="#17201d" stroke-width="1.6"/><ellipse id="${c.id}eR" cx="9" cy="-1" rx="5.5" ry="6.5" fill="#fff" stroke="#17201d" stroke-width="1.6"/>
+        <circle id="${c.id}pL" cx="-9" cy="-1" r="2.8" fill="#1b1410"/><circle id="${c.id}pR" cx="9" cy="-1" r="2.8" fill="#1b1410"/>
+        <path id="${c.id}bL" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/><path id="${c.id}bR" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/>
+        <ellipse id="${c.id}mo" cx="0" cy="${c.my}" rx="6" ry="2" fill="#5a1020"/><path id="${c.id}sm" stroke="#5a1020" stroke-width="2.4" stroke-linecap="round" fill="none"/>${c.over}</g>
+    </g>`;});
+  $('people').innerHTML=h;
+  // props held in the hands
+  $('mpr').innerHTML='<g id="ticket"><rect x="-13" y="-9" width="26" height="18" rx="2" fill="#fff" stroke="#17201d" stroke-width="2"/><text y="5" text-anchor="middle" font-family="Secular One, sans-serif" font-size="12" fill="#e2483d">47</text></g>';
+  $('zpr').innerHTML='<rect id="phone" x="-6" y="-11" width="12" height="22" rx="3" fill="#222" stroke="#17201d" stroke-width="2"/>';
+  $('spr').innerHTML='<g id="bag"><path d="M-8,-10 Q0,-22 8,-10" fill="none" stroke="#17201d" stroke-width="2.5"/><rect x="-13" y="-10" width="26" height="20" rx="5" fill="#c94f7c" stroke="#17201d" stroke-width="2.5"/></g>';
+  $('dpr').innerHTML='<g id="box"><rect x="-30" y="-24" width="60" height="44" rx="3" fill="#c98f52" stroke="#17201d" stroke-width="3"/><path d="M-30,-10H30M0,-24V-10" stroke="#a87038" stroke-width="3"/></g>';
+  $('npr').innerHTML='<g id="ticket2"><rect x="-13" y="-9" width="26" height="18" rx="2" fill="#fff" stroke="#17201d" stroke-width="2"/><text y="5" text-anchor="middle" font-family="Secular One, sans-serif" font-size="12" fill="#e2483d">49</text></g>';
+})();
+
+/* ---------- script: who says what, when (s = start, d = speech length) ---------- */
+const LINES=[
+ {c:SEC,f:'01',s:.3,   d:1.85,radio:1}, // number forty-six.
+ {c:MOT,f:'02',s:2.3,  d:1.76},          // yes! I'm next!
+ {c:ZVI,f:'03',s:4.2,  d:1.77},          // excuse me, excuse me! just a question!
+ {c:MOT,f:'04',s:6.1,  d:1.45},          // bro, there's a line here!
+ {c:ZVI,f:'05',s:7.7,  d:2.30},          // it's not a line, it's a question! one second!
+ {c:SAV,f:'06',s:10.15,d:3.03},          // wait! I also have just a question!
+ {c:DEL,f:'07',s:13.3, d:2.29},          // delivery! just a question, where do I sign?
+ {c:SEC,f:'08',s:18.0, d:4.56,radio:1},  // number forty-seven? ...no? number forty-eight.
+ {c:MOT,f:'09',s:22.7, d:2.66},          // what?! wait! that's me!
+ {c:MOT,f:'10',s:25.5, d:2.29},          // excuse me! just a question!
+ {c:NEW,f:'11',s:27.9, d:1.53}           // bro, there's a line here!
+];
+const ENV_FPS=60;
+function envOf(buf){ // loudness per 1/60 s (33 ms window), scaled so speech peaks open the mouth fully
+  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
+  let pk=1e-6;
+  for(let i=0;i<n;i++){
+    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
+    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
+    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
+  }
+  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
+  return e;
+}
+function mouthOf(c,t){
+  let m=0;
+  for(const l of LINES){
+    if(l.c!==c||t<l.s||t>=l.s+l.d) continue;
+    m=Math.max(m,l.env?(l.env[Math.floor((t-l.s)*ENV_FPS)]||0):.5+.5*Math.sin(t*28)); // without audio, flap
+  }
+  return m;
+}
+
+/* ---------- faces over time ---------- */
+const MOODS={
+ [MOT]:[[0,{es:1,bu:1,ba:0,sm:3,o:0}],[2.3,{es:1.15,bu:4,ba:-2,sm:9,o:0}],[4.2,{es:1.1,bu:3,ba:-1,sm:0,o:0}],
+        [6.1,{es:1,bu:-2,ba:4,sm:-4,o:0}],[10.15,{es:1.05,bu:4,ba:-3,sm:-5,o:0}],[22.7,{es:1.5,bu:7,ba:-2,sm:0,o:.4}],
+        [24.6,{es:1.2,bu:4,ba:-1,sm:-2,o:0}],[25.4,{es:.75,bu:2,ba:2,sm:9,o:0}],[28.3,{es:.85,bu:3,ba:0,sm:10,o:0}]],
+ [ZVI]:[[0,{es:.9,bu:1,ba:0,sm:6,o:0}],[7.7,{es:.8,bu:4,ba:-3,sm:5,o:0}]],
+ [SAV]:[[0,{es:.9,bu:1,ba:0,sm:4,o:0}],[4.2,{es:1.1,bu:3,ba:-1,sm:1,o:0}],[10.15,{es:1.25,bu:5,ba:-1,sm:7,o:0}]],
+ [DEL]:[[0,{es:1.1,bu:3,ba:-1,sm:4,o:0}]],
+ [NEW]:[[0,{es:.9,bu:1,ba:0,sm:2,o:0}],[21.3,{es:1.1,bu:4,ba:-2,sm:0,o:0}],[25.5,{es:1.2,bu:2,ba:1,sm:-2,o:0}],[27.9,{es:1,bu:-2,ba:5,sm:-5,o:0}]]
+};
+const MK=['es','bu','ba','sm','o'];
+function moodOf(i,t){
+  const M=MOODS[i];let k=0;for(let j=0;j<M.length;j++) if(t>=M[j][0]) k=j;
+  const cur=M[k][1],prev=M[Math.max(0,k-1)][1],u=eio(seg(t,M[k][0],M[k][0]+.3));
+  const r={};MK.forEach(q=>r[q]=lerp(prev[q],cur[q],u));return r;
+}
+const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.5)-3.4)/.07));
+
+/* ---------- blocking: where each person is, as a function of t ---------- */
+// x, stand (0 seated .. 1 standing), op, sleep, pose
+function walkTo(t,pts){ // pts: [[t,x],...] eased between keys
+  if(t<=pts[0][0]) return pts[0][1];
+  for(let k=1;k<pts.length;k++) if(t<pts[k][0]) return lerp(pts[k-1][1],pts[k][1],eio(seg(t,pts[k-1][0],pts[k][0])));
+  return pts[pts.length-1][1];
+}
+const inDoor=(t,a)=>1-seg(t,a,a+.35); // fade out through the doorway
+function stateOf(i,t){
+  if(i===MOT){
+    const x=walkTo(t,[[25.25,135],[25.85,DOOR_X-12]]);
+    let stand=0;
+    if(t>=2.3&&t<3.3) stand=.45*Math.sin(seg(t,2.3,3.3)*Math.PI);      // a little hop of joy
+    if(t>=6.1&&t<7.7) stand=.5*win(t,6.1,7.7,.25);                      // half up to protest
+    if(t>=22.8) stand=eo(seg(t,22.8,23.15));
+    const sleep=seg(t,16.0,16.8)*(1-seg(t,22.7,22.85));
+    let pose='lap';
+    if(t>=2.3&&t<3.6) pose='cheer'; else if(t>=6.1&&t<7.7) pose='point'; else if(t>=22.8&&t<25.3) pose='ticket';
+    else if(t>=25.3) pose=t>=28.4?'shrug':'finger';
+    return {x,stand,op:inDoor(t,28.95),sleep,pose,facing:t>=25.3?-1:0};
+  }
+  if(i===ZVI){
+    const x=walkTo(t,[[3.95,OUT],[4.6,226],[9.55,226],[9.95,DOOR_X]]);
+    return {x,stand:1,op:t<3.95?0:inDoor(t,9.95),pose:t>=7.7&&t<9.5?'wave':'phone'};
+  }
+  if(i===SAV){
+    const x=walkTo(t,[[10.8,55],[12.75,DOOR_X]]);
+    const stand=t<10.15?0:eo(seg(t,10.15,10.45))*.85;
+    return {x,stand,op:inDoor(t,12.85),pose:t>=10.15&&t<10.9?'finger':(t<10.15?'lap':'bag'),hunch:t>=10.15?1:0};
+  }
+  if(i===DEL){
+    const x=walkTo(t,[[13.15,OUT],[14.4,230],[15.0,DOOR_X]]);
+    return {x,stand:1,op:t<13.15?0:inDoor(t,15.25),pose:'box'};
+  }
+  // the newcomer takes grandma's chair during the time skip
+  const stand=t>=27.85?.5*eo(seg(t,27.85,28.1)):0;
+  return {x:55,stand,op:seg(t,16.7,17.0),pose:t>=27.85?'point':'lap'};
+}
+function lookAt(i,t,st){ // a point to look at, or null for straight ahead
+  const DISP=[180,96],DOOR=[DOOR_X,380];
+  const head=j=>{const s=stateOf(j,t);return [s.x,lerp(352,316,s.stand)];};
+  if(i===MOT){
+    if(t<2.3||(t>=22.7&&t<24.3)) return DISP;
+    if(t>=4.0&&t<10.15) return head(ZVI);
+    if(t>=10.15&&t<13.1) return head(SAV);
+    if(t>=13.2&&t<15.6) return head(DEL);
+    if(t>=24.3&&t<25.3) return DOOR;
+    if(t>=25.5) return head(NEW);
+    return null;
+  }
+  if(i===ZVI) return t<9.55?head(MOT):DOOR;
+  if(i===SAV){ if(t>=4.0&&t<10.15) return head(ZVI); if(t>=10.15&&t<10.8) return head(MOT); return DOOR; }
+  if(i===DEL) return t<14.6?head(MOT):DOOR;
+  if(t>=18&&t<22.7) return DISP;
+  if(t>=22.7) return head(MOT);
+  return null;
+}
+
+/* ---------- elements ---------- */
+const E={};
+['cam','num','waves','sky','sun','hrH','mnH','door','web','zzz','tint','cap','end','title','bigplay','seek','time','pp','mute','stage','status','mBeard'].forEach(k=>E[k]=$(k));
+const P={};
+[MOT,ZVI,SAV,DEL,NEW].forEach(i=>{const c=CH[i],o={};
+  ['P','lg','sh','ts','ch','pr','ar','ai','hL','hR','H','eL','eR','pL','pR','bL','bR','mo','sm'].forEach(k=>o[k]=$(c.id+k));P[i]=o;});
+const ZZ=[...E.zzz.children];
+
+function prev(i,t){return stateOf(i,Math.max(0,t-.04)).x;}
+function drawPerson(i,t){
+  const c=CH[i],p=P[i],s=stateOf(i,t);
+  A(p.P,'opacity',s.op);
+  if(s.op<=0) return;
+  const moving=Math.abs(s.x-prev(i,t))>.6;
+  const ph=moving?t*(i===SAV?22:16):0, step=moving?Math.sin(ph):0;
+  const bob=moving?-Math.abs(Math.cos(ph))*5:0;
+  const hunch=s.hunch?8:0;
+  const x=s.x, hip=lerp(472,452,s.stand)+bob, sh=hip-88+hunch;
+  const hy=sh-c.r-6+(s.sleep||0)*10;
+  // legs: seated shins hang from the seat edge, standing legs reach down from the hips
+  const lt=lerp(486,hip,s.stand), fy=568;
+  const L=(dx,lift)=>`M${x+dx-9},${lt}H${x+dx+9}V${fy-lift}H${x+dx-9}Z`;
+  A(p.lg,'d',L(-12,step>0?step*8:0)+L(12,step<0?-step*8:0));
+  const F=(dx,lift)=>`M${x+dx-12},${fy+6-lift}Q${x+dx-12},${fy-6-lift} ${x+dx+2},${fy-6-lift}Q${x+dx+14},${fy-6-lift} ${x+dx+14},${fy+6-lift}Z`;
+  A(p.sh,'d',F(-14,step>0?step*8:0)+F(12,step<0?-step*8:0));
+  // torso (grandma gets a skirt)
+  const w=c.skirt?34:28, wb=c.skirt?38:28;
+  A(p.ts,'d',`M${x-w},${sh+10}Q${x-w},${sh} ${x-w+12},${sh}H${x+w-12}Q${x+w},${sh} ${x+w},${sh+10}L${x+wb},${hip+8}H${x-wb}Z`);
+  if(p.ch) A(p.ch,'d',`M${x-10},${sh}Q${x},${sh+18} ${x+10},${sh}`);
+  // arms by pose
+  const sL=[x-w+6,sh+10],sR=[x+w-6,sh+10];
+  let hL=[x-20,hip-4],hR=[x+20,hip-4],eL=null,eR=null,prop=null;
+  const wob=Math.sin(t*14);
+  switch(s.pose){
+    case 'lap': if(i===MOT) prop=[x+20,hip-14]; if(i===SAV) prop=[x,hip-14]; if(i===NEW) prop=[x+20,hip-14]; break;
+    case 'cheer': hL=[x-46,sh-46+wob*4];hR=[x+46,sh-46-wob*4];prop=[hR[0],hR[1]-14];break;
+    case 'point': hR=[x+50,sh-6];eR=[x+40,sh+6];if(i===MOT) prop=[x-20,hip-14];break;
+    case 'ticket': hR=[x+40,sh-48+wob*5];prop=[hR[0],hR[1]-14];hL=[x-36,sh-30-wob*4];break;
+    case 'finger': hR=[x+34,sh-44];eR=[x+40,sh-8];if(i===MOT) prop=[x-28,hip-10];if(i===SAV) prop=[x-26,hip-8];break;
+    case 'shrug': hL=[x-44,sh-14];hR=[x+44,sh-14];eL=[x-40,sh+18];eR=[x+40,sh+18];prop=[hL[0],hL[1]-12];break;
+    case 'phone': hR=[x+22,hy+6];eR=[x+40,sh+8];prop=[hR[0]+2,hR[1]-4];break;
+    case 'wave': hR=[x+44,sh-30+wob*6];hL=[x-34,sh-14-wob*6];break;
+    case 'bag': hL=[x-30,hip-20+bob];prop=[hL[0],hL[1]+14];hR=[x+40,sh-24+wob*8];break;
+    case 'box': hL=[x-24,sh+34];hR=[x+24,sh+34];prop=[x,sh+30];break;
+  }
+  const arm=(s0,e,h)=>e?`M${s0[0]},${s0[1]}L${e[0]},${e[1]}L${h[0]},${h[1]}`:`M${s0[0]},${s0[1]}Q${(s0[0]+h[0])/2+(h[0]<x?-10:10)},${(s0[1]+h[1])/2} ${h[0]},${h[1]}`;
+  const d=arm(sL,eL,hL)+arm(sR,eR,hR);
+  A(p.ar,'d',d);A(p.ai,'d',d);
+  A(p.hL,'cx',hL[0]);A(p.hL,'cy',hL[1]);A(p.hR,'cx',hR[0]);A(p.hR,'cy',hR[1]);
+  if(prop){A(p.pr,'transform',`translate(${prop[0]} ${prop[1]})`);A(p.pr,'opacity',1);} else A(p.pr,'opacity',0);
+  // head
+  const m=moodOf(i,t),talk=mouthOf(i,t);
+  let rot=Math.sin(t*1.5+i)*2+(s.sleep||0)*20;
+  if(i===MOT&&s.pose==='shrug') rot+=8;
+  if(talk>.2) rot+=Math.sin(t*9)*2.5;
+  A(p.H,'transform',`translate(${x} ${hy-talk*2}) rotate(${rot})`);
+  const look=lookAt(i,t,s);let lx=0,ly=0;
+  if(look){const dx=look[0]-x,dy=look[1]-hy,dd=Math.hypot(dx,dy)||1;lx=dx/dd;ly=dy/dd;}
+  const asleep=(s.sleep||0)>.5;
+  let ery=asleep?.6:Math.max(.6,6.5*m.es*(1-.92*blinkOf(t,i*1.3)));
+  A(p.eL,'ry',ery);A(p.eR,'ry',(i===MOT&&t>=28.45&&t<28.95)?.6:ery); // the wink
+  const pr=m.es>1.35?2.1:2.8;
+  [[p.pL,-9],[p.pR,9]].forEach(([e,cx])=>{A(e,'cx',cx+lx*2.3);A(e,'cy',-1+ly*2);A(e,'r',pr);A(e,'opacity',asleep?0:1);});
+  if(i===MOT&&t>=28.45&&t<28.95) A(p.pR,'opacity',0);
+  const by=-11-m.bu;
+  A(p.bL,'d',`M-15,${by} L-4,${by+m.ba}`);A(p.bR,'d',`M4,${by+m.ba} L15,${by}`);
+  const o=asleep?.15+.1*Math.sin(t*3):Math.max(talk,m.o);
+  if(o>.12){A(p.mo,'opacity',1);A(p.mo,'rx',4.5+3*o);A(p.mo,'ry',1.4+6*o);A(p.sm,'opacity',0);}
+  else{A(p.mo,'opacity',0);A(p.sm,'opacity',1);A(p.sm,'d',`M-7,${c.my} Q0,${c.my+m.sm*1.2} 7,${c.my}`);}
+  return {x,hy};
+}
+
+/* ---------- render: everything is a pure function of t ---------- */
+const TL0=15.7, TL1=17.9; // the time skip
+function render(t){
+  const tl=seg(t,TL0,TL1);
+  // the now-serving number
+  E.num.textContent=t<.28?'45':t<18.0?'46':t<21.32?'47':'48';
+  A(E.num,'opacity',(t>=18&&t<19.2)||(t>=21.32&&t<22.3)?(Math.floor(t*6)%2?1:.25):1);
+  const sec=mouthOf(SEC,t);
+  A(E.waves,'opacity',sec>.1?.4+.6*sec:0);
+  // clock spins and the window runs through night during the skip
+  const mins=(t/60)*360+tl*360*3, hrs=mins/12+60;
+  A(E.mnH,'transform',`rotate(${mins} 62 104)`);A(E.hrH,'transform',`rotate(${hrs} 62 104)`);
+  const night=Math.sin(tl*Math.PI*2-Math.PI/2)*.5+.5; // 0 day → 1 night → 0 day
+  A(E.sky,'fill',night>.5?'#1d2b55':'#8fd3f5');
+  A(E.sun,'fill',night>.5?'#f4f1ea':'#ffe27a');
+  A(E.sun,'cy',200+((tl*2)%1)*50);
+  A(E.tint,'opacity',night*.35);
+  A(E.web,'opacity',seg(t,16.6,17.5)*(1-seg(t,22.7,23)));
+  // Moti's beard grows during the skip and stays
+  const g=seg(t,TL0+.2,TL1);
+  A(E.mBeard,'d',g>0?`M-25,-2Q-30,${24+44*g} 0,${30+52*g}Q30,${24+44*g} 25,-2Z`:'');
+  // the door swings for everyone who "only has a question"
+  const open=Math.max(win(t,9.75,10.55,.2),win(t,12.65,13.45,.2),win(t,15.05,15.8,.2),win(t,28.75,29.5,.2));
+  A(E.door,'transform',`translate(348 0) scale(${1-.82*open} 1) translate(-348 0)`);
+
+  let mh=null;
+  [NEW,MOT,ZVI,SAV,DEL].forEach(i=>{const r=drawPerson(i,t);if(i===MOT) mh=r;});
+  // snores
+  const sl=seg(t,16.2,16.8)*(1-seg(t,22.7,22.8));
+  A(E.zzz,'opacity',sl);
+  if(mh&&sl>0) ZZ.forEach((z,k)=>{const u=((t*.6)+k/3)%1;A(z,'x',mh.x+26+u*30+k*4);A(z,'y',mh.hy-20-u*50);A(z,'opacity',1-u);});
+  // a small jolt when he wakes up
+  A(E.cam,'transform',t>=22.7&&t<23.0?`translate(${Math.sin(t*90)*3} 0)`:'');
+
+  E.cap.style.opacity=win(t,TL0+.05,TL1+.05,.25);
+  E.end.style.opacity=eo(seg(t,29.45,29.8));
+  E.title.style.opacity=(t<.05&&!playing)?1:0;
+  E.seek.value=t;
+  E.time.textContent='0:'+String(Math.floor(t)).padStart(2,'0');
+}
+
+/* ---------- audio: Web Audio for voices and the synthesized effects ---------- */
+let AC=null,master=null,noiseBuf=null,muted=false,loaded=0,failed=0;
+const live=new Set();
+function ctx(){
+  if(AC) return AC;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
+  try{AC=new C();}catch(e){return null;}
+  master=AC.createGain();master.connect(AC.destination);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  return AC;
+}
+function ac(){ // from a tap: wake the context, and on iPhone play even with the silent switch on
+  try{if(navigator.audioSession) navigator.audioSession.type='playback';}catch(e){}
+  if(!ctx()) return null;
+  if(AC.state==='suspended') AC.resume();
+  const s=AC.createBufferSource();s.buffer=AC.createBuffer(1,1,22050);s.connect(AC.destination);s.start(0);
+  return AC;
+}
+function track(s){live.add(s);s.onended=()=>live.delete(s);return s;}
+function stopAll(){live.forEach(s=>{try{s.stop();}catch(e){}});live.clear();}
+function playBuf(buf,off,radio){
+  const s=AC.createBufferSource();s.buffer=buf;
+  let out=s;
+  if(radio){ // the secretary comes through a cheap ceiling speaker
+    const hp=AC.createBiquadFilter(),lp=AC.createBiquadFilter();
+    hp.type='highpass';hp.frequency.value=450;lp.type='lowpass';lp.frequency.value=3200;
+    s.connect(hp);hp.connect(lp);out=lp;
+  }
+  out.connect(master);s.start(0,off||0);track(s);
+}
+function tone(f0,f1,dur,type,vol,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function noise(dur,vol,freq,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
+  s.buffer=noiseBuf;f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random()*.5);s.stop(t0+dur+.02);track(s);
+}
+const dingDong=()=>{tone(988,988,.5,'sine',.12);tone(784,784,.7,'sine',.12,.28);};
+const creak=()=>{tone(260,420,.45,'sawtooth',.025);noise(.3,.08,900);};
+const thud=()=>{tone(120,60,.18,'sine',.25);noise(.08,.2,250);};
+const steps=(a,b,gap)=>{const r=[];for(let x=a;x<b;x+=gap) r.push([x,()=>tone(520,420,.04,'square',.03)]);return r;};
+const SFX=[
+  [.28,dingDong],
+  ...steps(3.95,4.6,.11),
+  [9.75,creak],[10.5,thud],
+  ...steps(10.8,12.75,.09),
+  [12.65,creak],[13.4,thud],
+  ...steps(13.15,15.0,.1),
+  [15.05,creak],[15.75,thud],
+  [TL0,()=>{noise(.6,.15,1800);tone(300,1200,.6,'sine',.05);}],               // whoosh into the time skip
+  ...steps(TL0+.1,TL1-.1,.07).map(([x])=>[x,()=>tone(2200,2200,.02,'square',.02)]), // fast clock ticks
+  [16.9,()=>{noise(.8,.08,260);}],[19.6,()=>{noise(.8,.06,260);}],             // snores
+  [18.0,dingDong],[21.32,dingDong],
+  [22.7,()=>{tone(180,620,.25,'triangle',.12);}],                               // boing: awake
+  [25.25,()=>{noise(.35,.12,1500);}],                                           // dash to the door
+  [28.75,creak],
+  [29.45,()=>{tone(523,523,.12,'square',.05);tone(659,659,.12,'square',.05,.12);tone(784,784,.3,'square',.05,.24);}] // sting
+];
+const EV=SFX.concat(LINES.map(l=>[l.s,()=>{if(l.buf) playBuf(l.buf,0,l.radio);}]));
+
+async function loadVoices(){
+  const c=ctx();
+  if(!c){failed=LINES.length;return updateStatus();}
+  await Promise.all(LINES.map(async l=>{
+    try{
+      const r=await fetch('audio/'+l.f+'.mp3');if(!r.ok) throw new Error(r.status);
+      const ab=await r.arrayBuffer();
+      l.buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      l.env=envOf(l.buf);loaded++;
+    }catch(e){failed++;}
+    updateStatus();
+  }));
+  if(playing) resumeVoices();
+}
+function updateStatus(){
+  const n=LINES.length;
+  if(loaded+failed<n) E.status.textContent='טוען את הקולות... '+loaded+' מתוך '+n;
+  else if(!failed) E.status.textContent='הקולות מוכנים. הפעילו סאונד ולחצו על הסרטון.';
+  else E.status.textContent='לא הצלחנו לטעון '+failed+' מתוך '+n+' קולות. בדקו את החיבור לאינטרנט ורעננו את הדף.';
+}
+function resumeVoices(){ // pick up any line already under way (after resume or seek)
+  if(!AC) return;
+  for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.radio);
+}
+
+/* ---------- #preview: loop a highlight silently (no audio events fire) ---------- */
+function startPreview(a,b){
+  if(!document.documentElement.classList.contains('preview')) return;
+  E.stage.style.pointerEvents='none';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){render(lerp(a,b,.5));return;}
+  const t0=performance.now();
+  (function pv(now){T=a+((now-t0)/1000)%(b-a);render(T);requestAnimationFrame(pv);})(t0);
+}
+
+/* ---------- player ---------- */
+let T=0,playing=false,last=0,raf=0;
+const ICON={
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
+  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
+  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
+};
+function ui(){
+  const ended=T>=DUR;
+  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
+  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
+  E.bigplay.style.opacity=playing?0:1;
+  E.bigplay.innerHTML=(ended?ICON.replay:ICON.play).replace('<svg','<svg style="fill:#17201d"');
+  E.mute.innerHTML=muted?ICON.off:ICON.on;
+  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+}
+function frame(now){
+  if(!playing) return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const prev=T;T=Math.min(DUR,T+dt);
+  if(AC) for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
+  render(T);
+  if(T>=DUR){playing=false;ui();return;}
+  raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(T>=DUR) T=0;
+  ac();playing=true;last=performance.now();ui();
+  resumeVoices();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
+}
+function pause(){playing=false;cancelAnimationFrame(raf);stopAll();ui();}
+function toggle(){playing?pause():play();}
+E.stage.addEventListener('click',toggle);
+E.pp.addEventListener('click',toggle);
+E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=muted?0:1;ui();});
+E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
+E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
+
+ui();render(0);updateStatus();loadVoices();
+startPreview(3.8,15.6);
+})();
+</script>
+
+</body>
+</html>
