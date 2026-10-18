@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>אכלת?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview .ctl,html.preview #status,html.preview .title,html.preview .bigplay{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
+/* layout: phone-shaped stage (Friday dinner at mom's, then Dani's flat; flat cartoon with thick outlines), slim controls underneath */
+:root{
+  --bg:#f6efe6; --fg:#22180f; --muted:#6e6255; --accent:#e2483d; --panel:#ffffff; --line:#e0d5c6;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#16120e; --fg:#f4ece2; --muted:#b4a796; --accent:#ff6f5e; --panel:#231d17; --line:#3a3128; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#16120e; --fg:#f4ece2; --muted:#b4a796; --accent:#ff6f5e; --panel:#231d17; --line:#3a3128; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 210px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#f2d9a8; container-type:inline-size;
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.title{inset:0;background:#22180f;color:#ffc94a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
+.title small{font:800 4.4cqw var(--font-body);color:#ffb0a6}
+.title h2{font:400 22cqw/1 var(--font-display);margin:0}
+.title p{margin:0;font:500 5cqw var(--font-body);color:#f4ece2}
+.cap{left:0;right:0;top:12%;text-align:center;font:400 8cqw/1.1 var(--font-display);color:#fff;text-shadow:0 .8cqw 0 #22180f,0 0 3cqw rgba(0,0,0,.6);opacity:0}
+.end{left:10cqw;right:10cqw;top:8cqw;background:rgba(34,24,15,.95);color:#f4ece2;border-radius:4cqw;padding:3.4cqw;text-align:center;opacity:0}
+.end .fin{font:400 14cqw/1 var(--font-display);color:#ffc94a}
+.end small{display:block;margin-top:1.2cqw;font:500 3.6cqw/1.4 var(--font-body);color:#ffe2d6}
+.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
+.bigplay svg{position:static;width:10cqw;height:10cqw}
+
+.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
+.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ctl svg{width:20px;height:20px;fill:currentColor}
+.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
+#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="he">
+  <div class="head">
+    <h1>אכלת?</h1>
+    <p class="sub">ארוחת שישי אצל אמא. דני בדיאטה. אמא שמעה, ולא הקשיבה. 30 שניות עם קול.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="ארוחת שישי: אמא מעמיסה שניצלים על הצלחת של דני, ואבא קורא עיתון">
+      <g id="cam" stroke-linejoin="round">
+        <!-- scene A: mom's dining room on Friday night -->
+        <g id="bgA">
+          <rect width="360" height="640" fill="#f2d9a8"/>
+          <path d="M0,300H360" stroke="#d9b97e" stroke-width="4"/>
+          <rect y="300" width="360" height="340" fill="#e8c88e"/>
+          <g stroke="#22180f" stroke-width="3">
+            <rect x="200" y="92" width="100" height="110" rx="6" fill="#1f2b55"/>
+            <path d="M250,92V202M200,147H300" fill="none"/>
+          </g>
+          <circle cx="276" cy="116" r="9" fill="#f4f1ea"/>
+          <g fill="#fff"><circle cx="220" cy="110" r="1.6"/><circle cx="232" cy="184" r="1.6"/><circle cx="284" cy="176" r="1.6"/></g>
+          <rect x="58" y="80" width="120" height="86" rx="4" fill="#fff8e1" stroke="#22180f" stroke-width="3"/>
+          <text x="118" y="116" text-anchor="middle" font-family="Secular One, sans-serif" font-size="17" fill="#b5362b">שבת שלום</text>
+          <text x="118" y="144" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="11" fill="#6e6255">״מי שלא אוכל — חולה״</text>
+          <g stroke="#22180f" stroke-width="3"><rect x="56" y="330" width="46" height="150" rx="10" fill="#9b6a43"/><rect x="156" y="330" width="48" height="150" rx="10" fill="#9b6a43"/></g>
+        </g>
+        <!-- scene B: Dani's flat, late at night -->
+        <g id="bgB" opacity="0">
+          <rect width="360" height="640" fill="#2b3a66"/>
+          <rect y="430" width="360" height="210" fill="#3c4a74"/>
+          <rect x="40" y="96" width="110" height="130" rx="6" fill="#121a36" stroke="#22180f" stroke-width="3"/>
+          <circle cx="112" cy="136" r="14" fill="#f4f1ea"/>
+          <rect x="226" y="80" width="90" height="70" rx="4" fill="#ffc94a" stroke="#22180f" stroke-width="3" opacity=".9"/>
+          <text x="271" y="122" text-anchor="middle" font-family="Secular One, sans-serif" font-size="16" fill="#22180f">HOME</text>
+          <g stroke="#22180f" stroke-width="3"><rect x="30" y="360" width="300" height="110" rx="24" fill="#c94f4f"/></g>
+        </g>
+        <g id="people"></g>
+        <!-- foreground of scene A: the Friday table -->
+        <g id="fgA">
+          <path d="M-10,474 H370 V640 H-10Z" fill="#ffffff" stroke="#22180f" stroke-width="3"/>
+          <path d="M-10,474 H370 L370,500 Q350,520 330,500 Q310,520 290,500 Q270,520 250,500 Q230,520 210,500 Q190,520 170,500 Q150,520 130,500 Q110,520 90,500 Q70,520 50,500 Q30,520 10,500 Q-10,520 -10,500Z" fill="#f4f1ea" stroke="#22180f" stroke-width="2.5"/>
+          <!-- candles and challah -->
+          <g stroke="#22180f" stroke-width="2.5"><rect x="316" y="420" width="10" height="54" fill="#fff"/><rect x="334" y="420" width="10" height="54" fill="#fff"/></g>
+          <g id="flames" fill="#ffb02e"><path d="M321,418 q-6,-10 0,-18 q6,8 0,18Z"/><path d="M339,418 q-6,-10 0,-18 q6,8 0,18Z"/></g>
+          <g stroke="#22180f" stroke-width="2.5" fill="#d99a4a"><ellipse cx="74" cy="466" rx="30" ry="12"/><path d="M54,464 Q64,454 74,464 Q84,454 94,464" fill="none"/></g>
+          <!-- Dani's plate: the schnitzels, then everything else -->
+          <g id="plate" transform="translate(180 478)">
+            <ellipse rx="70" ry="16" fill="#fff" stroke="#22180f" stroke-width="3"/>
+            <ellipse rx="52" ry="10" fill="none" stroke="#c4d7e8" stroke-width="2"/>
+            <g id="pile" transform="scale(1 0)">
+              <path d="M-66,-2 Q-60,-70 -20,-90 Q0,-130 26,-96 Q64,-80 66,-2Z" fill="#f7e8b7" stroke="#22180f" stroke-width="3"/>
+              <g fill="#5cb956" stroke="#22180f" stroke-width="2"><circle cx="-30" cy="-50" r="12"/><circle cx="-16" cy="-62" r="10"/></g>
+              <g fill="#e2483d" stroke="#22180f" stroke-width="2"><circle cx="24" cy="-60" r="8"/><circle cx="36" cy="-44" r="7"/></g>
+              <rect x="-6" y="-112" width="34" height="26" rx="4" fill="#e9a23b" stroke="#22180f" stroke-width="2.5"/>
+              <ellipse cx="-24" cy="-84" rx="22" ry="11" fill="#d58a2c" stroke="#22180f" stroke-width="2.5" transform="rotate(-20 -24 -84)"/>
+            </g>
+            <g id="schnitzels" fill="#e0a240" stroke="#22180f" stroke-width="2.5">
+              <path d="M-50,-6 Q-46,-26 -20,-24 Q6,-22 2,-6 Q-20,4 -50,-6Z"/>
+              <path d="M-4,-6 Q0,-28 26,-26 Q52,-22 48,-6 Q22,4 -4,-6Z"/>
+              <path d="M-30,-18 Q-24,-40 2,-38 Q28,-36 24,-18 Q-2,-10 -30,-18Z"/>
+              <path d="M-18,-30 Q-12,-54 14,-52 Q40,-48 34,-30 Q8,-22 -18,-30Z"/>
+            </g>
+          </g>
+        </g>
+        <!-- foreground of scene B: the couch arm -->
+        <g id="fgB" opacity="0">
+          <rect x="0" y="440" width="360" height="90" rx="20" fill="#d65f5f" stroke="#22180f" stroke-width="3"/>
+          <rect x="-20" y="380" width="60" height="160" rx="22" fill="#b94646" stroke="#22180f" stroke-width="3"/>
+        </g>
+        <!-- mom's packing: a tower of plastic boxes -->
+        <g id="tower"></g>
+        <g id="phone" opacity="0">
+          <rect x="-10" y="-17" width="20" height="34" rx="4" fill="#222" stroke="#22180f" stroke-width="2"/>
+          <rect x="-7" y="-13" width="14" height="24" rx="2" fill="#7fe0b4"/>
+        </g>
+        <g id="callBubble" opacity="0">
+          <rect x="196" y="236" width="140" height="56" rx="14" fill="#fff" stroke="#22180f" stroke-width="3"/>
+          <path d="M226,290 l-6,20 l22,-20Z" fill="#fff" stroke="#22180f" stroke-width="3" stroke-linejoin="round"/>
+          <path d="M226,289 h16" stroke="#fff" stroke-width="4"/>
+          <path d="M296,256 c-6,-8 -18,-2 -12,8 l12,12 l12,-12 c6,-10 -6,-16 -12,-8Z" fill="#e2483d" stroke="#22180f" stroke-width="2"/>
+          <text x="248" y="272" text-anchor="middle" font-family="Secular One, sans-serif" font-size="22" fill="#22180f">אמא</text>
+        </g>
+        <g id="ring" fill="none" stroke="#ffc94a" stroke-width="3" stroke-linecap="round" opacity="0"><path d="M-22,-12 Q-28,0 -22,12"/><path d="M22,-12 Q28,0 22,12"/><path d="M-30,-18 Q-38,0 -30,18"/><path d="M30,-18 Q38,0 30,18"/></g>
+      </g>
+      <rect id="fade" width="360" height="640" fill="#000" opacity="0"/>
+    </svg>
+
+    <div class="ov cap" id="cap">בינתיים, בדירה של דני...</div>
+    <div class="ov end" id="end"><div class="fin">הסוף</div><small>דני חזר לדיאטה ביום ראשון. אמא כבר מבשלת לשישי הבא.</small></div>
+    <div class="ov title" id="title">
+      <small>סרט קצר</small>
+      <h2>אכלת?</h2>
+      <p>ארוחת שישי. דיאטה. אמא.</p>
+    </div>
+    <div class="ov bigplay" id="bigplay"></div>
+  </div>
+
+  <div class="ctl">
+    <button id="pp" type="button" aria-label="הפעל"></button>
+    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
+    <span id="time">0:00</span>
+    <button id="mute" type="button" aria-label="השתק"></button>
+  </div>
+  <p id="status" aria-live="polite">טוען את הקולות...</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const eo=u=>1-Math.pow(1-u,3);
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const win=(t,a,b,f)=>seg(t,a,a+(f||.25))*(1-seg(t,b-(f||.25),b)); // 0→1→0 over [a,b]
+const A=(el,k,v)=>el.setAttribute(k,v);
+const DUR=30, DAN=0, IMA=1, ABA=2;
+const CUT=23.0; // from mom's table to Dani's flat
+
+/* ---------- cast: every person is one template (legs, torso, arms, head) ---------- */
+const CH=[
+ {id:'d',r:25,skin:'#efc19c',brow:'#2a1a10',bw:3,my:14,shirt:'#f08a2c',pants:'#2f4a7a',shoe:'#f4f1ea',
+  back:'<g fill="#2a1a10" stroke="#22180f" stroke-width="2.5"><circle cx="-18" cy="-18" r="11"/><circle cx="0" cy="-26" r="12"/><circle cx="18" cy="-18" r="11"/></g>',
+  front:'<path d="M-24,-6 C-22,-28 22,-28 24,-6 C14,-18 -14,-18 -24,-6Z" fill="#2a1a10"/><g id="dCheek" fill="#ff9aa2" opacity="0"><circle cx="-15" cy="9" r="7"/><circle cx="15" cy="9" r="7"/></g>',over:''},
+ {id:'m',r:25,skin:'#f1c3a0',brow:'#8a3a1e',bw:3,my:14,shirt:'#8e5aa8',pants:'#5b3a70',shoe:'#22180f',apron:1,
+  back:'<path d="M-30,6 C-36,-34 36,-34 30,6 C26,-4 -26,-4 -30,6Z" fill="#c4562c" stroke="#22180f" stroke-width="2.5"/>',
+  front:'<path d="M-25,-4 C-24,-30 24,-30 25,-4 C16,-20 -16,-20 -25,-4Z" fill="#c4562c"/><g fill="#ff9aa2" opacity=".55"><circle cx="-14" cy="8" r="5"/><circle cx="14" cy="8" r="5"/></g>',
+  over:'<g fill="#ffd23f" stroke="#22180f" stroke-width="1.5"><circle cx="-25" cy="12" r="3"/><circle cx="25" cy="12" r="3"/></g>'},
+ {id:'a',r:25,skin:'#e8b48f',brow:'#9a9a9a',bw:3,my:15,shirt:'#f4f1ea',pants:'#4a4f5c',shoe:'#22180f',
+  back:'',
+  front:'<path d="M-25,4 C-27,-12 -22,-16 -18,-12 L-18,2Z M25,4 C27,-12 22,-16 18,-12 L18,2Z" fill="#b8b8b8"/><path d="M-12,9 Q0,4 12,9 Q6,13 0,11 Q-6,13 -12,9Z" fill="#9a9a9a"/>',
+  over:'<g fill="none" stroke="#22180f" stroke-width="2"><rect x="-17" y="-8" width="15" height="12" rx="3"/><rect x="2" y="-8" width="15" height="12" rx="3"/><path d="M-2,-3h4"/></g>'}
+];
+const OL='stroke="#22180f" stroke-width="3"';
+(function build(){
+  let h='';
+  [ABA,IMA,DAN].forEach(i=>{const c=CH[i];
+    h+=`<g id="${c.id}P">
+      <path id="${c.id}lg" fill="${c.pants}" ${OL}/><path id="${c.id}sh" fill="${c.shoe}" ${OL}/>
+      <path id="${c.id}ts" fill="${c.shirt}" ${OL}/>
+      ${c.apron?`<path id="${c.id}ap" fill="#fff" stroke="#22180f" stroke-width="2.5"/>`:''}
+      <g id="${c.id}pr"></g>
+      <path id="${c.id}ar" fill="none" stroke="#22180f" stroke-width="15" stroke-linecap="round"/><path id="${c.id}ai" fill="none" stroke="${c.shirt}" stroke-width="9" stroke-linecap="round"/>
+      <circle id="${c.id}hL" r="7" fill="${c.skin}" ${OL}/><circle id="${c.id}hR" r="7" fill="${c.skin}" ${OL}/>
+      <g id="${c.id}H">${c.back}<circle id="${c.id}fc" r="${c.r}" fill="${c.skin}" ${OL}/>${c.front}
+        <ellipse id="${c.id}eL" cx="-9" cy="-1" rx="5.5" ry="6.5" fill="#fff" stroke="#22180f" stroke-width="1.6"/><ellipse id="${c.id}eR" cx="9" cy="-1" rx="5.5" ry="6.5" fill="#fff" stroke="#22180f" stroke-width="1.6"/>
+        <circle id="${c.id}pL" cx="-9" cy="-1" r="2.8" fill="#1b1410"/><circle id="${c.id}pR" cx="9" cy="-1" r="2.8" fill="#1b1410"/>
+        <path id="${c.id}bL" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/><path id="${c.id}bR" stroke="${c.brow}" stroke-width="${c.bw}" stroke-linecap="round" fill="none"/>
+        <ellipse id="${c.id}mo" cx="0" cy="${c.my}" rx="6" ry="2" fill="#5a1020"/><path id="${c.id}sm" stroke="#5a1020" stroke-width="2.4" stroke-linecap="round" fill="none"/>${c.over}</g>
+    </g>`;});
+  $('people').innerHTML=h;
+  // dad's newspaper, mom's frying pan
+  $('apr').innerHTML='<g><rect x="-46" y="-40" width="92" height="64" rx="3" fill="#f4f1ea" stroke="#22180f" stroke-width="2.5"/><rect x="-38" y="-32" width="40" height="22" fill="#c9ccd2"/><path d="M8,-30h30M8,-22h30M8,-14h30M-38,-2h76M-38,6h76M-38,14h60" stroke="#8a8f99" stroke-width="2.5"/><text x="0" y="-44" text-anchor="middle" font-family="Secular One, sans-serif" font-size="11" fill="#22180f">ספורט</text></g>';
+  $('mpr').innerHTML='<g><path d="M0,0 L34,-4" stroke="#22180f" stroke-width="7" stroke-linecap="round"/><ellipse cx="54" cy="-6" rx="26" ry="8" fill="#3a3f4a" stroke="#22180f" stroke-width="3"/><path d="M38,-12 Q54,-22 70,-12Z" fill="#e0a240" stroke="#22180f" stroke-width="2"/></g>';
+  // the tower of plastic boxes, each one labelled in mom's handwriting
+  const lab=['שניצל','אורז','קוגל','מרק','סלט','עוגה','עוד שניצל'],col=['#ff6f5e','#ffc94a','#7fe0b4','#7fb6ff','#c9a0ff','#ff9ad2','#ffd9a0'];
+  let tw='';lab.forEach((l,k)=>{const y=-k*30;
+    tw+=`<g transform="translate(${(k%2?4:-4)} ${y})"><rect x="-40" y="-28" width="80" height="28" rx="5" fill="${col[k]}" fill-opacity=".85" stroke="#22180f" stroke-width="2.5"/><rect x="-42" y="-32" width="84" height="7" rx="3" fill="${col[k]}" stroke="#22180f" stroke-width="2.5"/><rect x="-22" y="-20" width="44" height="13" rx="2" fill="#fff" stroke="#22180f" stroke-width="1.5"/><text y="-9.5" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="9" fill="#22180f">${l}</text></g>`;});
+  $('tower').innerHTML=tw;
+})();
+
+/* ---------- script: who says what, when (s = start, d = speech length) ---------- */
+const LINES=[
+ {c:DAN,f:'01',s:.3,  d:2.90}, // hi mom! just saying up front: I'm on a diet.
+ {c:IMA,f:'02',s:3.4, d:2.33}, // sure, sweetie. just a taste.
+ {c:DAN,f:'03',s:5.9, d:2.08}, // mom! that's three schnitzels!
+ {c:IMA,f:'04',s:8.1, d:3.82}, // three is a taste. four is a meal.
+ {c:ABA,f:'05',s:12.1,d:2.22}, // eat. she won't let you go.
+ {c:DAN,f:'06',s:15.6,d:2.58}, // enough! I'm full! really!
+ {c:IMA,f:'07',s:18.3,d:3.10}, // full?! are you sick?
+ {c:IMA,f:'08',s:21.5,d:1.24}, // then take it home!
+ {c:DAN,f:'09',s:23.7,d:2.21}, // finally home...
+ {c:IMA,f:'10',s:26.45,d:2.86,phone:1} // home yet, sweetie? did you eat something on the way?
+];
+const ENV_FPS=60;
+function envOf(buf){ // loudness per 1/60 s (33 ms window), scaled so speech peaks open the mouth fully
+  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
+  let pk=1e-6;
+  for(let i=0;i<n;i++){
+    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
+    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
+    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
+  }
+  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
+  return e;
+}
+function mouthOf(c,t){
+  let m=0;
+  for(const l of LINES){
+    if(l.c!==c||l.phone||t<l.s||t>=l.s+l.d) continue; // mom on the phone has no face on screen
+    m=Math.max(m,l.env?(l.env[Math.floor((t-l.s)*ENV_FPS)]||0):.5+.5*Math.sin(t*28)); // without audio, flap
+  }
+  return m;
+}
+function phoneTalk(t){
+  const l=LINES[LINES.length-1];
+  if(t<l.s||t>=l.s+l.d) return 0;
+  return l.env?(l.env[Math.floor((t-l.s)*ENV_FPS)]||0):.6;
+}
+
+/* ---------- faces over time ---------- */
+const MOODS={
+ [DAN]:[[0,{es:1,bu:2,ba:-1,sm:8,o:0}],[3.4,{es:1,bu:1,ba:0,sm:5,o:0}],[4.6,{es:1.45,bu:7,ba:-2,sm:-2,o:.3}],
+        [5.9,{es:1.2,bu:4,ba:-3,sm:-4,o:0}],[8.1,{es:1.1,bu:3,ba:-3,sm:-5,o:0}],[10.3,{es:1.5,bu:7,ba:-2,sm:-3,o:.3}],
+        [12.1,{es:.9,bu:2,ba:-2,sm:-4,o:0}],[15.6,{es:.85,bu:3,ba:-3,sm:-6,o:0}],[18.3,{es:1.1,bu:4,ba:-2,sm:-3,o:0}],
+        [21.5,{es:1.5,bu:7,ba:-2,sm:-2,o:.4}],[23.7,{es:.55,bu:-1,ba:1,sm:-2,o:0}],[26.0,{es:.6,bu:2,ba:1,sm:-4,o:0}],[27.5,{es:.5,bu:0,ba:2,sm:-6,o:0}]],
+ [IMA]:[[0,{es:1.1,bu:4,ba:-2,sm:10,o:0}],[3.4,{es:.8,bu:3,ba:-2,sm:9,o:0}],[5.9,{es:.9,bu:3,ba:-2,sm:8,o:0}],
+        [8.1,{es:.8,bu:2,ba:-1,sm:7,o:0}],[15.6,{es:1,bu:3,ba:-1,sm:4,o:0}],[18.3,{es:1.5,bu:8,ba:-3,sm:-3,o:.4}],
+        [20.6,{es:1.2,bu:6,ba:-3,sm:-2,o:0}],[21.5,{es:.9,bu:4,ba:-2,sm:10,o:0}]],
+ [ABA]:[[0,{es:.8,bu:0,ba:1,sm:1,o:0}],[12.1,{es:.75,bu:2,ba:-1,sm:-1,o:0}]]
+};
+const MK=['es','bu','ba','sm','o'];
+function moodOf(i,t){
+  const M=MOODS[i];let k=0;for(let j=0;j<M.length;j++) if(t>=M[j][0]) k=j;
+  const cur=M[k][1],prev=M[Math.max(0,k-1)][1],u=eio(seg(t,M[k][0],M[k][0]+.3));
+  const r={};MK.forEach(q=>r[q]=lerp(prev[q],cur[q],u));return r;
+}
+const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.5)-3.4)/.07));
+
+/* ---------- blocking ---------- */
+const fatOf=t=>eo(seg(t,14.3,15.6)); // Dani after the montage
+const schnitzels=t=>t<4.55?0:t<4.8?1:t<5.05?2:t<10.35?3:4;
+function keys(t,pts){
+  if(t<=pts[0][0]) return pts[0][1];
+  for(let k=1;k<pts.length;k++) if(t<pts[k][0]) return lerp(pts[k-1][1],pts[k][1],eio(seg(t,pts[k-1][0],pts[k][0])));
+  return pts[pts.length-1][1];
+}
+function stateOf(i,t){
+  const B=t>=CUT;
+  if(i===DAN){
+    if(!B){
+      let pose='table';
+      if(t<1.6) pose='wave'; else if(t>=5.9&&t<8.0) pose='palms'; else if(t>=15.6&&t<18.3) pose='belly'; else if(t>=21.7) pose='carry';
+      return {x:180,stand:0,op:1,pose,fat:fatOf(t)};
+    }
+    // in his flat: walks in carrying the tower, drops on the couch
+    const x=keys(t,[[CUT,-60],[23.75,150]]);
+    const stand=1-eo(seg(t,23.85,24.2));
+    let pose=t<23.9?'carry':t>=26.3?'phone':'flop';
+    return {x,stand,op:1,pose,fat:1,walk:t<23.75};
+  }
+  if(B) return {op:0};
+  if(i===IMA){
+    let pose='hip';
+    const serve=win(t,4.35,5.25,.15)+win(t,10.1,10.7,.15)+win(t,14.3,15.6,.2);
+    if(serve>0) pose='serve'; else if(t>=18.3&&t<21.3) pose='cheeks'; else if(t>=21.3) pose='present';
+    return {x:284,stand:1,op:1,pose,serve};
+  }
+  return {x:76,stand:0,op:1,pose:'paper'};
+}
+function lookAt(i,t){
+  const DH=[180,353],MH=[284,302],AH=[76,353],PLATE=[180,470];
+  if(t>=CUT) return i===DAN?(t>=27.2?[180,200]:[260,300]):null;
+  if(i===DAN){
+    if(t<3.3) return MH;
+    if(t>=4.5&&t<5.9) return PLATE;
+    if(t>=10.3&&t<10.9) return PLATE;
+    if(t>=12.1&&t<14.4) return AH;
+    if(t>=14.3&&t<15.6) return PLATE;
+    return MH;
+  }
+  if(i===IMA) return (t>=4.3&&t<5.4)||(t>=10.0&&t<10.8)||(t>=14.3&&t<15.6)?PLATE:DH;
+  return t>=12.1&&t<14.4?[120,420]:[76,470]; // dad never really looks up from the paper
+}
+
+/* ---------- elements ---------- */
+const E={};
+['cam','bgA','bgB','fgA','fgB','flames','plate','pile','schnitzels','tower','phone','callBubble','ring','fade','cap','end','title','bigplay','seek','time','pp','mute','stage','status','dCheek','dfc','map'].forEach(k=>E[k]=$(k));
+const P={};
+[DAN,IMA,ABA].forEach(i=>{const c=CH[i],o={};
+  ['P','lg','sh','ts','pr','ar','ai','hL','hR','H','eL','eR','pL','pR','bL','bR','mo','sm'].forEach(k=>o[k]=$(c.id+k));P[i]=o;});
+const SCH=[...E.schnitzels.children],BOX=[...E.tower.children],RING=[...E.ring.children];
+
+function drawPerson(i,t){
+  const c=CH[i],p=P[i],s=stateOf(i,t);
+  A(p.P,'opacity',s.op);
+  if(!s.op) return null;
+  const ph=s.walk?t*16:0, step=s.walk?Math.sin(ph):0, bob=s.walk?-Math.abs(Math.cos(ph))*5:0;
+  const x=s.x, hip=lerp(472,452,s.stand)+bob, sh=hip-88;
+  const hy=sh-c.r-6;
+  const lt=lerp(486,hip,s.stand), fy=568;
+  const L=(dx,lift)=>`M${x+dx-9},${lt}H${x+dx+9}V${fy-lift}H${x+dx-9}Z`;
+  A(p.lg,'d',L(-12,step>0?step*8:0)+L(12,step<0?-step*8:0));
+  const F=(dx,lift)=>`M${x+dx-12},${fy+6-lift}Q${x+dx-12},${fy-6-lift} ${x+dx+2},${fy-6-lift}Q${x+dx+14},${fy-6-lift} ${x+dx+14},${fy+6-lift}Z`;
+  A(p.sh,'d',F(-14,step>0?step*8:0)+F(12,step<0?-step*8:0));
+  const fat=s.fat||0, w=28+22*fat, belly=26*fat;
+  A(p.ts,'d',`M${x-w+8},${sh+10}Q${x-w+8},${sh} ${x-w+20},${sh}H${x+w-20}Q${x+w-8},${sh} ${x+w-8},${sh+10}Q${x+w+belly*.4},${hip-30} ${x+w},${hip+8}H${x-w}Q${x-w-belly*.4},${hip-30} ${x-w+8},${sh+10}Z`);
+  if(c.apron) A($(c.id+'ap'),'d',`M${x-16},${sh+18}H${x+16}V${hip+20}Q${x},${hip+28} ${x-16},${hip+20}Z`);
+  const sL=[x-w+14,sh+10],sR=[x+w-14,sh+10];
+  let hL=[x-24,hip-4],hR=[x+24,hip-4],eL=null,eR=null,prop=null;
+  const wob=Math.sin(t*12);
+  switch(s.pose){
+    case 'table': hL=[x-34,470];hR=[x+34,470];break;
+    case 'wave': hR=[x+44,sh-40+wob*6];hL=[x-34,470];break;
+    case 'palms': hL=[x-50,sh-20+wob*3];hR=[x+50,sh-20-wob*3];eL=[x-44,sh+16];eR=[x+44,sh+16];break;
+    case 'belly': hL=[x-20,hip-24];hR=[x+20,hip-30];break;
+    case 'carry': hL=[x-30,sh+20];hR=[x+30,sh+20];eL=[x-40,sh+40];eR=[x+40,sh+40];break;
+    case 'flop': hL=[x-70,sh+4];hR=[x+70,sh+4];eL=[x-50,sh+6];eR=[x+50,sh+6];break;
+    case 'phone': hR=[x+22,hy+6];eR=[x+42,sh+10];hL=[x-70,sh+4];eL=[x-50,sh+6];break;
+    case 'hip': hL=[x-34,hip-20];hR=[x+34,hip-20];eL=[x-44,sh+30];eR=[x+44,sh+30];break;
+    case 'serve': {const u=s.serve,r=t>=14.3&&t<15.6?Math.sin(t*30)*10:0;hR=[lerp(x+30,x-70,u)+r,lerp(hip-10,sh+30,u)];eR=[lerp(x+40,x-20,u),lerp(sh+40,sh+30,u)];prop=[hR[0],hR[1]];hL=[x+34,hip-20];eL=[x+44,sh+30];break;}
+    case 'cheeks': hL=[x-20,hy+12];hR=[x+20,hy+12];eL=[x-40,sh+20];eR=[x+40,sh+20];break;
+    case 'present': hL=[x-64,sh+10];hR=[x-30,sh-10];eL=[x-40,sh+20];eR=[x-10,sh+20];break;
+    case 'paper': hL=[x-40,410];hR=[x+40,410];prop=[x,414];break;
+  }
+  const arm=(s0,e,h)=>e?`M${s0[0]},${s0[1]}L${e[0]},${e[1]}L${h[0]},${h[1]}`:`M${s0[0]},${s0[1]}Q${(s0[0]+h[0])/2+(h[0]<x?-10:10)},${(s0[1]+h[1])/2} ${h[0]},${h[1]}`;
+  const d=arm(sL,eL,hL)+arm(sR,eR,hR);
+  A(p.ar,'d',d);A(p.ai,'d',d);
+  A(p.hL,'cx',hL[0]);A(p.hL,'cy',hL[1]);A(p.hR,'cx',hR[0]);A(p.hR,'cy',hR[1]);
+  if(prop){A(p.pr,'transform',`translate(${prop[0]} ${prop[1]})${i===IMA?' scale(-1 1)':''}`);A(p.pr,'opacity',1);} else A(p.pr,'opacity',0);
+  // head
+  const m=moodOf(i,t),talk=mouthOf(i,t);
+  let rot=Math.sin(t*1.5+i)*2;
+  if(talk>.2) rot+=Math.sin(t*9)*2.5;
+  if(i===DAN&&s.pose==='flop') rot+=10;
+  if(i===ABA) rot=4;
+  A(p.H,'transform',`translate(${x} ${hy-talk*2+(i===ABA?4:0)}) rotate(${rot}) scale(${1+fat*.12} ${1+fat*.04})`);
+  const look=lookAt(i,t);let lx=0,ly=0;
+  if(look){const dx=look[0]-x,dy=look[1]-hy,dd=Math.hypot(dx,dy)||1;lx=dx/dd;ly=dy/dd;}
+  const ery=Math.max(.6,6.5*m.es*(1-.92*blinkOf(t,i*1.3)));
+  A(p.eL,'ry',ery);A(p.eR,'ry',ery);
+  const pr=m.es>1.35?2.1:2.8;
+  [[p.pL,-9],[p.pR,9]].forEach(([e,cx])=>{A(e,'cx',cx+lx*2.3);A(e,'cy',-1+ly*2);A(e,'r',pr);});
+  const by=-11-m.bu;
+  A(p.bL,'d',`M-15,${by} L-4,${by+m.ba}`);A(p.bR,'d',`M4,${by+m.ba} L15,${by}`);
+  const o=Math.max(talk,m.o);
+  if(o>.12){A(p.mo,'opacity',1);A(p.mo,'rx',4.5+3*o);A(p.mo,'ry',1.4+6*o);A(p.sm,'opacity',0);}
+  else{A(p.mo,'opacity',0);A(p.sm,'opacity',1);A(p.sm,'d',`M-7,${c.my} Q0,${c.my+m.sm*1.2} 7,${c.my}`);}
+  return {x,hy,hR};
+}
+
+/* ---------- render: everything is a pure function of t ---------- */
+function render(t){
+  const B=t>=CUT;
+  A(E.bgA,'opacity',B?0:1);A(E.fgA,'opacity',B?0:1);
+  A(E.bgB,'opacity',B?1:0);A(E.fgB,'opacity',B?1:0);
+  A(E.fade,'opacity',win(t,CUT-.35,CUT+.35,.35));
+  A(E.cam,'transform',B?'':'translate(180 640) scale(1.3) translate(-180 -560)'); // frame the table, not the tablecloth
+  A(E.flames,'transform',`translate(0 ${Math.sin(t*8)*.6})`);
+  // the plate: three schnitzels, a fourth, then the montage piles up everything
+  const n=schnitzels(t);
+  SCH.forEach((s,k)=>{const on=k<n,pop=on?eo(seg(t,[4.55,4.8,5.05,10.35][k],[4.55,4.8,5.05,10.35][k]+.15)):0;
+    A(s,'opacity',on?1:0);A(s,'transform',`translate(0 ${(1-pop)*-30})`);});
+  A(E.pile,'transform',`scale(1 ${eo(seg(t,14.3,15.5))})`);
+  A(E.plate,'transform',`translate(180 478) scale(${1+.06*Math.sin(seg(t,14.3,15.6)*Math.PI*6)*(t<15.6?1:0)})`);
+  // Dani's cheeks go red as he fills up
+  A(E.dCheek,'opacity',fatOf(t)*.7);
+
+  let dan=null;
+  [ABA,IMA,DAN].forEach(i=>{const r=drawPerson(i,t);if(i===DAN) dan=r;});
+
+  // the tower: drops onto the table, then rides home with Dani and sits beside him on the couch
+  let tx,ty,ts=1,top=1;
+  if(!B){const u=eo(seg(t,21.55,21.9));tx=180;ty=lerp(-60,472,u);top=t>=21.55?1:0;}
+  else if(t<23.9){tx=dan.x+6;ty=500;}
+  else{tx=270;ty=474;}
+  A(E.tower,'transform',`translate(${tx} ${ty}) scale(${ts})`);A(E.tower,'opacity',top);
+  BOX.forEach((b,k)=>{const wob=t>=21.85&&t<22.4?Math.sin((t-21.85)*40+k)*3*(1-seg(t,21.85,22.4)):0;A(b,'transform',`translate(${(k%2?4:-4)+wob} ${-k*30})`);});
+  // the phone rings on top of the tower, then goes to his ear
+  const ringing=t>=25.95&&t<26.4;
+  let px=270,py=474-7*30-22;
+  if(t>=26.3&&dan){px=dan.hR[0]+4;py=dan.hR[1]-6;}
+  A(E.phone,'opacity',t>=23.9?1:0);
+  A(E.phone,'transform',`translate(${px+(ringing?Math.sin(t*80)*2:0)} ${py}) rotate(${ringing?Math.sin(t*60)*8:0})`);
+  A(E.ring,'opacity',ringing?1:0);A(E.ring,'transform',`translate(${px} ${py})`);
+  RING.forEach((r,k)=>A(r,'opacity',Math.floor(t*8+k)%2?1:.3));
+  A(E.callBubble,'opacity',win(t,25.95,29.4,.2));
+  A(E.callBubble,'transform',`translate(0 ${-phoneTalk(t)*3})`);
+
+  E.cap.style.opacity=win(t,CUT+.1,CUT+1.6,.25);
+  E.end.style.opacity=eo(seg(t,29.4,29.8));
+  E.title.style.opacity=(t<.05&&!playing)?1:0;
+  E.seek.value=t;
+  E.time.textContent='0:'+String(Math.floor(t)).padStart(2,'0');
+}
+
+/* ---------- audio: Web Audio for voices and the synthesized effects ---------- */
+let AC=null,master=null,noiseBuf=null,muted=false,loaded=0,failed=0;
+const live=new Set();
+function ctx(){
+  if(AC) return AC;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
+  try{AC=new C();}catch(e){return null;}
+  master=AC.createGain();master.connect(AC.destination);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  return AC;
+}
+function ac(){ // from a tap: wake the context, and on iPhone play even with the silent switch on
+  try{if(navigator.audioSession) navigator.audioSession.type='playback';}catch(e){}
+  if(!ctx()) return null;
+  if(AC.state==='suspended') AC.resume();
+  const s=AC.createBufferSource();s.buffer=AC.createBuffer(1,1,22050);s.connect(AC.destination);s.start(0);
+  return AC;
+}
+function track(s){live.add(s);s.onended=()=>live.delete(s);return s;}
+function stopAll(){live.forEach(s=>{try{s.stop();}catch(e){}});live.clear();}
+function playBuf(buf,off,phone){
+  const s=AC.createBufferSource();s.buffer=buf;
+  let out=s;
+  if(phone){ // mom comes through the phone speaker
+    const hp=AC.createBiquadFilter(),lp=AC.createBiquadFilter();
+    hp.type='highpass';hp.frequency.value=500;lp.type='lowpass';lp.frequency.value=3000;
+    s.connect(hp);hp.connect(lp);out=lp;
+  }
+  out.connect(master);s.start(0,off||0);track(s);
+}
+function tone(f0,f1,dur,type,vol,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function noise(dur,vol,freq,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
+  s.buffer=noiseBuf;f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random()*.5);s.stop(t0+dur+.02);track(s);
+}
+const plop=()=>{tone(220,110,.12,'sine',.18);noise(.06,.12,500);};
+const SFX=[
+  [4.55,plop],[4.8,plop],[5.05,plop],[10.35,plop],
+  ...Array.from({length:9},(_,k)=>[14.3+k*.14,plop]),                                 // the montage
+  [15.55,()=>{tone(1400,1400,.06,'square',.04);tone(1700,1700,.06,'square',.04,.08);}], // a shirt button pops
+  [21.85,()=>{tone(110,55,.3,'sine',.3);noise(.15,.25,300);}],                         // the tower lands
+  [CUT-.3,()=>{noise(.5,.1,1200);}],
+  ...Array.from({length:6},(_,k)=>[CUT+.05+k*.13,()=>tone(520,420,.04,'square',.03)]), // footsteps
+  [23.95,()=>{tone(90,50,.3,'sine',.25);noise(.2,.2,200);}],                           // flop on the couch
+  ...Array.from({length:4},(_,k)=>[25.95+k*.11,()=>tone(k%2?1320:1760,k%2?1320:1760,.09,'square',.04)]), // ring
+  [29.4,()=>{tone(523,523,.12,'square',.05);tone(659,659,.12,'square',.05,.12);tone(784,784,.3,'square',.05,.24);}]
+];
+const EV=SFX.concat(LINES.map(l=>[l.s,()=>{if(l.buf) playBuf(l.buf,0,l.phone);}]));
+
+async function loadVoices(){
+  const c=ctx();
+  if(!c){failed=LINES.length;return updateStatus();}
+  await Promise.all(LINES.map(async l=>{
+    try{
+      const r=await fetch('audio/'+l.f+'.mp3');if(!r.ok) throw new Error(r.status);
+      const ab=await r.arrayBuffer();
+      l.buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      l.env=envOf(l.buf);loaded++;
+    }catch(e){failed++;}
+    updateStatus();
+  }));
+  if(playing) resumeVoices();
+}
+function updateStatus(){
+  const n=LINES.length;
+  if(loaded+failed<n) E.status.textContent='טוען את הקולות... '+loaded+' מתוך '+n;
+  else if(!failed) E.status.textContent='הקולות מוכנים. הפעילו סאונד ולחצו על הסרטון.';
+  else E.status.textContent='לא הצלחנו לטעון '+failed+' מתוך '+n+' קולות. בדקו את החיבור לאינטרנט ורעננו את הדף.';
+}
+function resumeVoices(){ // pick up any line already under way (after resume or seek)
+  if(!AC) return;
+  for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.phone);
+}
+
+/* ---------- #preview: loop a highlight silently (no audio events fire) ---------- */
+function startPreview(a,b){
+  if(!document.documentElement.classList.contains('preview')) return;
+  E.stage.style.pointerEvents='none';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){render(lerp(a,b,.5));return;}
+  const t0=performance.now();
+  (function pv(now){T=a+((now-t0)/1000)%(b-a);render(T);requestAnimationFrame(pv);})(t0);
+}
+
+/* ---------- player ---------- */
+let T=0,playing=false,last=0,raf=0;
+const ICON={
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
+  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
+  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
+};
+function ui(){
+  const ended=T>=DUR;
+  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
+  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
+  E.bigplay.style.opacity=playing?0:1;
+  E.bigplay.innerHTML=(ended?ICON.replay:ICON.play).replace('<svg','<svg style="fill:#22180f"');
+  E.mute.innerHTML=muted?ICON.off:ICON.on;
+  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+}
+function frame(now){
+  if(!playing) return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const prev=T;T=Math.min(DUR,T+dt);
+  if(AC) for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
+  render(T);
+  if(T>=DUR){playing=false;ui();return;}
+  raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(T>=DUR) T=0;
+  ac();playing=true;last=performance.now();ui();
+  resumeVoices();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
+}
+function pause(){playing=false;cancelAnimationFrame(raf);stopAll();ui();}
+function toggle(){playing?pause():play();}
+E.stage.addEventListener('click',toggle);
+E.pp.addEventListener('click',toggle);
+E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=muted?0:1;ui();});
+E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
+E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
+
+ui();render(0);updateStatus();loadVoices();
+startPreview(3.2,16.0);
+})();
+</script>
+
+</body>
+</html>
