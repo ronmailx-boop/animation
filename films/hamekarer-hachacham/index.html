@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>המקרר החכם</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview .ctl,html.preview #status,html.preview .title,html.preview .bigplay{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
+/* layout: phone-shaped stage (a dark kitchen at 2 a.m.), slim controls underneath */
+:root{
+  --bg:#eef0f7; --fg:#161a2e; --muted:#5d6380; --accent:#2f9e8f; --panel:#ffffff; --line:#d3d7e6;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#0e1020; --fg:#e9ecfb; --muted:#9aa1c4; --accent:#5fd3c3; --panel:#1a1d33; --line:#2c3150; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#0e1020; --fg:#e9ecfb; --muted:#9aa1c4; --accent:#5fd3c3; --panel:#1a1d33; --line:#2c3150; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 210px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#1b2140; container-type:inline-size;
+  cursor:pointer; touch-action:manipulation; -webkit-tap-highlight-color:transparent; box-shadow:0 0 0 1px var(--line);
+}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ov{position:absolute;pointer-events:none}
+.title{inset:0;background:#121628;color:#7ff0e0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.4cqw;text-align:center;padding:8cqw}
+.title small{font:800 4.4cqw var(--font-body);color:#aab3e0}
+.title h2{font:400 18cqw/1 var(--font-display);margin:0}
+.title p{margin:0;font:500 5cqw var(--font-body);color:#e9ecfb}
+.end{left:10cqw;right:10cqw;bottom:6cqw;background:rgba(18,22,40,.95);color:#e9ecfb;border-radius:4cqw;padding:3.4cqw;text-align:center;opacity:0}
+.end .fin{font:400 14cqw/1 var(--font-display);color:#7ff0e0}
+.end small{display:block;margin-top:1.2cqw;font:500 3.6cqw/1.4 var(--font-body);color:#c9cfee}
+.bigplay{left:50%;top:50%;width:22cqw;height:22cqw;margin:-11cqw 0 0 -11cqw;border-radius:50%;background:rgba(255,255,255,.94);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 1cqw 4cqw rgba(0,0,0,.35)}
+.bigplay svg{position:static;width:10cqw;height:10cqw}
+
+.ctl{width:100%;max-width:min(100%, 420px);display:flex;align-items:center;gap:10px;direction:ltr}
+.ctl button{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ctl button:focus-visible,.ctl input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.ctl svg{width:20px;height:20px;fill:currentColor}
+.ctl input[type=range]{flex:1;min-width:0;accent-color:var(--accent);height:44px;margin:0}
+#time{flex:none;font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted);min-width:34px;text-align:center}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+</style>
+</head>
+<body>
+
+<div class="wrap" dir="rtl" lang="he">
+  <div class="head">
+    <h1>המקרר החכם</h1>
+    <p class="sub">שתיים ורבע בלילה, עוגה במדף העליון, ומקרר שיודע הכל. 30 שניות עם קול.</p>
+  </div>
+
+  <div class="stage" id="stage">
+    <svg id="svg" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" role="img" aria-label="מטבח חשוך בלילה: אבי בפיג'מה מול מקרר חכם עם פרצוף על המסך, ואמא בשיחת וידאו">
+      <defs>
+        <pattern id="pj" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#5f7fd6"/><rect width="6" height="12" fill="#7d9be8"/></pattern>
+        <pattern id="tile" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#232a4d"/><path d="M0,0H30V30" fill="none" stroke="#2c3560" stroke-width="2"/></pattern>
+        <clipPath id="bubClip"><circle r="64"/></clipPath>
+        <radialGradient id="halo"><stop offset="0" stop-color="#fff6b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff6b0" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g id="cam">
+        <!-- kitchen at night -->
+        <rect width="360" height="640" fill="#1b2140"/>
+        <rect x="0" y="300" width="160" height="120" fill="url(#tile)"/>
+        <g transform="translate(22 46)">
+          <rect width="104" height="86" rx="6" fill="#0f1430" stroke="#39416e" stroke-width="5"/>
+          <path d="M52,0V86M0,43H104" stroke="#39416e" stroke-width="4"/>
+          <circle cx="78" cy="22" r="11" fill="#f6efc4"/><circle cx="73" cy="19" r="10" fill="#0f1430"/>
+          <circle cx="20" cy="16" r="1.4" fill="#fff"/><circle cx="34" cy="62" r="1.2" fill="#fff"/><circle cx="88" cy="66" r="1.3" fill="#fff"/>
+        </g>
+        <rect x="0" y="420" width="70" height="150" fill="#2a3158"/>
+        <rect x="0" y="414" width="76" height="10" rx="3" fill="#3b4478"/>
+        <rect y="566" width="360" height="74" fill="#141831"/>
+        <path id="spill" d="M166,262 L-20,330 L-20,640 L166,640 Z" fill="#fff1b0" opacity="0"/>
+
+        <!-- the fridge -->
+        <g id="beacon" opacity="0"><rect x="226" y="92" width="28" height="14" rx="3" fill="#3a3f55"/><path d="M230,92 a10,10 0 0 1 20,0z" fill="#ff3b4e"/><circle id="beam" cx="240" cy="86" r="22" fill="#ff3b4e" opacity=".3"/></g>
+        <rect x="160" y="108" width="160" height="460" rx="14" fill="#c9d2de"/>
+        <!-- freezer: inside first, door on top -->
+        <g>
+          <rect x="166" y="114" width="148" height="134" rx="8" fill="#cdeefe"/>
+          <ellipse cx="240" cy="200" rx="60" ry="40" fill="url(#halo)" id="schGlow" opacity="0"/>
+          <ellipse cx="240" cy="214" rx="40" ry="9" fill="#fff" stroke="#b9d6e6" stroke-width="2"/>
+          <path d="M210,206 q4,-16 30,-14 q30,-2 32,12 q-4,12 -30,12 q-28,2 -32,-10z" fill="#d9952f"/>
+          <g fill="#b46e1c"><circle cx="224" cy="203" r="1.6"/><circle cx="238" cy="198" r="1.4"/><circle cx="252" cy="205" r="1.6"/><circle cx="244" cy="209" r="1.3"/><circle cx="230" cy="210" r="1.4"/></g>
+          <circle cx="266" cy="198" r="7" fill="#ffe14d" stroke="#e8c21c" stroke-width="2"/>
+          <g id="sparks" fill="#fff" opacity="0"><path d="M196,150 l2,6 6,2 -6,2 -2,6 -2,-6 -6,-2 6,-2z"/><path d="M284,140 l2,6 6,2 -6,2 -2,6 -2,-6 -6,-2 6,-2z"/><path d="M296,190 l1.5,4 4,1.5 -4,1.5 -1.5,4 -1.5,-4 -4,-1.5 4,-1.5z"/></g>
+        </g>
+        <g id="frzDoor">
+          <rect x="160" y="108" width="160" height="144" rx="14" fill="#e3e9f0"/>
+          <rect x="168" y="150" width="8" height="70" rx="4" fill="#9aa6b4"/>
+          <rect x="196" y="146" width="92" height="72" rx="12" fill="#0b1122" id="screen"/>
+          <rect id="scrFlash" x="196" y="146" width="92" height="72" rx="12" fill="#ff3b4e" opacity="0"/>
+          <g id="face">
+            <rect id="feL" x="215" y="164" width="16" height="20" rx="6" fill="#6ee7ff"/>
+            <rect id="feR" x="253" y="164" width="16" height="20" rx="6" fill="#6ee7ff"/>
+            <path id="fhL" d="M215,178 q8,-12 16,0" stroke="#6ee7ff" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
+            <path id="fhR" d="M253,178 q8,-12 16,0" stroke="#6ee7ff" stroke-width="4" fill="none" stroke-linecap="round" opacity="0"/>
+            <g id="fBars" fill="#6ee7ff"></g>
+          </g>
+        </g>
+        <rect x="160" y="250" width="160" height="6" fill="#aeb8c6"/>
+        <!-- main compartment: inside, then the door -->
+        <g id="inside" opacity="0">
+          <rect x="166" y="260" width="148" height="300" rx="6" fill="#fff7d6"/>
+          <path d="M168,342H312M168,424H312M168,500H312" stroke="#e2d6a6" stroke-width="4"/>
+          <rect x="176" y="296" width="20" height="44" rx="2" fill="#fff" stroke="#9bb3d6" stroke-width="2"/><rect x="176" y="306" width="20" height="10" fill="#5f7fd6"/>
+          <g id="cake">
+            <ellipse cx="248" cy="338" rx="34" ry="5" fill="#e8e1ea"/>
+            <rect x="218" y="308" width="60" height="30" rx="6" fill="#ff9cc4"/>
+            <rect x="218" y="320" width="60" height="5" fill="#fff"/>
+            <path d="M218,312 q5,8 10,0 q5,8 10,0 q5,8 10,0 q5,8 10,0 q5,8 10,0 q5,8 10,0" fill="#fff"/>
+            <circle cx="248" cy="302" r="6" fill="#e5384a"/><path d="M248,296 q4,-8 10,-10" stroke="#3c7d3b" stroke-width="2" fill="none"/>
+          </g>
+          <g id="cakeGlow" opacity="0"><path d="M206,296 l3,-8 3,8 8,3 -8,3 -3,8 -3,-8 -8,-3z M290,300 l2,-6 2,6 6,2 -6,2 -2,6 -2,-6 -6,-2z" fill="#fff6a0"/></g>
+          <g id="laser" opacity="0" stroke="#ff3b4e" stroke-width="1.6"><path d="M210,292L290,346M210,346L290,292M210,306H290M210,330H290M232,288V348M264,288V348"/></g>
+          <g transform="translate(184 384)"><ellipse cx="0" cy="22" rx="11" ry="14" fill="#f4ead2"/><ellipse cx="22" cy="22" rx="11" ry="14" fill="#f4ead2"/></g>
+          <g transform="translate(250 368)"><rect width="34" height="50" rx="8" fill="#9ed49a" opacity=".85"/><rect y="-6" width="34" height="10" rx="3" fill="#d24b3e"/><ellipse cx="11" cy="22" rx="5" ry="9" fill="#5c9a3d"/><ellipse cx="22" cy="30" rx="5" ry="9" fill="#5c9a3d"/></g>
+          <g transform="translate(180 458)"><circle cx="10" cy="26" r="13" fill="#ff7a3d"/><circle cx="36" cy="28" r="12" fill="#e94a3a"/><path d="M58,40 q16,-30 34,-4" fill="#6dbb4a"/></g>
+          <path d="M320,256 L356,238 L356,584 L320,566Z" fill="#d4dce6"/>
+          <path d="M324,300 L352,288 M324,380 L352,370 M324,460 L352,452" stroke="#aeb8c6" stroke-width="4"/>
+          <rect x="330" y="252" width="10" height="44" rx="3" fill="#7fc3ff" opacity=".85"/><rect x="342" y="246" width="10" height="44" rx="3" fill="#7fc3ff" opacity=".85"/>
+        </g>
+        <g id="mainDoor">
+          <rect x="160" y="254" width="160" height="314" rx="14" fill="#e3e9f0"/>
+          <rect x="168" y="280" width="8" height="110" rx="4" fill="#9aa6b4"/>
+          <g transform="translate(262 300)"><rect width="34" height="40" rx="3" fill="#fff8c2"/><path d="M6,12h22M6,20h18M6,28h20" stroke="#9aa6b4" stroke-width="2"/></g>
+        </g>
+        <!-- family-chat notification -->
+        <g id="chat" opacity="0">
+          <path d="M268,46 h76 a12,12 0 0 1 12,12 v26 a12,12 0 0 1 -12,12 h-56 l-14,12 v-12 h-6 a12,12 0 0 1 -12,-12 v-26 a12,12 0 0 1 12,-12z" fill="#2fbf71"/>
+          <path d="M296,64 a7,7 0 0 1 12,-4 a7,7 0 0 1 12,4 c0,8 -12,14 -12,16 c0,-2 -12,-8 -12,-16z" fill="#fff"/>
+          <circle cx="342" cy="50" r="10" fill="#ff3b4e"/><text x="342" y="54" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="11" fill="#fff">99</text>
+        </g>
+        <!-- phone on the counter -->
+        <g id="phoneC"><rect id="phGlow" x="14" y="396" width="44" height="22" rx="8" fill="#7ff0e0" opacity="0"/><rect x="20" y="400" width="32" height="14" rx="3" fill="#0b0f20" stroke="#4a5280" stroke-width="2"/></g>
+
+        <!-- Avi -->
+        <g id="avi">
+          <ellipse cx="0" cy="226" rx="44" ry="8" fill="#0d1022" opacity=".6"/>
+          <rect x="-24" y="150" width="20" height="70" rx="8" fill="url(#pj)"/><rect x="4" y="150" width="20" height="70" rx="8" fill="url(#pj)"/>
+          <g fill="#f3f0f8"><ellipse cx="-16" cy="222" rx="16" ry="8"/><ellipse cx="16" cy="222" rx="16" ry="8"/><ellipse cx="-24" cy="210" rx="4" ry="10"/><ellipse cx="-14" cy="210" rx="4" ry="10"/><ellipse cx="8" cy="210" rx="4" ry="10"/><ellipse cx="18" cy="210" rx="4" ry="10"/></g>
+          <g fill="#ffb3c7"><ellipse cx="-24" cy="210" rx="1.8" ry="6"/><ellipse cx="-14" cy="210" rx="1.8" ry="6"/><ellipse cx="8" cy="210" rx="1.8" ry="6"/><ellipse cx="18" cy="210" rx="1.8" ry="6"/></g>
+          <rect x="-32" y="56" width="64" height="104" rx="22" fill="url(#pj)"/>
+          <path d="M-10,56 L0,74 L10,56" fill="#e7c09c"/>
+          <path id="armL" stroke="#7d9be8" stroke-width="15" stroke-linecap="round" fill="none"/>
+          <path id="armR" stroke="#7d9be8" stroke-width="15" stroke-linecap="round" fill="none"/>
+          <g id="phoneH" opacity="0"><rect x="-7" y="-14" width="14" height="28" rx="3" fill="#0b0f20" stroke="#4a5280" stroke-width="1.5"/></g>
+          <circle id="handL" r="8" fill="#f0b98d"/>
+          <g id="fork" opacity="0"><path d="M0,0 L0,-30 M-4,-30 V-42 M0,-30 V-43 M4,-30 V-42 M-4,-30 H4" stroke="#d9dee8" stroke-width="2.4" stroke-linecap="round" fill="none"/></g>
+          <circle id="handR" r="8" fill="#f0b98d"/>
+          <g id="aHead" transform="translate(0 20)">
+            <circle cx="-34" cy="2" r="7" fill="#e7a87c"/><circle cx="34" cy="2" r="7" fill="#e7a87c"/>
+            <circle r="34" fill="#f0b98d"/>
+            <path id="hair" d="M-34,-6 L-30,-30 L-18,-24 L-12,-42 L0,-28 L8,-44 L16,-26 L28,-36 L30,-16 L36,-8 C30,-30 -28,-34 -34,-6Z" fill="#3a2a22"/>
+            <ellipse cx="0" cy="22" rx="20" ry="9" fill="#5b4636" opacity=".18"/>
+            <ellipse id="aeL" cx="-12" cy="-1" rx="7" ry="8" fill="#fff"/><ellipse id="aeR" cx="12" cy="-1" rx="7" ry="8" fill="#fff"/>
+            <circle id="apL" cx="-12" cy="-1" r="3.4" fill="#1b1410"/><circle id="apR" cx="12" cy="-1" r="3.4" fill="#1b1410"/>
+            <path id="abL" stroke="#3a2a22" stroke-width="3.4" stroke-linecap="round" fill="none"/><path id="abR" stroke="#3a2a22" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+            <ellipse cx="0" cy="9" rx="5" ry="4" fill="#e3a07a"/>
+            <ellipse id="amo" cx="0" cy="19" rx="7" ry="2" fill="#5a1020"/>
+            <path id="asm" stroke="#5a1020" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          </g>
+        </g>
+      </g>
+      <rect id="siren" width="360" height="640" fill="#ff1f3d" opacity="0"/>
+      <!-- Mom on a video call -->
+      <g id="call" opacity="0">
+        <circle r="70" fill="#7ff0e0"/>
+        <g clip-path="url(#bubClip)">
+          <rect x="-70" y="-70" width="140" height="140" fill="#3b2f55"/>
+          <rect x="-60" y="-40" width="40" height="60" rx="4" fill="#4b3d6b"/>
+          <ellipse cx="0" cy="66" rx="50" ry="26" fill="#d9558b"/>
+          <g id="mHead">
+            <circle cx="0" cy="8" r="38" fill="#93cf96"/>
+            <g fill="#ff8fb8" stroke="#d9558b" stroke-width="1.5"><rect x="-34" y="-36" width="16" height="22" rx="7"/><rect x="-14" y="-44" width="16" height="22" rx="7"/><rect x="6" y="-44" width="16" height="22" rx="7"/><rect x="24" y="-36" width="16" height="22" rx="7"/></g>
+            <circle cx="-22" cy="22" r="7" fill="#d8f0b8" stroke="#7fb36a" stroke-width="1.5"/><circle cx="22" cy="22" r="7" fill="#d8f0b8" stroke="#7fb36a" stroke-width="1.5"/>
+            <ellipse id="meL" cx="-13" cy="4" rx="6.5" ry="7.5" fill="#fff"/><ellipse id="meR" cx="13" cy="4" rx="6.5" ry="7.5" fill="#fff"/>
+            <circle id="mpL" cx="-13" cy="4" r="3.2" fill="#1b1410"/><circle id="mpR" cx="13" cy="4" r="3.2" fill="#1b1410"/>
+            <path id="mbL" stroke="#3b2a22" stroke-width="3" stroke-linecap="round" fill="none"/><path id="mbR" stroke="#3b2a22" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <ellipse id="mmo" cx="0" cy="28" rx="7" ry="2" fill="#5a1020"/>
+            <path id="msm" stroke="#5a1020" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+          </g>
+        </g>
+        <circle r="66" fill="none" stroke="#0b0f20" stroke-width="4"/>
+        <rect x="-30" y="58" width="60" height="22" rx="11" fill="#0b0f20"/>
+        <circle id="rec" cx="-16" cy="69" r="4" fill="#ff3b4e"/>
+        <text x="6" y="74" text-anchor="middle" font-family="Heebo, sans-serif" font-weight="800" font-size="13" fill="#fff">אמא</text>
+      </g>
+    </svg>
+
+    <div class="ov end" id="end"><div class="fin">הסוף</div><small>המקרר מסר: העוגה בטוחה. השניצל פחות.</small></div>
+    <div class="ov title" id="title">
+      <small>סרט קצר</small>
+      <h2>המקרר החכם</h2>
+      <p>שתיים ורבע בלילה. 30 שניות.</p>
+    </div>
+    <div class="ov bigplay" id="bigplay"></div>
+  </div>
+
+  <div class="ctl">
+    <button id="pp" type="button" aria-label="הפעל"></button>
+    <input id="seek" type="range" min="0" max="30" step="0.01" value="0" aria-label="התקדמות הסרט">
+    <span id="time">0:00</span>
+    <button id="mute" type="button" aria-label="השתק"></button>
+  </div>
+  <p id="status" aria-live="polite">טוען את הקולות...</p>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const lerp=(a,b,u)=>a+(b-a)*u;
+const eo=u=>1-Math.pow(1-u,3);
+const eio=u=>u<.5?4*u*u*u:1-Math.pow(-2*u+2,3)/2;
+const seg=(t,a,b)=>clamp((t-a)/(b-a));
+const win=(t,a,b,f)=>seg(t,a,a+(f||.25))*(1-seg(t,b-(f||.25),b)); // 0→1→0 over [a,b]
+const A=(el,k,v)=>el.setAttribute(k,v);
+const DUR=30, AVI=0, FRIDGE=1, MOM=2;
+
+/* ---------- script: who says what, when (s = start, d = clip length) ---------- */
+const LINES=[
+ {c:FRIDGE,f:'01',s:1.3, d:4.68}, // good night, Avi. It's 2:15. What are we looking for?
+ {c:AVI,   f:'02',s:5.7, d:2.04}, // just... water
+ {c:FRIDGE,f:'03',s:7.4, d:4.68}, // the water's in the door. The cake's on the top shelf. Just saying.
+ {c:AVI,   f:'04',s:11.9,d:2.51}, // okay... just one bite
+ {c:FRIDGE,f:'05',s:14.4,d:2.51}, // alert! suspected snacking!
+ {c:MOM,   f:'06',s:17.2,d:4.05}, // Avi! what are you doing up at 2 a.m. next to my cake?!
+ {c:AVI,   f:'07',s:20.85,d:1.8}, // Mom?! how did you...
+ {c:FRIDGE,f:'08',s:22.2,d:2.69}, // I'm in the family WhatsApp group
+ {c:MOM,   f:'09',s:24.5,d:4.6}   // ...and there's schnitzel in the freezer. Heat it up, don't eat it cold.
+];
+const ENV_FPS=60;
+function envOf(buf){ // loudness per 1/60 s (33 ms window), scaled so speech peaks open the mouth fully
+  const ch=buf.getChannelData(0),hop=Math.max(1,Math.round(buf.sampleRate/ENV_FPS)),n=Math.ceil(ch.length/hop),e=new Float32Array(n);
+  let pk=1e-6;
+  for(let i=0;i<n;i++){
+    const a=i*hop,b=Math.min(ch.length,a+hop*2);let s=0;
+    for(let j=a;j<b;j++) s+=ch[j]*ch[j];
+    e[i]=Math.sqrt(s/Math.max(1,b-a));if(e[i]>pk) pk=e[i];
+  }
+  for(let i=0;i<n;i++) e[i]=Math.min(1,e[i]/(pk*.7));
+  return e;
+}
+function mouthOf(c,t){
+  let m=0;
+  for(const l of LINES){
+    if(l.c!==c||!l.env||t<l.s||t>=l.s+l.d) continue;
+    m=Math.max(m,l.env[Math.floor((t-l.s)*ENV_FPS)]||0);
+  }
+  return m;
+}
+
+/* ---------- Avi's face over time ---------- */
+const MOOD=[
+ [0,    {es:.8, bu:-1,ba:2, sm:3, o:0}],   // tiptoeing
+ [1.35, {es:1.45,bu:6,ba:-1,sm:0, o:.35}], // the fridge talks
+ [2.3,  {es:1.1,bu:3, ba:-2,sm:-2,o:0}],   // nervous
+ [9.2,  {es:.7, bu:0, ba:3, sm:6, o:0}],   // ...cake, you say?
+ [14.4, {es:1.6,bu:7, ba:-1,sm:0, o:.5}],  // ALERT
+ [16.4, {es:1.2,bu:4, ba:-3,sm:-5,o:0}],   // the phone rings
+ [20.8, {es:1.4,bu:5, ba:-2,sm:-2,o:0}],   // Mom?!
+ [22.3, {es:.5, bu:-2,ba:0, sm:0, o:0}],   // slowly turns to the fridge
+ [25.7, {es:1.05,bu:3,ba:-3,sm:4, o:0}],   // ...schnitzel?
+ [28.9, {es:.55,bu:-2,ba:0, sm:1, o:0}]    // look to camera
+];
+const MK=['es','bu','ba','sm','o'];
+function moodAt(t){
+  let k=0; for(let j=0;j<MOOD.length;j++) if(t>=MOOD[j][0]) k=j;
+  const cur=MOOD[k][1],prev=MOOD[Math.max(0,k-1)][1],u=eio(seg(t,MOOD[k][0],MOOD[k][0]+.3));
+  const r={}; MK.forEach(q=>r[q]=lerp(prev[q],cur[q],u)); return r;
+}
+function aviX(t){ return lerp(-70,86,eio(seg(t,0,1.3)))+(t>=11.9&&t<14.4?10*eio(seg(t,12.6,13.6)):0); }
+const AY=350;
+function lookTarget(t){
+  const SCR=[240,180],CAKE=[248,318],CALL=[100,150],PH=[36,406],FRZ=[240,200];
+  if(t<1.3) return [300,330];
+  if(t<9.2) return SCR;
+  if(t<14.4) return CAKE;
+  if(t<16.4) return SCR;
+  if(t<17.2) return PH;
+  if(t<22.3) return CALL;
+  if(t<24.5) return SCR;
+  if(t<28.1) return CALL;
+  if(t<28.9) return FRZ;
+  return null;
+}
+function look(t){
+  let x=0,y=0;
+  for(const dt of [0,.07,.14,.21]){
+    const p=lookTarget(Math.max(0,t-dt)); if(!p) continue;
+    const dx=p[0]-aviX(t),dy=p[1]-(AY+20),d=Math.hypot(dx,dy);
+    if(d>1){x+=dx/d;y+=dy/d;}
+  }
+  return [x/4,y/4];
+}
+const blinkOf=(t,ph)=>Math.max(0,1-Math.abs((((t+ph)%3.4)-3.3)/.07));
+
+/* ---------- elements ---------- */
+const E={};
+['cam','spill','beacon','beam','frzDoor','schGlow','sparks','screen','scrFlash','face','feL','feR','fhL','fhR','fBars','inside','mainDoor','cakeGlow','laser',
+ 'chat','phoneC','phGlow','avi','armL','armR','handL','handR','phoneH','fork','aHead','hair','aeL','aeR','apL','apR','abL','abR','amo','asm',
+ 'siren','call','mHead','meL','meR','mpL','mpR','mbL','mbR','mmo','msm','rec',
+ 'end','title','bigplay','seek','time','pp','mute','stage','status'].forEach(k=>E[k]=$(k));
+const BARS=[];
+for(let i=0;i<5;i++){const r=document.createElementNS('http://www.w3.org/2000/svg','rect');A(r,'x',224+i*8);A(r,'width',5);A(r,'rx',2);E.fBars.append(r);BARS.push(r);}
+
+/* ---------- render: everything is a pure function of t ---------- */
+function render(t){
+  const alarm=t>=14.4&&t<16.6;
+  const shake=(alarm?2.2*(1-seg(t,14.4,16.6)):0)+(t>=17.2&&t<17.6?2:0);
+  A(E.cam,'transform',`translate(${Math.sin(t*61)*shake} ${Math.cos(t*53)*shake})`);
+
+  // fridge doors
+  const open=eo(seg(t,1.0,1.3));
+  A(E.mainDoor,'transform',`translate(320 0) scale(${Math.max(.001,1-open)} 1) translate(-320 0)`);
+  A(E.inside,'opacity',open);
+  A(E.spill,'opacity',.16*open);
+  const fz=eo(seg(t,28.0,28.35));
+  A(E.frzDoor,'transform',`translate(320 0) scale(${Math.max(.001,1-fz)} 1) translate(-320 0)`);
+  A(E.schGlow,'opacity',fz*(.7+.3*Math.sin(t*8)));
+  A(E.sparks,'opacity',fz*Math.max(0,Math.sin(t*7)));
+
+  // the fridge's face
+  const fm=mouthOf(FRIDGE,t);
+  const on=t>=1.25;
+  A(E.face,'opacity',on?1:0);
+  const boot=win(t,1.25,1.55,.15);
+  A(E.scrFlash,'fill',alarm?'#ff3b4e':'#6ee7ff');
+  A(E.scrFlash,'opacity',alarm?(Math.floor(t*6)%2?.85:.2):boot*.6);
+  const happy=t>=22.2&&t<24.9;
+  const col=alarm?'#ffffff':'#6ee7ff';
+  let eh=20;
+  if(t>=7.4&&t<11.6) eh=9;              // unimpressed
+  if(t>=17.2&&t<22.2) eh=13;            // smug
+  if(alarm) eh=22;
+  eh*=1-.9*blinkOf(t,.7);
+  [E.feL,E.feR].forEach(e=>{A(e,'height',Math.max(2,eh));A(e,'y',184-eh);A(e,'fill',col);A(e,'opacity',happy?0:1);});
+  [E.fhL,E.fhR].forEach(e=>A(e,'opacity',happy?1:0));
+  BARS.forEach((r,i)=>{const h=2+fm*16*[.55,.85,1,.85,.55][i]*(.8+.2*Math.sin(t*23+i*1.7));A(r,'height',h);A(r,'y',203-h/2);A(r,'fill',col);});
+
+  // cake: sparkles when mentioned, lasers in the alarm
+  A(E.cakeGlow,'opacity',win(t,9.3,14.3,.3)*(.6+.4*Math.sin(t*9)));
+  A(E.laser,'opacity',t>=14.5&&t<24.5?(.7+.3*Math.sin(t*20)):0);
+  A(E.beacon,'opacity',alarm?1:0);
+  A(E.beam,'r',16+8*Math.abs(Math.sin(t*9)));
+  A(E.siren,'opacity',alarm?(Math.floor(t*4)%2?.18:.04):0);
+
+  // family chat notification
+  const ch=win(t,22.3,25.3,.3);
+  A(E.chat,'opacity',ch);A(E.chat,'transform',`translate(0 ${(1-ch)*12+Math.sin(t*4)*2})`);
+
+  // phone: rings on the counter, then goes to Avi's ear
+  const ring=t>=16.4&&t<17.05;
+  A(E.phGlow,'opacity',ring?(.5+.5*Math.sin(t*30)):0);
+  A(E.phoneC,'transform',ring?`translate(${Math.sin(t*90)*1.6} 0)`:'');
+  A(E.phoneC,'opacity',t>=17.05?0:1);
+  const inCall=t>=17.05&&t<29.0;
+
+  // Avi
+  const ax=aviX(t), hop=t<1.3?Math.abs(Math.sin(t*9))*4:0;
+  const jump=t>=14.4&&t<15.0?-26*Math.sin(seg(t,14.4,15.0)*Math.PI):0;
+  A(E.avi,'transform',`translate(${ax} ${AY-hop+jump})`);
+  // arms: shoulders at (±28, 70) in Avi's space
+  const surrender=win(t,14.45,16.4,.15);
+  const fork=t>=11.6&&t<16.4;
+  let rx=34,ry=120;                                         // right hand at rest
+  if(t<2.4){rx=lerp(34,22,win(t,1.35,2.4,.2));ry=lerp(120,60,win(t,1.35,2.4,.2));}   // startled, hand to chest
+  if(t>=5.7&&t<7.6){const w=win(t,5.7,7.6,.2);rx=lerp(34,10,w);ry=lerp(120,38,w);}  // whisper behind hand
+  if(fork){
+    const up=eo(seg(t,11.6,11.9)),reachU=eio(seg(t,13.2,14.2));
+    rx=lerp(lerp(34,40,up),248-ax-4,reachU);ry=lerp(lerp(120,64,up),318-AY-6,reachU);
+  }
+  rx=lerp(rx,46,surrender);ry=lerp(ry,-34,surrender);
+  let lx=-34,ly=120;
+  lx=lerp(lx,-46,surrender);ly=lerp(ly,-34,surrender);
+  if(inCall){const p=eio(seg(t,17.05,17.4));lx=lerp(-34,-36,p);ly=lerp(120,28,p);}
+  A(E.handR,'cx',rx);A(E.handR,'cy',ry);A(E.handL,'cx',lx);A(E.handL,'cy',ly);
+  A(E.armR,'d',`M24,72 Q${lerp(24,rx,.5)+8},${Math.max(72,ry)+10} ${rx},${ry}`);
+  A(E.armL,'d',`M-24,72 Q${lerp(-24,lx,.5)-8},${Math.max(72,ly)+10} ${lx},${ly}`);
+  A(E.fork,'opacity',fork?1:0);
+  A(E.fork,'transform',`translate(${rx} ${ry}) rotate(${fork&&t>=13.2?50:15})`);
+  A(E.phoneH,'opacity',inCall?1:0);A(E.phoneH,'transform',`translate(${lx-2} ${ly-4}) rotate(-10)`);
+  // head + face
+  const m=moodAt(t),L=look(t),talk=mouthOf(AVI,t);
+  const camLook=t>=28.9;
+  const tilt=Math.sin(t*1.4)*2+(t>=22.3&&t<24.5?8*eio(seg(t,22.3,23.2)):0)+(camLook?-4:0);
+  A(E.aHead,'transform',`translate(0 ${20-talk*1.2}) rotate(${tilt})`);
+  A(E.hair,'transform',`translate(0 ${t>=14.4&&t<16.4?-6:0}) scale(1 ${t>=14.4&&t<16.4?1.25:1})`);
+  const ery=Math.max(.7,8*m.es*(1-.92*blinkOf(t,0)));
+  A(E.aeL,'ry',ery);A(E.aeR,'ry',ery);
+  const px=camLook?0:L[0]*2.8,py=camLook?0:L[1]*2.6,pr=m.es>1.3?2.5:3.4;
+  [[E.apL,-12],[E.apR,12]].forEach(([e,x])=>{A(e,'cx',x+px);A(e,'cy',-1+py);A(e,'r',pr);});
+  const by=-13-m.bu;
+  A(E.abL,'d',`M-19,${by} L-5,${by+m.ba}`);A(E.abR,'d',`M5,${by+m.ba} L19,${by}`);
+  const o=Math.max(talk,m.o);
+  if(o>.12){A(E.amo,'opacity',1);A(E.amo,'rx',5+3.5*o);A(E.amo,'ry',1.5+7*o);A(E.asm,'opacity',0);}
+  else{A(E.amo,'opacity',0);A(E.asm,'opacity',1);A(E.asm,'d',`M-9,19 Q0,${19+m.sm*1.4} 9,19`);}
+
+  // Mom's video call
+  const pop=eo(seg(t,17.1,17.35))*(1-eio(seg(t,28.95,29.2)));
+  const angry=t<24.5, mt=mouthOf(MOM,t);
+  const msh=angry&&mt>.3?Math.sin(t*40)*2*mt:0;
+  A(E.call,'opacity',pop>0?1:0);
+  A(E.call,'transform',`translate(${100+msh} 150) scale(${pop})`);
+  A(E.mHead,'transform',`rotate(${Math.sin(t*1.8)*3}) translate(0 ${-mt*1.2})`);
+  const mes=angry?(mt>.2?1.25:1.1):.85, mry=7.5*mes*(1-.92*blinkOf(t,1.9));
+  A(E.meL,'ry',mry);A(E.meR,'ry',mry);
+  const mlx=t<24.5?1.6:1.2;
+  [[E.mpL,-13],[E.mpR,13]].forEach(([e,x])=>{A(e,'cx',x+mlx);A(e,'cy',5);});
+  const mbu=angry?-1:3,mba=angry?5:-3,mb=-8-mbu;
+  A(E.mbL,'d',`M-20,${mb} L-6,${mb+mba}`);A(E.mbR,'d',`M6,${mb+mba} L20,${mb}`);
+  if(mt>.12){A(E.mmo,'opacity',1);A(E.mmo,'rx',5+4*mt);A(E.mmo,'ry',1.5+7*mt);A(E.msm,'opacity',0);}
+  else{A(E.mmo,'opacity',0);A(E.msm,'opacity',1);A(E.msm,'d',`M-9,28 Q0,${28+(angry?-5:6)} 9,28`);}
+  A(E.rec,'opacity',Math.floor(t*2)%2?.3:1);
+
+  E.end.style.opacity=eo(seg(t,29.35,29.75));
+  E.title.style.opacity=(t<.05&&!playing)?1:0;
+  E.seek.value=t;
+  E.time.textContent='0:'+String(Math.floor(t)).padStart(2,'0');
+}
+
+/* ---------- audio: Web Audio for voices and the synthesized effects ---------- */
+let AC=null,master=null,noiseBuf=null,muted=false,loaded=0,failed=0;
+const live=new Set();
+function ctx(){
+  if(AC) return AC;
+  const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
+  try{AC=new C();}catch(e){return null;}
+  master=AC.createGain();master.connect(AC.destination);
+  noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+  const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+  return AC;
+}
+function ac(){ // from a tap: wake the context, and on iPhone play even with the silent switch on
+  try{if(navigator.audioSession) navigator.audioSession.type='playback';}catch(e){}
+  if(!ctx()) return null;
+  if(AC.state==='suspended') AC.resume();
+  const s=AC.createBufferSource();s.buffer=AC.createBuffer(1,1,22050);s.connect(AC.destination);s.start(0);
+  return AC;
+}
+function track(s){live.add(s);s.onended=()=>live.delete(s);return s;}
+function stopAll(){live.forEach(s=>{try{s.stop();}catch(e){}});live.clear();}
+function playBuf(buf,off,vol){
+  const s=AC.createBufferSource(),g=AC.createGain();
+  s.buffer=buf;g.gain.value=vol||1;s.connect(g);g.connect(master);s.start(0,off||0);track(s);
+}
+function tone(f0,f1,dur,type,vol,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(1,f1),t0+dur);
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function swell(f,dur,vol,delay){ // soft attack, for the choir
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type='sine';o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(vol,t0+.35);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g);g.connect(master);o.start(t0);o.stop(t0+dur+.03);track(o);
+}
+function noise(dur,vol,freq,delay){
+  if(!AC) return;
+  const t0=AC.currentTime+(delay||0),s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();
+  s.buffer=noiseBuf;f.type='bandpass';f.frequency.value=freq;f.Q.value=.8;
+  g.gain.setValueAtTime(vol,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  s.connect(f);f.connect(g);g.connect(master);s.start(t0,Math.random()*.5);s.stop(t0+dur+.02);track(s);
+}
+const SFX=[
+  ...[.15,.45,.75,1.05].map(x=>[x,()=>tone(700,500,.05,'sine',.06)]),             // tiptoe
+  [1.0,()=>{noise(.18,.2,500);tone(90,60,.3,'sine',.12);}],                       // door opens
+  [1.26,()=>{tone(880,880,.12,'sine',.08);tone(1320,1320,.2,'sine',.07,.12);}],   // screen wakes
+  [9.35,()=>tone(1800,2400,.25,'sine',.05)],                                      // cake sparkle
+  [11.65,()=>tone(3200,3000,.35,'sine',.07)],                                     // ting! the fork
+  ...[0,1,2,3,4,5,6,7].map(k=>[14.4+k*.26,()=>tone(k%2?620:880,k%2?620:880,.24,'square',.045)]), // siren
+  [16.45,()=>{tone(1300,1300,.12,'square',.04);tone(1600,1600,.12,'square',.04,.14);}],           // ring ring
+  [16.8,()=>{tone(1300,1300,.12,'square',.04);tone(1600,1600,.12,'square',.04,.14);}],
+  [17.15,()=>tone(500,1100,.12,'sine',.08)],                                      // call pops up
+  [22.3,()=>{tone(1200,1200,.06,'sine',.08);tone(1600,1600,.08,'sine',.08,.09);}],// family chat
+  ...[22.6,22.75,22.9,23.05].map(x=>[x,()=>tone(1500,1500,.04,'sine',.04)]),      // ...and more messages
+  [28.0,()=>{noise(.15,.15,600);[523,659,784,1047].forEach((f,i)=>swell(f,1.6,.05,i*.05));}], // freezer: ahhh
+  [29.0,()=>{tone(700,700,.12,'sine',.07);tone(500,500,.18,'sine',.07,.14);}]      // call ended
+];
+const EV=SFX.concat(LINES.map(l=>[l.s,()=>{if(l.buf) playBuf(l.buf,0,l.v);}]));
+
+async function loadVoices(){
+  const c=ctx();
+  if(!c){failed=LINES.length;return updateStatus();}
+  await Promise.all(LINES.map(async l=>{
+    try{
+      const r=await fetch('audio/'+l.f+'.mp3');if(!r.ok) throw new Error(r.status);
+      const ab=await r.arrayBuffer();
+      l.buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+      l.env=envOf(l.buf);loaded++;
+    }catch(e){failed++;}
+    updateStatus();
+  }));
+  if(playing) resumeVoices();
+}
+function updateStatus(){
+  const n=LINES.length;
+  if(loaded+failed<n) E.status.textContent='טוען את הקולות... '+loaded+' מתוך '+n;
+  else if(!failed) E.status.textContent='הקולות מוכנים. הפעילו סאונד ולחצו על הסרטון.';
+  else E.status.textContent='לא הצלחנו לטעון '+failed+' מתוך '+n+' קולות. בדקו את החיבור לאינטרנט ורעננו את הדף.';
+}
+function resumeVoices(){ // pick up any line already under way (after resume or seek)
+  if(!AC) return;
+  for(const l of LINES) if(l.buf&&T>=l.s&&T<l.s+l.d-.1) playBuf(l.buf,T-l.s,l.v);
+}
+
+/* ---------- #preview: loop a highlight silently (no audio events fire) ---------- */
+function startPreview(a,b){
+  if(!document.documentElement.classList.contains('preview')) return;
+  E.stage.style.pointerEvents='none';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){render(lerp(a,b,.5));return;}
+  const t0=performance.now();
+  (function pv(now){T=a+((now-t0)/1000)%(b-a);render(T);requestAnimationFrame(pv);})(t0);
+}
+
+/* ---------- player ---------- */
+let T=0,playing=false,last=0,raf=0;
+const ICON={
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg>',
+  replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
+  on:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM16.5 12a4.5 4.5 0 00-2.5-4v8a4.5 4.5 0 002.5-4z"/></svg>',
+  off:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9zM15 9.4L17.6 12 15 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L21.6 8 19 10.6 16.4 8z"/></svg>'
+};
+function ui(){
+  const ended=T>=DUR;
+  E.pp.innerHTML=playing?ICON.pause:(ended?ICON.replay:ICON.play);
+  E.pp.setAttribute('aria-label',playing?'עצור':(ended?'הפעל שוב':'הפעל'));
+  E.bigplay.style.opacity=playing?0:1;
+  E.bigplay.innerHTML=(ended?ICON.replay:ICON.play).replace('<svg','<svg style="fill:#161a2e"');
+  E.mute.innerHTML=muted?ICON.off:ICON.on;
+  E.mute.setAttribute('aria-label',muted?'הפעל סאונד':'השתק');
+}
+function frame(now){
+  if(!playing) return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;
+  const prev=T;T=Math.min(DUR,T+dt);
+  if(AC) for(const [et,fn] of EV){ if(et>prev&&et<=T) fn(); }
+  render(T);
+  if(T>=DUR){playing=false;ui();return;}
+  raf=requestAnimationFrame(frame);
+}
+function play(){
+  if(T>=DUR) T=0;
+  ac();playing=true;last=performance.now();ui();
+  resumeVoices();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(frame);
+}
+function pause(){playing=false;cancelAnimationFrame(raf);stopAll();ui();}
+function toggle(){playing?pause():play();}
+E.stage.addEventListener('click',toggle);
+E.pp.addEventListener('click',toggle);
+E.mute.addEventListener('click',()=>{muted=!muted;if(master) master.gain.value=muted?0:1;ui();});
+E.seek.addEventListener('input',()=>{T=parseFloat(E.seek.value);stopAll();render(T);ui();});
+E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
+ui();render(0);updateStatus();loadVoices();
+startPreview(11.5,24.5);
+})();
+</script>
+
+</body>
+</html>
