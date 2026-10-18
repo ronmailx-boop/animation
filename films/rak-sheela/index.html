@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
 <script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
-(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed'||m==='feed')document.documentElement.classList.add(m);})();</script>
 <style>
 html{-webkit-text-size-adjust:100%}
 body{margin:0;font-size:14px}
@@ -19,6 +19,10 @@ html.preview .wrap{max-width:none;gap:0}
 html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
 html.embed .head{display:none}
 html.embed body{padding-block:8px}
+html.feed body{padding:0;background:#000;overflow:hidden}
+html.feed .head,html.feed .ctl,html.feed #status{display:none!important}
+html.feed .wrap{max-width:none;gap:0}
+html.feed .stage{width:100vw;height:100vh;height:100svh;aspect-ratio:auto;border-radius:0;box-shadow:none}
 /* layout: phone-shaped stage (a clinic waiting room, flat cartoon with thick outlines), slim controls underneath */
 :root{
   --bg:#eef3f1; --fg:#17201d; --muted:#5d6b66; --accent:#e2483d; --panel:#ffffff; --line:#d3ddd9;
@@ -449,7 +453,7 @@ const live=new Set();
 function ctx(){
   if(AC) return AC;
   const C=window.AudioContext||window.webkitAudioContext;if(!C) return null;
-  try{AC=new C();}catch(e){return null;}
+  try{AC=sharedAC()||new C();}catch(e){return null;}
   master=AC.createGain();master.connect(AC.destination);
   noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
   const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
@@ -588,6 +592,20 @@ E.seek.addEventListener('change',()=>{if(playing) resumeVoices();});
 
 ui();render(0);updateStatus();loadVoices();
 startPreview(3.8,15.6);
+/* ---------- #feed: the gallery's vertical feed drives the film; sound goes through the feed's shared AudioContext ---------- */
+const FEED=document.documentElement.classList.contains('feed');
+function sharedAC(){try{return window.parent!==window&&window.parent.__ac||null;}catch(e){return null;}}
+if(FEED){
+  let want=false;
+  window.film={
+    play(){want=true;if(!playing)play();},
+    pause(){want=false;if(playing)pause();},
+    restart(){want=true;if(playing)pause();T=0;render(0);play();},
+    get time(){return T;},dur:DUR
+  };
+  E.stage.addEventListener('click',()=>{want=playing;}); // a tap pauses or resumes, and the loop follows
+  setInterval(()=>{if(want&&!playing&&T>=DUR) play();},250); // loop, like a feed
+}
 })();
 </script>
 
