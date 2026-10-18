@@ -1,0 +1,16 @@
+.git
+.github
+.claude
+.wrangler
+node_modules
+remotion
+tests
+package.json
+package-lock.json
+skills-lock.json
+wrangler.jsonc
+.assetsignore
+.gitignore
+CLAUDE.md
+PROJECT_STATE.md
+README.md
