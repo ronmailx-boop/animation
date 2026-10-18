@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>יום פיג'מות</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
+<script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+<style>
+/* the film itself is film.mp4, rendered with Remotion from /remotion (see README) */
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-size:14px}
+html.preview body{padding:0;background:#000;overflow:hidden}
+html.preview .head,html.preview #status{display:none!important}
+html.preview .wrap{max-width:none;gap:0}
+html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none}
+html.preview video{object-fit:cover}
+html.embed .head{display:none}
+html.embed body{padding-block:8px}
+:root{
+  --bg:#f6efe6; --fg:#22180f; --muted:#6e6255; --accent:#e2483d; --line:#e0d5c6;
+  --font-display:'Secular One','Heebo',system-ui,sans-serif;
+  --font-body:'Heebo',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){--bg:#16120e; --fg:#f4ece2; --muted:#b4a796; --accent:#ff6f5e; --line:#3a3128; color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#16120e; --fg:#f4ece2; --muted:#b4a796; --accent:#ff6f5e; --line:#3a3128; color-scheme:dark}
+
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--font-body);
+  padding-block:16px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;align-items:center}
+.head{width:100%}
+h1{font:400 26px/1.1 var(--font-display);margin:0}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px;line-height:1.4}
+.stage{
+  position:relative; aspect-ratio:9/16; width:min(100%, max(220px, calc((100svh - 150px) * .5625)));
+  border-radius:16px; overflow:hidden; background:#141a3a; box-shadow:0 0 0 1px var(--line);
+}
+.stage video{position:absolute;inset:0;width:100%;height:100%;display:block;background:#141a3a}
+#status{margin:0;color:var(--muted);font-size:13px;line-height:1.4;text-align:center}
+#status:empty{display:none}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="head">
+    <h1>יום פיג'מות</h1>
+    <p class="sub">רבע לחצות, ומירי הגננת כותבת בקבוצת ההורים. אחרי 214 הודעות כולם כבר יודעים מתי יום פיג'מות. כמעט כולם. 30 שניות עם קול.</p>
+  </div>
+  <div class="stage">
+    <video id="film" src="film.mp4" poster="poster.jpg" controls playsinline preload="metadata"></video>
+  </div>
+  <p id="status" role="status"></p>
+</div>
+
+<script>
+(function(){
+const v=document.getElementById('film');
+const status=document.getElementById('status');
+v.addEventListener('error',()=>{status.textContent='לא הצלחנו לטעון את הסרט. בדקו את החיבור לאינטרנט ונסו לרענן את הדף.';});
+
+/* #preview: loop a highlight silently, no controls */
+function startPreview(a,b){
+  v.removeAttribute('controls');v.muted=true;v.preload='auto';
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){v.currentTime=(a+b)/2;return;}
+  v.addEventListener('loadedmetadata',()=>{v.currentTime=a;v.play().catch(()=>{});},{once:true});
+  v.addEventListener('timeupdate',()=>{if(v.currentTime>=b||v.currentTime<a-0.5) v.currentTime=a;});
+}
+if(document.documentElement.classList.contains('preview')) startPreview(4.8,15.0);
+/* inside the gallery player the viewer already tapped play, so start right away */
+else if(document.documentElement.classList.contains('embed')) v.play().catch(()=>{});
+})();
+</script>
+
+</body>
+</html>
