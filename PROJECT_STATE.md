@@ -112,7 +112,8 @@
 - [x] `wrangler.jsonc`, `.assetsignore` (כולל `remotion`, `.claude`, `skills-lock.json`), `.github/workflows/deploy-cloudflare.yml`
 - [x] המשתמש: ליצור API Token (תבנית Edit Cloudflare Workers, zone `vplusstudio.app`, שם `nu-beemet-deploy`) ולשמור כ-Secret `CLOUDFLARE_API_TOKEN` בריפו
 - [x] פריסה ראשונה (18.10.2026): הלוג מראה את `https://nu-beemet.ronmailx.workers.dev` ואת `nu.beemet.vplusstudio.app (custom domain)`. עלו 90 קבצים — בדיוק החלק הציבורי, כלומר `.assetsignore` עובד
-- [ ] בדיקה בטלפון: האתר נפתח בשתי הכתובות (תעודה חדשה: עד 5–15 דקות), סאונד בפיד
+- [x] בדיקה בטלפון: האתר נפתח (התעודה ל-`nu.beemet` הונפקה תוך כמה דקות), שיתוף בוואטסאפ עובד עם תצוגה מקדימה
+- [x] שורת הכתובת נשארת נקייה (בלי `#<slug>` בזמן גלילה); קישור שיתוף נוחת על הסרט ואז מתנקה
 - [x] מיתוג האתר ל"נו, באמת": כותרת, לוגו (פרצוף מגלגל עיניים, גם favicon), @nu.beemet בכיתוב, טקסט השיתוף
 
 ## כלים
