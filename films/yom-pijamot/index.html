@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
 <script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
-(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed'||m==='feed')document.documentElement.classList.add(m);})();</script>
 <style>
 /* the film itself is film.mp4, rendered with Remotion from /remotion (see README) */
 html{-webkit-text-size-adjust:100%}
@@ -20,6 +20,11 @@ html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;b
 html.preview video{object-fit:cover}
 html.embed .head{display:none}
 html.embed body{padding-block:8px}
+html.feed body{padding:0;background:#000;overflow:hidden}
+html.feed .head,html.feed #status{display:none!important}
+html.feed .wrap{max-width:none;gap:0}
+html.feed .stage{width:100vw;height:100vh;height:100svh;aspect-ratio:auto;border-radius:0;box-shadow:none}
+html.feed video{object-fit:cover;background:#000}
 :root{
   --bg:#f6efe6; --fg:#22180f; --muted:#6e6255; --accent:#e2483d; --line:#e0d5c6;
   --font-display:'Secular One','Heebo',system-ui,sans-serif;
@@ -75,7 +80,30 @@ function startPreview(a,b){
   v.addEventListener('loadedmetadata',()=>{v.currentTime=a;v.play().catch(()=>{});},{once:true});
   v.addEventListener('timeupdate',()=>{if(v.currentTime>=b||v.currentTime<a-0.5) v.currentTime=a;});
 }
+/* #feed: the gallery's vertical feed drives the film. The picture plays muted and the sound
+   (audio.mp3, the same track) goes through the feed's shared AudioContext, which one tap has
+   already unlocked, so the film can start with sound as soon as it scrolls into view. */
+function startFeed(){
+  let AC=null;try{AC=window.parent!==window&&window.parent.__ac;}catch(e){}
+  v.removeAttribute('controls');v.muted=true;v.preload='auto';
+  let buf=null,src=null,want=false;
+  if(AC) fetch('audio.mp3').then(r=>r.arrayBuffer()).then(ab=>new Promise((res,rej)=>AC.decodeAudioData(ab,res,rej)))
+    .then(b=>{buf=b;if(!v.paused) sound();}).catch(()=>{});
+  function hush(){if(src){try{src.stop();}catch(e){}src=null;}}
+  function sound(){hush();if(!buf) return;src=AC.createBufferSource();src.buffer=buf;src.connect(AC.destination);src.start(0,Math.min(v.currentTime,buf.duration));}
+  v.addEventListener('playing',sound); // also after every seek or stall
+  v.addEventListener('pause',hush);v.addEventListener('waiting',hush);
+  v.addEventListener('ended',()=>{hush();if(want){v.currentTime=0;v.play().catch(()=>{});}}); // loop, like a feed
+  v.addEventListener('click',()=>{if(v.paused){want=true;v.play().catch(()=>{});}else{want=false;v.pause();}});
+  window.film={
+    play(){want=true;v.play().catch(()=>{});},
+    pause(){want=false;v.pause();},
+    restart(){want=true;v.currentTime=0;v.play().catch(()=>{});},
+    get time(){return v.currentTime;},get dur(){return v.duration||30;}
+  };
+}
 if(document.documentElement.classList.contains('preview')) startPreview(4.8,15.0);
+else if(document.documentElement.classList.contains('feed')) startFeed();
 /* inside the gallery player the viewer already tapped play, so start right away */
 else if(document.documentElement.classList.contains('embed')) v.play().catch(()=>{});
 })();

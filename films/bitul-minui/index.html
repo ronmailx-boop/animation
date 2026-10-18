@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@500;800&family=Secular+One&display=swap">
 <script>/* #preview: silent looping highlight for the gallery card; #embed: player inside the gallery */
-(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed')document.documentElement.classList.add(m);})();</script>
+(function(){const m=location.hash.slice(1);if(m==='preview'||m==='embed'||m==='feed')document.documentElement.classList.add(m);})();</script>
 <style>
 html{-webkit-text-size-adjust:100%}
 body{margin:0;font-size:14px}
@@ -19,6 +19,10 @@ html.preview .wrap{max-width:none;gap:0}
 html.preview .stage{width:100vw;height:100vh;aspect-ratio:auto;border-radius:0;box-shadow:none;cursor:default}
 html.embed .head{display:none}
 html.embed body{padding-block:8px}
+html.feed body{padding:0;background:#000;overflow:hidden}
+html.feed .head,html.feed .ctl,html.feed #status{display:none!important}
+html.feed .wrap{max-width:none;gap:0}
+html.feed .stage{width:100vw;height:100vh;height:100svh;aspect-ratio:auto;border-radius:0;box-shadow:none}
 /* layout: phone-shaped split-screen call, rep on top, customer below, slim controls underneath */
 :root{
   --bg:#ecebf6; --fg:#1d1540; --muted:#625c86; --accent:#7367f0; --panel:#ffffff; --line:#cfcbe6;
@@ -414,7 +418,7 @@ const clips=Array(LINES.length).fill(null);
 // one shared element: once a tap has started it, mobile browsers let it play later lines too
 const VO=new Audio();VO.preload='auto';
 function ctx(){
-  if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C){try{AC=new C();}catch(e){AC=null;}}}
+  if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C){try{AC=sharedAC()||new C();}catch(e){AC=null;}}}
   return AC;
 }
 function ac(){
@@ -480,6 +484,7 @@ function playClip(i,off){
     const s=AC.createBufferSource();s.buffer=c.buf;s.playbackRate.value=SPEED;s.connect(AC.destination);s.start(0,off);
     cur={stop:()=>{try{s.stop();}catch(e){}}};
   };
+  if(FEED){viaBuffer();return;} // in the feed only the shared AudioContext may play without a tap
   try{
     VO.onerror=viaBuffer;VO.src=c.url;
     VO.preservesPitch=true;VO.mozPreservesPitch=true;VO.webkitPreservesPitch=true;
@@ -596,6 +601,20 @@ E.seek.addEventListener('change',()=>{if(playing)resumeLine();});
 ui();render(0);
 loadBuiltIn();
 startPreview(4.5,16);
+/* ---------- #feed: the gallery's vertical feed drives the film; sound goes through the feed's shared AudioContext ---------- */
+const FEED=document.documentElement.classList.contains('feed');
+function sharedAC(){try{return window.parent!==window&&window.parent.__ac||null;}catch(e){return null;}}
+if(FEED){
+  let want=false;
+  window.film={
+    play(){want=true;if(!playing)play();},
+    pause(){want=false;if(playing)pause();},
+    restart(){want=true;if(playing)pause();T=0;render(0);play();},
+    get time(){return T;},dur:DUR
+  };
+  E.stage.addEventListener('click',()=>{want=playing;}); // a tap pauses or resumes, and the loop follows
+  setInterval(()=>{if(want&&!playing&&T>=DUR) play();},250); // loop, like a feed
+}
 })();
 </script>
 </body>
