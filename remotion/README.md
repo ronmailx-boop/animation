@@ -1,4 +1,4 @@
-# Remotion — סרטי MP4 של אולם ההקרנות
+# Remotion — סרטי MP4 של "נו, באמת"
 
 כאן נכתבים הסרטים שמרונדרים לווידאו (כרגע: `YomPijamot` → `films/yom-pijamot/film.mp4`).
 

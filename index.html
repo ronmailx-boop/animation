@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>אולם ההקרנות</title>
+<title>נו, באמת</title>
+<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'><circle cx='24' cy='24' r='22' fill='%23ffc94a' stroke='%23140f1c' stroke-width='3'/><ellipse cx='16' cy='20' rx='6' ry='7' fill='%23fff' stroke='%23140f1c' stroke-width='2.5'/><ellipse cx='32' cy='20' rx='6' ry='7' fill='%23fff' stroke='%23140f1c' stroke-width='2.5'/><circle cx='17' cy='15.5' r='3' fill='%23140f1c'/><circle cx='33' cy='15.5' r='3' fill='%23140f1c'/><path d='M16 34h16' stroke='%23140f1c' stroke-width='3' stroke-linecap='round'/></svg>">
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="סרטוני אנימציה קצרים בעברית, מצוירים בקוד ומדובבים בקולות של ElevenLabs.">
+<meta name="description" content="נו, באמת — סרטוני אנימציה של 30 שניות על החיים בישראל. מצוירים בקוד ומדובבים בקולות של ElevenLabs.">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,8 +53,8 @@ button{font:inherit;color:inherit}
 .badge{display:inline-block;margin-inline-start:6px;padding:0 8px;border-radius:4px;background:var(--accent);font:800 12px/20px var(--font-body);vertical-align:3px;text-shadow:none}
 
 .rail{position:absolute;inset-inline-end:8px;bottom:calc(96px + env(safe-area-inset-bottom,0px));z-index:3;display:flex;flex-direction:column;align-items:center;gap:16px}
-.logo{width:50px;height:50px;border-radius:50%;background:var(--marquee);border:2px solid #fff;display:grid;place-items:center;margin-bottom:6px}
-.logo svg{width:28px;height:28px}
+.logo{width:50px;height:50px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;margin-bottom:6px;overflow:hidden;background:#ffc94a}
+.logo svg{width:100%;height:100%}
 .act{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:52px;padding:0;border:0;background:none;cursor:pointer;font:800 12px var(--font-body);text-shadow:0 1px 2px rgba(0,0,0,.6);-webkit-tap-highlight-color:transparent}
 .act span.ic{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.25)}
 .act svg{width:30px;height:30px;fill:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));transition:transform .15s}
@@ -69,7 +70,8 @@ button{font:inherit;color:inherit}
   background:rgba(0,0,0,.55);border:0;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
 #start .pp{width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,.95);display:grid;place-items:center;box-shadow:0 6px 24px rgba(0,0,0,.4)}
 #start .pp svg{width:44px;height:44px;fill:#111;margin-inline-start:6px}
-#start h1{margin:0;font:400 34px/1.1 var(--font-display);color:var(--marquee)}
+#start h1{margin:0;font:400 40px/1.1 var(--font-display);color:var(--marquee)}
+#start .face svg{width:72px;height:72px;display:block}
 #start p{margin:0;font:500 16px var(--font-body);color:#fff;max-width:28ch}
 #start:focus-visible .pp{outline:4px solid var(--marquee);outline-offset:4px}
 #start[hidden]{display:none}
@@ -102,8 +104,9 @@ dialog::backdrop{background:rgba(0,0,0,.6)}
 
 <button id="start" type="button">
   <span class="pp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-  <h1>אולם ההקרנות</h1>
-  <p>סרטוני אנימציה של 30 שניות בעברית. הקישו כדי להתחיל עם קול, וגללו למעלה לסרטון הבא.</p>
+  <span class="face"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#ffc94a" stroke="#140f1c" stroke-width="3"/><ellipse cx="16" cy="20" rx="6" ry="7" fill="#fff" stroke="#140f1c" stroke-width="2.5"/><ellipse cx="32" cy="20" rx="6" ry="7" fill="#fff" stroke="#140f1c" stroke-width="2.5"/><circle cx="17" cy="15.5" r="3" fill="#140f1c"/><circle cx="33" cy="15.5" r="3" fill="#140f1c"/><path d="M16 34h16" stroke="#140f1c" stroke-width="3" stroke-linecap="round"/></svg></span>
+  <h1>נו, באמת</h1>
+  <p>סרטוני אנימציה של 30 שניות על החיים בישראל. הקישו כדי להתחיל עם קול, וגללו למעלה לסרטון הבא.</p>
 </button>
 <div id="hint" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4l-7 7 1.4 1.4L11 7.8V20h2V7.8l4.6 4.6L19 11z"/></svg>גללו לסרטון הבא</div>
 
@@ -160,7 +163,7 @@ const ICON={
   heart:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.1 5.3 3 1.7-1.9 3.2-3 5.3-3 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/></svg>',
   replay:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V2L7 6.5 12 11V8a5 5 0 11-5 5H5a7 7 0 107-8z"/></svg>',
   note:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v11.6A3.5 3.5 0 1 0 11 18V8h7V3z"/></svg>',
-  logo:'<svg viewBox="0 0 34 34" aria-hidden="true"><rect x="3" y="6" width="28" height="22" rx="4" fill="#140f1c"/><path d="M14 12v10l8-5z" fill="#ffc94a"/></svg>'
+  logo:'<svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="#ffc94a" stroke="#140f1c" stroke-width="3"/><ellipse cx="16" cy="20" rx="6" ry="7" fill="#fff" stroke="#140f1c" stroke-width="2.5"/><ellipse cx="32" cy="20" rx="6" ry="7" fill="#fff" stroke="#140f1c" stroke-width="2.5"/><circle cx="17" cy="15.5" r="3" fill="#140f1c"/><circle cx="33" cy="15.5" r="3" fill="#140f1c"/><path d="M16 34h16" stroke="#140f1c" stroke-width="3" stroke-linecap="round"/></svg>'
 };
 const feed=document.getElementById('feed'),startBtn=document.getElementById('start'),hint=document.getElementById('hint');
 const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
@@ -176,10 +179,10 @@ const slides=FILMS.map((f,i)=>{
   const fr=el('iframe');fr.title='הסרט '+f.title;fr.setAttribute('allow','autoplay');
   scr.append(img,fr);
 
-  const top=el('div','top');top.append(el('b',null,'אולם ההקרנות'),el('span',null,'בשבילך'));
+  const top=el('div','top');top.append(el('b',null,'נו, באמת'),el('span',null,'בשבילך'));
 
   const cap=el('div','cap');
-  cap.append(el('div','who','@אולם_ההקרנות'));
+  const who=el('div','who'),handle=el('bdi',null,'@nu.beemet');handle.dir='ltr';who.append(handle);cap.append(who);
   const h=el('h2',null,f.title);if(f.isNew) h.append(el('span','badge','חדש'));
   cap.append(h,el('p',null,f.logline),el('div','tags',f.cast.map(c=>'#'+c.replace(/[()]/g,'').trim().replace(/\s+/g,'_')).join(' ')));
   const snd=el('div','snd');snd.innerHTML=ICON.note;snd.append(el('i',null,'צליל מקורי · '+f.cast.join(', ')+' · קולות ElevenLabs'));cap.append(snd);
@@ -270,7 +273,7 @@ const sheet=document.getElementById('shareSheet'),shMsg=document.getElementById(
 const filmUrl=f=>location.href.split('#')[0]+'#'+f.slug;
 let shareUrl='';
 async function shareFilm(f){
-  const url=filmUrl(f),text='"'+f.title+'" – סרטון אנימציה של 30 שניות מאולם ההקרנות';
+  const url=filmUrl(f),text='"'+f.title+'" – סרטון של 30 שניות מ"נו, באמת" 🙄';
   if(navigator.share){
     try{await navigator.share({title:f.title,text,url});return;}
     catch(e){if(e.name==='AbortError') return;} // cancelled by the user; any other error falls back to the sheet
