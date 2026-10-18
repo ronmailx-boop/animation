@@ -60,7 +60,21 @@ h2{margin:0;font:400 22px/1.2 var(--font-display)}
 .poster .badge{position:absolute;top:12px;inset-inline-start:12px;padding:3px 9px;border-radius:999px;background:var(--accent);color:#fff;font:800 12px var(--font-body)}
 
 .meta{display:flex;flex-direction:column;gap:6px;min-width:0}
+.meta-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .meta h3{margin:0;font:400 22px/1.15 var(--font-display);text-wrap:balance}
+.share{flex:none;display:flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:500 14px var(--font-body);cursor:pointer}
+.share svg{width:18px;height:18px;fill:currentColor}
+.share:focus-visible,.sh-opt:focus-visible{outline:3px solid var(--marquee);outline-offset:2px}
+
+/* share sheet (when the phone's own share menu is not available) */
+#shareSheet{width:min(420px,100vw);height:fit-content;max-height:100svh;margin:auto auto 0;border-radius:18px 18px 0 0;padding:18px max(16px, env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px, env(safe-area-inset-left,0px))}
+@media (min-width:700px){#shareSheet{margin:auto;border-radius:18px;box-shadow:0 0 0 1px var(--line)}}
+.sh-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sh-head h2{font-size:20px}
+.sh-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sh-opt{width:100%;display:flex;align-items:center;gap:10px;min-height:52px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:500 15px var(--font-body);text-decoration:none;cursor:pointer}
+.sh-opt svg{width:24px;height:24px;flex:none}
+#shMsg{margin:12px 0 0;min-height:1.5em;color:var(--marquee);font-size:14px;text-align:center}
 .meta p{margin:0;color:var(--muted)}
 .cast{list-style:none;margin:2px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .cast li{padding:2px 10px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--fg)}
@@ -113,6 +127,21 @@ dialog::backdrop{background:rgba(5,3,8,.8)}
   </div>
 </dialog>
 
+<dialog id="shareSheet" aria-labelledby="shTitle">
+  <div class="sh-head">
+    <h2 id="shTitle">שיתוף</h2>
+    <button class="close" id="shClose" type="button" aria-label="סגירה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"/></svg></button>
+  </div>
+  <ul class="sh-list">
+    <li><a class="sh-opt" id="shWa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#25d366"/><path fill="#fff" d="M12 5.2a6.8 6.8 0 0 0-5.9 10.2L5.2 18.8l3.5-.9A6.8 6.8 0 1 0 12 5.2zm3.9 9.5c-.2.5-1 .9-1.4.9-.4.1-.8.1-2.6-.6-2.2-.9-3.6-3.1-3.7-3.3-.1-.1-.9-1.2-.9-2.3s.6-1.6.8-1.8c.2-.2.4-.3.6-.3h.4c.1 0 .3 0 .5.4l.7 1.6c.1.1.1.3 0 .4l-.3.4-.3.4c-.1.1-.2.2-.1.4.2.3.6 1 1.3 1.6.9.8 1.6 1 1.8 1.1.2.1.4.1.5-.1l.7-.8c.2-.2.3-.2.5-.1l1.5.7c.2.1.4.2.4.3.1.1.1.6-.1 1.1z"/></svg>וואטסאפ</a></li>
+    <li><a class="sh-opt" id="shTg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#29a9eb"/><path fill="#fff" d="M5.5 11.6l11.2-4.3c.5-.2 1 .1.8.9l-1.9 9c-.1.6-.5.8-1 .5l-2.9-2.1-1.4 1.3c-.2.2-.3.3-.6.3l.2-3 5.4-4.9c.2-.2 0-.3-.3-.1l-6.7 4.2-2.9-.9c-.6-.2-.6-.6.1-.9z"/></svg>טלגרם</a></li>
+    <li><a class="sh-opt" id="shFb" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1877f2"/><path fill="#fff" d="M13.2 19v-6h2l.3-2.4h-2.3V9.1c0-.7.2-1.2 1.2-1.2h1.2V5.8c-.2 0-1-.1-1.8-.1-1.8 0-3 1.1-3 3.1v1.8h-2V13h2v6z"/></svg>פייסבוק</a></li>
+    <li><a class="sh-opt" id="shMail"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#ff6b4a"/><path fill="#fff" d="M6 8h12v8H6zm1 1v.3l5 3.3 5-3.3V9zm0 1.5V15h10v-4.5l-5 3.3z"/></svg>מייל</a></li>
+    <li style="grid-column:1/-1"><button class="sh-opt" id="shCopy" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#ffc94a"/><path fill="#1c1408" d="M10.6 13.4a1 1 0 0 1 0-1.4l2.8-2.8a1 1 0 1 1 1.4 1.4L12 13.4a1 1 0 0 1-1.4 0zm-1.8 3.2a3 3 0 0 1-2.1-5.1l1.4-1.4 1.4 1.4-1.4 1.4a1 1 0 0 0 1.4 1.4l1.4-1.4 1.4 1.4-1.4 1.4a3 3 0 0 1-2.1.9zm6.4-3.2l-1.4-1.4 1.4-1.4a1 1 0 0 0-1.4-1.4l-1.4 1.4-1.4-1.4 1.4-1.4a3 3 0 0 1 4.2 4.2z"/></svg>העתקת קישור</button></li>
+  </ul>
+  <p id="shMsg" role="status"></p>
+</dialog>
+
 <script>
 (function(){
 /* the catalogue: newest first. Each film lives in films/<slug>/ with its own audio/ and poster.jpg */
@@ -142,6 +171,7 @@ const FILMS=[
    logline:'עומר רק רוצה לבטל את המנוי לחדר הכושר. דנה, נציגת השירות, לא מוותרת עליו.',
    cast:['דנה','עומר']}
 ];
+const SHARE='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16a3 3 0 0 0-2.2 1l-7-4a3 3 0 0 0 0-2l7-4A3 3 0 1 0 15 5l-7 4a3 3 0 1 0 0 6l7 4a3 3 0 1 0 3-3z"/></svg>';
 const PLAY='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 const grid=document.getElementById('grid');
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -159,7 +189,11 @@ FILMS.forEach(f=>{
   btn.append(el('span','dur',f.dur));
   const pl=el('span','play');pl.innerHTML=PLAY;pl.append(document.createTextNode('צפייה'));btn.append(pl);
   btn.addEventListener('click',()=>openPlayer(f));
-  const meta=el('div','meta');meta.append(el('h3',null,f.title),el('p',null,f.logline));
+  const meta=el('div','meta');
+  const sh=el('button','share');sh.type='button';sh.innerHTML=SHARE;sh.append(document.createTextNode('שיתוף'));sh.setAttribute('aria-label','שיתוף הסרט '+f.title);
+  sh.addEventListener('click',()=>shareFilm(f));
+  const top=el('div','meta-top');top.append(el('h3',null,f.title),sh);
+  meta.append(top,el('p',null,f.logline));
   const cast=el('ul','cast');cast.setAttribute('aria-label','דמויות');f.cast.forEach(c=>cast.append(el('li',null,c)));meta.append(cast);
   li.append(btn,meta);grid.append(li);
 });
@@ -185,6 +219,38 @@ function closePlayer(){ if(dlg.open) dlg.close(); }
 dlg.addEventListener('close',()=>{frame.removeAttribute('src');}); // stops the sound
 document.getElementById('close').addEventListener('click',closePlayer);
 dlg.addEventListener('click',e=>{if(e.target===dlg) closePlayer();});
+
+/* share: a link to this page that opens straight into the film (#<slug>).
+   On phones the system share menu lists every installed app (WhatsApp etc.); elsewhere, our own sheet. */
+const sheet=document.getElementById('shareSheet'),shMsg=document.getElementById('shMsg');
+const filmUrl=f=>location.href.split('#')[0]+'#'+f.slug;
+let shareUrl='';
+async function shareFilm(f){
+  const url=filmUrl(f),text='"'+f.title+'" – סרטון אנימציה של 30 שניות מאולם ההקרנות';
+  if(navigator.share){
+    try{await navigator.share({title:f.title,text,url});return;}
+    catch(e){if(e.name==='AbortError') return;} // cancelled by the user; any other error falls back to the sheet
+  }
+  shareUrl=url;
+  const msg=encodeURIComponent(text+'\n'+url);
+  document.getElementById('shWa').href='https://wa.me/?text='+msg;
+  document.getElementById('shTg').href='https://t.me/share/url?url='+encodeURIComponent(url)+'&text='+encodeURIComponent(text);
+  document.getElementById('shFb').href='https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url);
+  document.getElementById('shMail').href='mailto:?subject='+encodeURIComponent(f.title)+'&body='+msg;
+  document.getElementById('shTitle').textContent='שיתוף: '+f.title;
+  shMsg.textContent='';
+  if(sheet.showModal) sheet.showModal(); else location.href='https://wa.me/?text='+msg;
+}
+document.getElementById('shCopy').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText(shareUrl);shMsg.textContent='הקישור הועתק';}
+  catch(e){shMsg.textContent='לא הצלחנו להעתיק. הנה הקישור: '+shareUrl;}
+});
+document.getElementById('shClose').addEventListener('click',()=>sheet.close());
+sheet.addEventListener('click',e=>{if(e.target===sheet) sheet.close();});
+
+/* a shared link (#<slug>) opens that film right away */
+const linked=FILMS.find(f=>f.slug===decodeURIComponent(location.hash.slice(1)));
+if(linked) openPlayer(linked);
 })();
 </script>
 </body>
