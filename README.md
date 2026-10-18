@@ -13,6 +13,7 @@
 ## הסרטים
 | סרט | תיקייה | דמויות |
 |---|---|---|
+| יום פיג'מות (Remotion, MP4) | `films/yom-pijamot/` | יעל, מירי הגננת, הורי הגן |
 | אכלת? | `films/achalta/` | דני, אמא, אבא |
 | שומרת חנייה | `films/shomeret-chanaya/` | יוסי, רינה, שמוליק (בטלפון) |
 | רק שאלה | `films/rak-sheela/` | מוטי, צביקה, סבתא, השליח, המזכירה |
@@ -26,5 +27,13 @@
 2. מוסיפים לסרט את `startPreview(from,to)` (ראו את הסרטים הקיימים).
 3. מוסיפים רשומה למערך `FILMS` בראש הסקריפט ב-`index.html`.
 
+## סרטים ב-Remotion
+מסרטון 8 ("יום פיג'מות") יש גם שיטה שנייה: הסרט נכתב ב-React עם [Remotion](https://www.remotion.dev) בתיקייה `remotion/` ומרונדר לקובץ `films/<slug>/film.mp4`. הדף `films/<slug>/index.html` הוא נגן וידאו עם אותם מצבי `#preview` / `#embed`, כך שהגלריה לא צריכה לדעת את ההבדל.
+- קולות: `remotion/public/audio/*.mp3` (ElevenLabs), סנכרון שפתיים מ-`remotion/src/envelopes.json`, תזמון ב-`remotion/src/timeline.ts`.
+- פונטים מקומיים ב-`remotion/public/fonts` (הרינדור לא תלוי ברשת).
+- רינדור: `cd remotion && npm i && npx remotion render YomPijamot ../films/yom-pijamot/film.mp4 --crf=26`
+  (בסביבת הענן של Claude: להוסיף `--browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell`).
+- תצוגה מקדימה אינטראקטיבית: `npx remotion studio`.
+
 ## הרצה מקומית
-`python3 -m http.server` מתיקיית הריפו, ואז http://localhost:8000 (צריך שרת, כי הקולות נטענים ב-fetch).
+`python3 -m http.server` מתיקיית הריפו, ואז http://localhost:8000 (צריך שרת, כי הקולות נטענים ב-fetch; לסרטי ה-MP4 עדיף שרת שתומך ב-Range, למשל `npx http-server`, כדי שהטריילר יוכל לקפוץ לאמצע).
